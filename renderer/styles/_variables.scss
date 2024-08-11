@@ -1,0 +1,103 @@
+/* General */
+$primary-color: #fa8787;
+$secondary-color: #995252;
+$seashell-color: #efefef;
+$white-color: #ffffff;
+$black-color: #000000;
+$grey-color: #c8c7c7;
+$ruby-red-color: #f21d1d;
+$grey-g100-color: #878687;
+$monsoon-color: #878687;
+$soft-peach-color: #ededed;
+$grey-g20-color: #f6f6f6;
+$grey-g40-color: #e2e2e2;
+$red-r50-color: #fff3f3;
+$grey-g900-color: #211f20;
+$iron-color: #dfe0e2;
+$blue-b75-color: #a7d9ed;
+$blue-b10-soft-color: #f8f8ff;
+$black-b10-color: #fbfbfb;
+$black-b20-color: #f6f6f6;
+$blue-romace: #dcf6da;
+$placebo-purple: #f1e8fb;
+$citrine-white: #faefdc;
+$lovelight: #f9d6d6;
+$husky: #e0ecfa;
+$poisonous-pesticide: #3bc92f;
+$soothing-saphire: #3b82d6;
+$rose-madder: #e33535;
+$mirabell-yellow: #f1c267;
+$queer-purple: #b476f2;
+$tropical-breeze: #ebeced;
+$light-grey: #eeeeee;
+$white-smoke: #f4f4f4;
+$blue-azure: #3b82d6;
+$neutral-5-color: #d9d9d9;
+
+/* Filter */
+$filter_primary_color: brightness(0) saturate(100%) invert(69%) sepia(83%)
+  saturate(1931%) hue-rotate(309deg) brightness(105%) contrast(96%);
+$filter_secondary_color: brightness(0) saturate(100%) invert(38%) sepia(13%)
+  saturate(1753%) hue-rotate(314deg) brightness(93%) contrast(85%);
+$filter_seashell_color: brightness(0) saturate(100%) invert(99%) sepia(3%)
+  saturate(82%) hue-rotate(201deg) brightness(117%) contrast(87%);
+$filter_grey_color: brightness(0) saturate(100%) invert(78%) sepia(0%)
+  saturate(0%) hue-rotate(114deg) brightness(104%) contrast(90%);
+$filter_black_color: brightness(0) saturate(100%) invert(0%) sepia(100%)
+  saturate(7467%) hue-rotate(151deg) brightness(88%) contrast(101%);
+$filter_ruby_red_color: brightness(0) saturate(100%) invert(14%) sepia(58%)
+  saturate(7446%) hue-rotate(355deg) brightness(109%) contrast(92%);
+$filter_white_color: brightness(0) saturate(100%) invert(99%) sepia(7%)
+  saturate(692%) hue-rotate(243deg) brightness(117%) contrast(100%);
+$filter_monsoon_color: brightness(0) saturate(100%) invert(60%) sepia(7%)
+  saturate(44%) hue-rotate(251deg) brightness(87%) contrast(84%);
+$filter_grey_g900_color: brightness(0) saturate(100%) invert(4%) sepia(1%)
+  saturate(5023%) hue-rotate(277deg) brightness(99%) contrast(82%);
+$filter_grey_g40_color: brightness(0) saturate(100%) invert(100%) sepia(0%)
+  saturate(4027%) hue-rotate(8deg) brightness(129%) contrast(77%);
+$filter_grey_g500_color: invert(30%) sepia(5%) saturate(20%) hue-rotate(323deg)
+  brightness(98%) contrast(84%);
+$filter_transparent_color: transparent;
+
+/* Fonts */
+$primary-font: 'Nunito Sans', sans-serif;
+
+/* Font sizes */
+$pixels-for-a-rem: 16px; // 1rem
+
+$font-size-xxxxlarge: 1.5rem; // 24px
+$font-size-xxxlarge: 1.375rem; // 22px
+$font-size-xxlarge: 1.25rem; // 20px
+$font-size-xlarge: 1.125rem; // 18px
+$font-size-large: 1rem; // 16px
+$font-size-medium: 0.875rem; // 14px
+$font-size-small: 0.8125rem; // 13px
+$font-size-xsmall: 0.75rem; // 12px
+$font-size-xxsmall: 0.6875rem; // 11px
+$font-size-xxxsmall: 0.625rem; // 10px
+$font-size-xxxxsmall: 0.5rem; // 8px
+
+$font-size-default: $font-size-large;
+
+/* Responsive breakpoints */
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+);
+
+$device-breakpoints: (
+  mobile: 0,
+  tablet: 577px,
+  laptop: 769px,
+  desktop: 1025px,
+  large-desktop: 1201px,
+);
+
+$orientation-landscape: landscape;
+$orientation-portrait: portrait;
+$header-height: 68px;
+$bread-crumb-height: 62px;
+$chat-current-user: 72px;

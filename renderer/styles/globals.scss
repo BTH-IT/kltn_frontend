@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap');
+
+html,
+body {
+  font-family: 'Google Sans', 'Roboto', 'Arial', sans-serif;
+  height: 100%;
+  pointer-events: unset !important;
+}
+
+*:focus {
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+  transition-duration: 0ms !important;
+  outline: none !important;
+}
+
+*:focus-visible {
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+  transition-duration: 0ms !important;
+  outline: none !important;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.cl-dividerRow {
+  display: none !important;
+}
+
+.cl-form {
+  display: none !important;
+}
+
+.cl-footer {
+  display: none !important;
+}
+
+.cl-signIn-root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.cl-main {
+  .cl-socialButtons {
+    button {
+      padding: 16px 10px !important;
+      background: black;
+      color: white;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgb(59, 59, 59);
+      }
+    }
+  }
+}
+
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+  border: none !important;
+  background: #f8f9fa !important;
+}
+.ql-editor.ql-blank {
+  border: none !important;
+}
+
+.quill {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.ql-editor {
+  min-height: 100px !important;
+}
+
+.comment {
+  &.active {
+    .ql-toolbar {
+      display: block;
+    }
+
+    .quill {
+      border-radius: 12px !important;
+    }
+  }
+
+  .ql-toolbar {
+    display: none;
+  }
+
+  .ql-editor {
+    min-height: 50px !important;
+  }
+
+  .ql-editor.ql-blank {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}

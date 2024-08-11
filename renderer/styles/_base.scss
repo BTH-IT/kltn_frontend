@@ -1,0 +1,12 @@
+@import 'variables';
+@import 'functions';
+@import 'mixins';
+@import './pages/index.scss';
+
+//--- Common
+body {
+  font-family: $primary-font;
+  font-size: $font-size-default;
+  color: $grey-g900-color;
+  font-weight: 400;
+}
