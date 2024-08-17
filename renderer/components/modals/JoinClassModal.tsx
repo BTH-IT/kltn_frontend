@@ -5,7 +5,6 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -21,16 +20,16 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
-import classService from '@/services/classService';
-import { ClassesContext } from '@/contexts/ClassesContext';
+import classService from '@/services/courseService';
+import { CoursesContext } from '@/contexts/CoursesContext';
 
 const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
-  const { classesEnrolled, setClassesEnrolled } = useContext(ClassesContext);
+  const { enrolledCourses, setenrolledCourses } = useContext(CoursesContext);
   const router = useRouter();
-  const { user } = useUser();
+  const user = null;
 
   const FormSchema = z.object({
     inviteCode: z.string().refine((inviteCode) => inviteCode.length === 7, {
@@ -61,7 +60,7 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
       const res = await classService.getClassByInviteCode(values.inviteCode.toLowerCase());
       if (res.data?.classId && user?.id) {
         await classService.addStudentToClass(String(res.data.classId), user.id);
-        setClassesEnrolled([...classesEnrolled, res.data]);
+        setenrolledCourses([...enrolledCourses, res.data]);
         router.push(`/classes/${res.data.classId}`);
 
         setHasSubmitted(false);

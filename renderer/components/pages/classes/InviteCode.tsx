@@ -1,6 +1,5 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { useQRCode } from 'next-qrcode';
 import { Copy, EllipsisVertical, EyeOff, Link2, QrCode, RotateCcw, Scan } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -16,11 +15,12 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/libs/utils';
-import classService from '@/services/classService';
+import classService from '@/services/courseService';
 import CommonModal from '@/components/modals/CommonModal';
 
 const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; inviteCode: string; name: string }) => {
-  const { user } = useUser();
+  const user = null;
+
   const { toast } = useToast();
   const { Canvas } = useQRCode();
 
@@ -79,8 +79,8 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
   };
 
   return teacherId === user?.id ? (
-    <div className="p-4 rounded-md border">
-      <div className="flex gap-3 justify-between items-center mb-3">
+    <div className="p-4 border rounded-md">
+      <div className="flex items-center justify-between gap-3 mb-3">
         <h2>Mã lớp</h2>
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -88,23 +88,23 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-auto" align="start">
             <DropdownMenuGroup>
-              <DropdownMenuItem className="flex gap-3 items-center">
+              <DropdownMenuItem className="flex items-center gap-3">
                 <EyeOff width={20} height={20} />
                 <span>Ẩn mã lớp</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleChangeInvCodeClick()} className="flex gap-3 items-center">
+              <DropdownMenuItem onClick={() => handleChangeInvCodeClick()} className="flex items-center gap-3">
                 <RotateCcw width={20} height={20} />
                 <span>Đặt lại mã lớp</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)} className="flex gap-3 items-center">
+              <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)} className="flex items-center gap-3">
                 <QrCode width={20} height={20} />
                 <span>QR tham gia lớp học</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleCopyInvCodeClick()} className="flex gap-3 items-center">
+              <DropdownMenuItem onClick={() => handleCopyInvCodeClick()} className="flex items-center gap-3">
                 <Copy width={20} height={20} />
                 <span>Sao chép mã lớp</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleCopyInvLinkClick()} className="flex gap-3 items-center">
+              <DropdownMenuItem onClick={() => handleCopyInvLinkClick()} className="flex items-center gap-3">
                 <Link2 width={20} height={20} />
                 <span>Sao chép liên kết tham gia lớp học</span>
               </DropdownMenuItem>
@@ -112,7 +112,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex gap-5 items-center">
+      <div className="flex items-center gap-5">
         <p className={cn('text-2xl font-semibold', updatingInvCode && 'hidden')}>{inviteCode}</p>
         <Skeleton className={cn('h-10 w-[88px]', !updatingInvCode && 'hidden')} />
         <ShowCodeModal invCode={code} classesName={name}>
@@ -126,7 +126,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
         height={600}
         title="QR tham gia lớp học"
         desc={
-          <div className="w-fit mx-auto mt-5">
+          <div className="mx-auto mt-5 w-fit">
             <Canvas
               text={`${process.env.NEXT_PUBLIC_URL}/classes/invite/${inviteCode}`}
               options={{

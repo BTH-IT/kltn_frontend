@@ -14,10 +14,10 @@ import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/u
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { ClassContext } from '@/contexts/ClassContext';
-import { ClassesContext } from '@/contexts/ClassesContext';
+import { CoursesContext } from '@/contexts/CoursesContext';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
-import { IAssignment, IClasses, MetaLinkData } from '@/types';
+import { IAssignment, ICourse, MetaLinkData } from '@/types';
 import { cn } from '@/libs/utils';
 
 import { DateTimePicker } from '../common/DatetimePicker';
@@ -26,19 +26,19 @@ import MultiSelectPeople, { Option } from '../common/MultiSelectPeople';
 import AssignmentForm from '../forms/AssignmentForm';
 
 const AssignmentHmWorkModal = ({
-  classes,
+  course,
   onOpenModal,
   setOnOpenModal,
   setAssignments,
 }: {
-  classes: IClasses | null;
+  course: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignments: React.Dispatch<React.SetStateAction<IAssignment[]>>;
 }) => {
   const { toast } = useToast();
 
-  const { classesCreated } = useContext(ClassesContext);
+  const { createdCourses } = useContext(CoursesContext);
 
   const [canSubmit, setCanSubmit] = useState(false);
   const [studentSelected, setStudentSelected] = useState<Option[] | null>(null);
@@ -48,17 +48,26 @@ const AssignmentHmWorkModal = ({
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [files, setFiles] = useState<File[]>([]);
 
-  useEffect(() => {
-    if (classes) {
-      const scoreCols = JSON.parse(classes?.scoreStructure)
-        .filter((item: any) => !(item.divideColumnFirst && item.divideColumnFirst.length > 0))
-        .sort((a: any, b: any) => a.columnName.localeCompare(b.columnName));
+  // useEffect(() => {
+  //   if (course) {
+  //     const scoreCols = JSON.parse(course?.scoreStructure)
+  //       .filter(
+  //         (item: any) =>
+  //           !(item.divideColumnFirst && item.divideColumnFirst.length > 0)
+  //       )
+  //       .sort((a: any, b: any) => a.columnName.localeCompare(b.columnName));
 
-      setScoreCols(scoreCols);
+  //     setScoreCols(scoreCols);
 
-      setClassOptionSelected([{ label: classes?.name ?? '', value: classes?.classId ?? '', default: true }]);
-    }
-  }, [classes]);
+  //     setClassOptionSelected([
+  //       {
+  //         label: course?.name ?? '',
+  //         value: course?.courseId ?? '',
+  //         default: true,
+  //       },
+  //     ]);
+  //   }
+  // }, [course]);
 
   const [links, setLinks] = useState<MetaLinkData[]>([]);
 
@@ -71,8 +80,8 @@ const AssignmentHmWorkModal = ({
       if (!selected.some((opt) => opt.default === true)) {
         setClassOptionSelected([
           {
-            label: classes?.name ?? '',
-            value: classes?.classId ?? '',
+            label: course?.courseGroup ?? '',
+            value: course?.courseId ?? '',
             default: true,
           },
           ...selected,
@@ -82,26 +91,26 @@ const AssignmentHmWorkModal = ({
         setStudentSelected(null);
       }
     },
-    [classes],
+    [course],
   );
 
-  const generateStudentOptions = useCallback(() => {
-    return classes?.students.map((student) => {
-      return {
-        image: student.avatarUrl,
-        value: student.userId,
-        label: student.name,
-      };
-    });
-  }, [classes]);
+  // const generateStudentOptions = useCallback(() => {
+  //   return course?.students.map((student) => {
+  //     return {
+  //       image: student.avatarUrl,
+  //       value: student.userId,
+  //       label: student.name,
+  //     };
+  //   });
+  // }, [course]);
 
   const generateClassOptions = useCallback(() => {
-    return classesCreated
+    return createdCourses
       ?.map((c) => {
         return {
-          label: c.name,
-          value: c.classId,
-          default: c.classId === classes?.classId,
+          label: c.courseGroup,
+          value: c.courseId,
+          default: c.courseId === course?.courseId,
         };
       })
       .sort((a, b) => {
@@ -109,7 +118,7 @@ const AssignmentHmWorkModal = ({
         if (b.default) return 1;
         return 0;
       });
-  }, [classesCreated, classes]);
+  }, [createdCourses, course]);
 
   const FormSchema = z.object({
     title: z.string().min(1, {
@@ -136,7 +145,7 @@ const AssignmentHmWorkModal = ({
     setLinks([]);
   };
 
-  const submitForm = async (values: z.infer<typeof FormSchema>, classId: string) => {
+  const submitForm = async (values: z.infer<typeof FormSchema>, courseId: string) => {
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
     const formattedDueDate = dueDate?.toISOString() ?? null;
@@ -146,7 +155,7 @@ const AssignmentHmWorkModal = ({
     }) ?? ['all'];
 
     const data = {
-      classId,
+      courseId,
       title: values.title,
       content: values.content,
       dueDate: formattedDueDate,
@@ -156,36 +165,36 @@ const AssignmentHmWorkModal = ({
       studentAssigned,
     };
 
-    return await assignmentService.createAssignment(data);
+    return await assignmentService.createAssignment(data as any);
   };
 
-  const createAssignment = async (values: z.infer<typeof FormSchema>, classId: string) => {
+  const createAssignment = async (values: z.infer<typeof FormSchema>, courseId: string) => {
     try {
-      const response = await submitForm(values, classId);
+      const response = await submitForm(values, courseId);
       return response.data;
     } catch (error) {
-      console.error(`Error creating assignment for class ${classId}:`, error);
+      console.error(`Error creating assignment for class ${courseId}:`, error);
       throw error;
     }
   };
 
   const onSubmit = async (values: z.infer<typeof FormSchema>): Promise<void> => {
-    if (!classes) return;
+    if (!course) return;
 
     try {
-      const mainClassId = classes.classId;
+      const maincourseId = course.courseId;
       let assignmentCount = 0;
 
-      const createAssignmentsForClasses = async () => {
-        const classIds = classOptionSelected?.map((opt) => opt.value.toString()) || [];
-        const uniqueClassIds = new Set([mainClassId, ...classIds]);
+      const createAssignmentsForcourse = async () => {
+        const courseIds = classOptionSelected?.map((opt) => opt.value.toString()) || [];
+        const uniquecourseIds = new Set([maincourseId, ...courseIds]);
 
         await Promise.all(
-          Array.from(uniqueClassIds).map(async (classId) => {
-            const data = await createAssignment(values, classId);
+          Array.from(uniquecourseIds).map(async (courseId) => {
+            const data = await createAssignment(values, courseId);
             if (data) {
               assignmentCount++;
-              if (classId === mainClassId) {
+              if (courseId === maincourseId) {
                 setAssignments((prevAssignments) => [data, ...prevAssignments]);
               }
             }
@@ -193,7 +202,7 @@ const AssignmentHmWorkModal = ({
         );
       };
 
-      await createAssignmentsForClasses();
+      await createAssignmentsForcourse();
 
       toast({
         title: `Đã đăng (${assignmentCount}) bài tập thành công`,
@@ -233,20 +242,20 @@ const AssignmentHmWorkModal = ({
   return (
     <>
       <Dialog open={onOpenModal} onOpenChange={onCloseModal}>
-        <DialogContent2 className="p-0 w-screen h-screen max-h-screen font-sans text-gray-700">
+        <DialogContent2 className="w-screen h-screen max-h-screen p-0 font-sans text-gray-700">
           <DialogTitle className="hidden"></DialogTitle>
           <div className="flex justify-center">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="items-center space-y-8 w-full h-fit">
-                <div className="flex sticky top-0 right-0 left-0 justify-between items-center px-5 py-3 w-full bg-white border-b-2">
-                  <div className="flex gap-3 items-center font-semibold text-md">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="items-center w-full space-y-8 h-fit">
+                <div className="sticky top-0 left-0 right-0 flex items-center justify-between w-full px-5 py-3 bg-white border-b-2">
+                  <div className="flex items-center gap-3 font-semibold text-md">
                     <NotebookText />
                     Bài tập
                   </div>
-                  <div className="flex gap-7 items-center">
+                  <div className="flex items-center gap-7">
                     <Button type="submit" disabled={isDisabled} className="w-20" variant="primary">
                       {form.formState.isSubmitting && (
-                        <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                        <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                       )}
                       Tạo
                     </Button>
@@ -257,7 +266,7 @@ const AssignmentHmWorkModal = ({
                   </div>
                 </div>
                 <div className="!my-0 overflow-auto w-full h-[92vh]">
-                  <div className="grid grid-cols-12 h-full">
+                  <div className="grid h-full grid-cols-12">
                     <div className="col-span-9 bg-[#F8F9FA]">
                       <AssignmentForm form={form} files={files} setFiles={setFiles} links={links} setLinks={setLinks} />
                     </div>

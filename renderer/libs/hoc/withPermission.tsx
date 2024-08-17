@@ -1,23 +1,26 @@
 'use client';
 
-import React, { ElementType, useEffect } from 'react';
+import React, { ElementType, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
 
 import Loading from '@/components/loading/loading';
 
 function withPermission(WrappedComponent: ElementType) {
   const PermissionComponent = (props: any) => {
-    const { isLoaded, userId } = useAuth();
     const router = useRouter();
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-      if (isLoaded && !userId) {
+      const token = localStorage.getItem('access_token');
+      setMounted(true);
+      if (!token) {
         router.replace('/login');
+      } else {
+        router.replace('/');
       }
-    }, [isLoaded, userId, router]);
+    }, []);
 
-    if (!isLoaded) {
+    if (!mounted) {
       return <Loading />;
     }
 

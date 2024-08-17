@@ -3,7 +3,7 @@ export * from './sidebar';
 export * from './dropdown';
 export * from './schema';
 export * from './user';
-export * from './classes';
+export * from './course';
 export * from './subject';
 export * from './role';
 export * from './comment';

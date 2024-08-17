@@ -2,7 +2,6 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Menu, Plus } from 'lucide-react';
-import { UserButton } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -39,7 +38,7 @@ const NavigationHeader = () => {
   return (
     isMounted && (
       <div className="w-full h-[4.5rem] bg-white border-gray-300 border-b-[0.5px] flex items-center justify-between px-4 fixed z-10">
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           <button className="p-3 rounded-full hover:bg-gray-100" onClick={handleMenuClick}>
             <Menu />
           </button>
@@ -77,13 +76,7 @@ const NavigationHeader = () => {
               <Plus />
             </button>
           </CreateClassModal>
-          <UserButton
-            appearance={{
-              elements: {
-                userButtonAvatarBox: 'size-8',
-              },
-            }}
-          />
+          {/* dawdad */}
         </div>
       </div>
     )

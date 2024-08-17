@@ -5,16 +5,16 @@ import { Folder, TrendingUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-import { IClasses } from '@/types';
+import { ICourse } from '@/types';
 
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 
-const ClassCard = ({ item }: { item: IClasses }) => {
+const CourseCard = ({ item }: { item: ICourse }) => {
   const router = useRouter();
   return (
     <Card
-      onClick={() => router.push(`classes/${item.classId}`)}
+      onClick={() => router.push(`courses/${item.courseId}`)}
       className="font-sans rounded-xl overflow-hidden cursor-pointer relative
               hover:shadow-[0_1px_2px_0_rgba(60,64,67,.3),0_2px_6px_2px_rgba(60,64,67,.15)]"
     >
@@ -27,17 +27,15 @@ const ClassCard = ({ item }: { item: IClasses }) => {
           className="z-0 brightness-90"
         />
         <div className="z-10 p-4">
-          <div className="font-semibold text-2xl max-w-[252px] truncate shadow-inner">{item.name}</div>
-          <div className="max-w-[185px] text-sm truncate font-normal shadow-inner">
-            {item.subjectId} - {item.subject?.name}
-          </div>
+          <div className="font-semibold text-2xl max-w-[252px] truncate shadow-inner">{item.courseGroup}</div>
+          <div className="max-w-[185px] text-sm truncate font-normal shadow-inner">{item.subjectName}</div>
         </div>
         <Image
-          src={item.teacher?.avatarUrl ?? '/images/avt.png'}
+          src={'/images/avt.png'}
           alt="Avatar"
           width={75}
           height={75}
-          className="absolute bottom-0 right-5 rounded-full translate-y-1/2"
+          className="absolute bottom-0 translate-y-1/2 rounded-full right-5"
         />
       </CardHeader>
 
@@ -56,4 +54,4 @@ const ClassCard = ({ item }: { item: IClasses }) => {
   );
 };
 
-export default ClassCard;
+export default CourseCard;

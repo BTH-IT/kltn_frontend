@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import uploadService from '@/services/uploadService';
-import classService from '@/services/classService';
-import { IClasses } from '@/types';
+import classService from '@/services/courseService';
+import { ICourse } from '@/types';
 
 import UploadComponent from '../common/UploadComponent';
 
-const ClassPersonalizeModal = ({ children, data }: { children: React.ReactNode; data: IClasses }) => {
+const ClassPersonalizeModal = ({ children, data }: { children: React.ReactNode; data: ICourse }) => {
   const { toast } = useToast();
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);

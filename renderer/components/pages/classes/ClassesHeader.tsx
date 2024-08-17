@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
@@ -16,7 +15,7 @@ const ClassesHeader = ({ data }: { data: any }) => {
 
   const newPath = pathname.slice(pathname.lastIndexOf('/'));
 
-  const { user } = useUser();
+  const user = null;
 
   const [onOpenModal, setOnOpenModal] = useState(false);
 
@@ -88,7 +87,7 @@ const ClassesHeader = ({ data }: { data: any }) => {
           )}
         </div>
         <TooltipProvider>
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <Tooltip>
               <TooltipTrigger>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

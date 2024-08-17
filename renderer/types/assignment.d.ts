@@ -1,4 +1,4 @@
-import { IClasses } from './classes';
+import { ICourse } from './course';
 
 export interface IAssignment {
   assignmentId: string;
@@ -11,6 +11,6 @@ export interface IAssignment {
   attachedLinks: string;
   createdAt: string;
   updatedAt: string;
-  classes: IClasses;
+  classes: ICourse;
   studentAssigned: any;
 }

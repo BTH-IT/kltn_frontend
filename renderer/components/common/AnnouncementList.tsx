@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { IAnnouncement, IClasses } from '@/types';
+import { IAnnouncement, ICourse } from '@/types';
 import announcementService from '@/services/announcementService';
 
 import AnnouncementItem from './AnnouncementItem';
@@ -12,7 +12,7 @@ const AnnouncementList = ({
   announcements,
   setAnnouncements,
 }: {
-  classes: IClasses | null;
+  classes: ICourse | null;
   announcements: IAnnouncement[];
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {

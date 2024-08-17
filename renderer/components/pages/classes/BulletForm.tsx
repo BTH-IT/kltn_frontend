@@ -2,7 +2,6 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { faGoogleDrive, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link2, Upload } from 'lucide-react';
@@ -19,11 +18,11 @@ import AddLinkModal from '@/components/modals/AddLinkModal';
 import AddYoutubeLinkModal from '@/components/modals/AddYoutubeLinkModal';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
-import { ClassesContext } from '@/contexts/ClassesContext';
+import { CoursesContext } from '@/contexts/CoursesContext';
 import announcementService from '@/services/announcementService';
 import uploadService from '@/services/uploadService';
 import userService from '@/services/userService';
-import { IAnnouncement, IClasses, MetaLinkData } from '@/types';
+import { IAnnouncement, ICourse, MetaLinkData } from '@/types';
 import { formatDuration, getFileType } from '@/utils';
 import { cn } from '@/libs/utils';
 
@@ -38,7 +37,7 @@ const BulletForm = ({
   setAnnouncements,
 }: {
   setIsPost: React.Dispatch<React.SetStateAction<boolean>>;
-  classes: IClasses | null;
+  classes: ICourse | null;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
   const { toast } = useToast();
@@ -50,10 +49,14 @@ const BulletForm = ({
   const [openPicker] = useDrivePicker();
   const [links, setLinks] = useState<MetaLinkData[]>([]);
   const { control, handleSubmit, reset, formState } = useForm();
-  const { classesCreated } = useContext(ClassesContext);
+  const { createdCourses } = useContext(CoursesContext);
   const [mentionOptionSelected, setMentionOptionSelected] = useState<Option[] | null>(null);
   const [classOptionSelected, setClassOptionSelected] = useState<Option[] | null>([
-    { label: classes?.name ?? '', value: classes?.classId ?? '', default: true },
+    {
+      label: classes?.name ?? '',
+      value: classes?.classId ?? '',
+      default: true,
+    },
   ]);
 
   const handleOpenPicker = () => {
@@ -244,7 +247,7 @@ const BulletForm = ({
   };
 
   const generateClassOptions = useCallback(() => {
-    return classesCreated
+    return createdCourses
       ?.map((c) => {
         return {
           label: c.name,
@@ -257,7 +260,7 @@ const BulletForm = ({
         if (b.default) return 1;
         return 0;
       });
-  }, [classesCreated, classes]);
+  }, [createdCourses, classes]);
 
   const generateMentionOptions = useCallback(() => {
     return classes?.students.map((student) => {
@@ -274,7 +277,7 @@ const BulletForm = ({
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 p-4">
         <div className="flex flex-col gap-4 px-3">
           {user?.id === classes?.teacherId && (
-            <div className="flex gap-10 items-center">
+            <div className="flex items-center gap-10">
               <div>
                 <div className="mb-2 font-medium">Đăng trong</div>
                 <MultiSelectClassroom
@@ -322,7 +325,7 @@ const BulletForm = ({
           <AnnouncementLinkList links={links} setLinks={setLinks} />
         </div>
         <div className="p-3 sm:items-end">
-          <div className="flex justify-between items-center w-full">
+          <div className="flex items-center justify-between w-full">
             <div className="flex gap-5">
               <TooltipBottom content="Thêm tệp Google Drive">
                 <Button
@@ -407,7 +410,7 @@ const BulletForm = ({
                 variant="primaryReverge"
               >
                 {formState.isSubmitting && (
-                  <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                  <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                 )}
                 Đăng
               </Button>

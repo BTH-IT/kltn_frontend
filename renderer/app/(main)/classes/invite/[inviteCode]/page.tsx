@@ -5,7 +5,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { fetcher } from '@/actions';
 import { API_URL } from '@/constants/endpoints';
 import InviteButton from '@/components/pages/classes/invite/InviteButton';
-import { IClasses } from '@/types';
+import { ICourse } from '@/types';
 
 const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) => {
   const { inviteCode } = params;
@@ -15,7 +15,7 @@ const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) =>
     return redirect('/login');
   }
 
-  const classData = await fetcher<IClasses | null>(`${API_URL.CLASSES}/invite/${inviteCode}`);
+  const classData = await fetcher<ICourse | null>(`${API_URL.CLASSES}/invite/${inviteCode}`);
 
   if (!classData) {
     return redirect('/');

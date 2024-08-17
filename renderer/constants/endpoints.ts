@@ -1,7 +1,7 @@
 export const API_URL = {
   USERS: '/users',
   SUBJECTS: '/subjects',
-  CLASSES: '/classes',
+  COURSES: '/courses',
   COMMENTS: '/comments',
   ANNOUNCEMENTS: '/announcements',
   ASSIGNMENTS: '/assignments',

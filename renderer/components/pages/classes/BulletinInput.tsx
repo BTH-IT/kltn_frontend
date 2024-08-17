@@ -1,11 +1,10 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { RefreshCw } from 'lucide-react';
 
-import { IAnnouncement, IClasses } from '@/types';
+import { IAnnouncement, ICourse } from '@/types';
 
 import BulletForm from './BulletForm';
 
@@ -13,14 +12,15 @@ const BulletinInput = ({
   classes,
   setAnnouncements,
 }: {
-  classes: IClasses | null;
+  classes: ICourse | null;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const { user } = useUser();
+  const user = null;
+
   const [isPost, setIsPost] = useState(false);
 
   return (
-    <div className="rounded-md border shadow">
+    <div className="border rounded-md shadow">
       {!isPost ? (
         <div onClick={() => setIsPost((prev) => !prev)} className="flex items-center pr-4">
           <Image
@@ -30,7 +30,7 @@ const BulletinInput = ({
             alt="avatar"
             className="p-4 w-[75px] h-[75px] rounded-full"
           />
-          <div className="flex flex-1 gap-3 justify-between items-center">
+          <div className="flex items-center justify-between flex-1 gap-3">
             <p className="text-sm">Thông báo nội dung nào đó cho lớp học của bạn</p>
             <RefreshCw />
           </div>

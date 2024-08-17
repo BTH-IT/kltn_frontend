@@ -1,19 +1,8 @@
 /* eslint-disable no-case-declarations */
 import moment from 'moment';
 
-import subjectService from '@/services/subjectService';
 import 'moment-duration-format';
 import { IScoreStructure } from '@/types';
-
-export const getSubjectData = async () => {
-  try {
-    const res = await subjectService.getSubjects();
-    return res.data;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
 
 export function generateInviteCode(length: number) {
   let result = '';
@@ -308,4 +297,25 @@ export const getLeafColumns = (node: any) => {
     return [node];
   }
   return node.children.flatMap(getLeafColumns);
+};
+
+export const BE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+export const KEY_LOCALSTORAGE = {
+  ACCESS_TOKEN: 'access_token',
+  CURRENT_ACCOUNT: 'current_account',
+  CURRENT_USER: 'current_user',
+  REFRESH_TOKEN: 'refresh_token',
+};
+
+export const CLEAR_LOCALSTORAGE = () => {
+  localStorage.removeItem(KEY_LOCALSTORAGE.ACCESS_TOKEN);
+  localStorage.removeItem(KEY_LOCALSTORAGE.REFRESH_TOKEN);
+  localStorage.removeItem(KEY_LOCALSTORAGE.CURRENT_USER);
+};
+
+export const SET_LOCALSTORAGE = (data: any) => {
+  localStorage.setItem(KEY_LOCALSTORAGE.ACCESS_TOKEN, data.token);
+  localStorage.setItem(KEY_LOCALSTORAGE.CURRENT_USER, JSON.stringify(data.user));
+  localStorage.setItem(KEY_LOCALSTORAGE.REFRESH_TOKEN, data.refreshToken);
 };

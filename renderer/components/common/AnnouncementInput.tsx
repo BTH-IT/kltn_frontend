@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { IAnnouncement, IClasses } from '@/types';
+import { IAnnouncement, ICourse } from '@/types';
 
 import BulletinInput from '../pages/classes/BulletinInput';
 
 import AnnouncementList from './AnnouncementList';
 
-const AnnouncementInput = ({ classes }: { classes: IClasses | null }) => {
+const AnnouncementInput = ({ classes }: { classes: ICourse | null }) => {
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
 
   useEffect(() => {

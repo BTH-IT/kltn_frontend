@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { EllipsisVertical, SendHorizontal } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -18,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import commentService from '@/services/commentService';
-import { IAnnouncement, IClasses, IComment } from '@/types';
+import { IAnnouncement, ICourse, IComment } from '@/types';
 
 import AvatarHeader from './AvatarHeader';
 import CommentList from './CommentList';
@@ -33,13 +32,13 @@ const AnnouncementItem = ({
   handleRemove,
   setAnnouncements,
 }: {
-  classes: IClasses | null;
+  classes: ICourse | null;
   announcement: IAnnouncement;
   handlePin: (announcement: IAnnouncement) => void;
   handleRemove: (id: string) => void;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const { user: currentUser } = useUser();
+  const currentUser = null;
 
   const [isFocus, setIsFocus] = useState(false);
 
@@ -98,7 +97,7 @@ const AnnouncementItem = ({
   };
 
   return (
-    <div className="flex flex-col gap-3 bg-white rounded-lg border">
+    <div className="flex flex-col gap-3 bg-white border rounded-lg">
       <div className="flex flex-col gap-2 p-4">
         <AvatarHeader
           imageUrl={announcement.user?.avatarUrl || ''}

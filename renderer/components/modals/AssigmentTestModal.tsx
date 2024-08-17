@@ -14,10 +14,10 @@ import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/u
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { ClassContext } from '@/contexts/ClassContext';
-import { ClassesContext } from '@/contexts/ClassesContext';
+import { CoursesContext } from '@/contexts/CoursesContext';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
-import { IAssignment, IClasses, MetaLinkData } from '@/types';
+import { IAssignment, ICourse, MetaLinkData } from '@/types';
 import { cn } from '@/libs/utils';
 
 import { DateTimePicker } from '../common/DatetimePicker';
@@ -32,14 +32,14 @@ const AssignmentTestModal = ({
   setOnOpenModal,
   setAssignments,
 }: {
-  classes: IClasses | null;
+  classes: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignments: React.Dispatch<React.SetStateAction<IAssignment[]>>;
 }) => {
   const { toast } = useToast();
 
-  const { classesCreated } = useContext(ClassesContext);
+  const { createdCourses } = useContext(CoursesContext);
 
   const [canSubmit, setCanSubmit] = useState(false);
   const [studentSelected, setStudentSelected] = useState<Option[] | null>(null);
@@ -58,7 +58,13 @@ const AssignmentTestModal = ({
 
       setScoreCols(scoreCols);
 
-      setClassOptionSelected([{ label: classes?.name ?? '', value: classes?.classId ?? '', default: true }]);
+      setClassOptionSelected([
+        {
+          label: classes?.name ?? '',
+          value: classes?.classId ?? '',
+          default: true,
+        },
+      ]);
     }
   }, [classes]);
 
@@ -98,7 +104,7 @@ const AssignmentTestModal = ({
   }, [classes]);
 
   const generateClassOptions = useCallback(() => {
-    return classesCreated
+    return createdCourses
       ?.map((c) => {
         return {
           label: c.name,
@@ -111,7 +117,7 @@ const AssignmentTestModal = ({
         if (b.default) return 1;
         return 0;
       });
-  }, [classesCreated, classes]);
+  }, [createdCourses, classes]);
 
   const FormSchema = z.object({
     title: z.string().min(1, {

@@ -3,7 +3,6 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { faGoogleDrive, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link2, MessageSquare, Upload, X } from 'lucide-react';
@@ -20,7 +19,7 @@ import AddYoutubeLinkModal from '@/components/modals/AddYoutubeLinkModal';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import announcementService from '@/services/announcementService';
-import { Attachment, IAnnouncement, IClasses, MetaLinkData } from '@/types';
+import { Attachment, IAnnouncement, ICourse, MetaLinkData } from '@/types';
 import { YoutubeCardProps } from '@/components/common/YoutubeCard';
 import { formatDuration, getFileType } from '@/utils';
 import uploadService from '@/services/uploadService';
@@ -41,11 +40,12 @@ const EditAnnoucementModal = ({
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  classes: IClasses | null;
+  classes: ICourse | null;
   announcement: IAnnouncement;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const { user } = useUser();
+  const user = null;
+
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -240,9 +240,9 @@ const EditAnnoucementModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent2 className="max-w-[750px] min-h-[450px] p-0 font-sans text-gray-700">
-        <DialogHeader className="flex flex-row justify-between items-center px-6 py-3 border-b-2 h-fit">
-          <div className="flex gap-2 items-center">
-            <div className="flex justify-center items-center w-8 h-8 rounded-full bg-cyan-100/60">
+        <DialogHeader className="flex flex-row items-center justify-between px-6 py-3 border-b-2 h-fit">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100/60">
               <MessageSquare className="w-6 h-6 text-teal-600" />
             </div>
             <DialogTitle>Thông báo</DialogTitle>
@@ -292,7 +292,7 @@ const EditAnnoucementModal = ({
             <AnnouncementLinkList links={links} setLinks={setLinks} />
           </div>
           <DialogFooter className="px-6 pb-6 sm:items-end">
-            <div className="flex justify-between items-center w-full">
+            <div className="flex items-center justify-between w-full">
               <div className="flex gap-5">
                 <TooltipBottom content="Thêm tệp Google Drive">
                   <Button
@@ -369,7 +369,7 @@ const EditAnnoucementModal = ({
                   variant="primaryReverge"
                 >
                   {formState.isSubmitting && (
-                    <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                    <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
                   Lưu
                 </Button>

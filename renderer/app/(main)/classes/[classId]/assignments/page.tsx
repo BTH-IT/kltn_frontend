@@ -4,7 +4,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AlignLeft, BookText, FileQuestion, NotebookText, NotepadText, Plus, RefreshCcw } from 'lucide-react';
 import Image from 'next/image';
-import { useUser } from '@clerk/nextjs';
 
 import {
   DropdownMenu,
@@ -33,7 +32,7 @@ const AssignmentPage = () => {
   const [assignments, setAssignments] = useState<IAssignment[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
-  const { user } = useUser();
+  const user = null;
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -75,31 +74,31 @@ const AssignmentPage = () => {
               <DropdownMenuContent className="w-auto" align="start">
                 <DropdownMenuGroup>
                   <DropdownMenuItem
-                    className="flex gap-3 p-2 items-center text-md"
+                    className="flex items-center gap-3 p-2 text-md"
                     onClick={() => setOnOpenAssignModal(true)}
                   >
                     <NotebookText />
                     Bài tập
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    className="flex gap-3 p-2 items-center text-md"
+                    className="flex items-center gap-3 p-2 text-md"
                     onClick={() => setOnOpenTestModal(true)}
                   >
                     <NotepadText />
                     Bài kiểm tra
                   </DropdownMenuItem>
-                  {/* <DropdownMenuItem className="flex gap-3 p-2 items-center text-md">
+                  {/* <DropdownMenuItem className="flex items-center gap-3 p-2 text-md">
               <FileQuestion />
               Câu hỏi
             </DropdownMenuItem> */}
                   <DropdownMenuItem
-                    className="flex gap-3 p-2 items-center text-md"
+                    className="flex items-center gap-3 p-2 text-md"
                     onClick={() => setOnOpenDocsModal(true)}
                   >
                     <BookText />
                     Tài liệu
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="flex gap-3 p-2 items-center text-md">
+                  <DropdownMenuItem className="flex items-center gap-3 p-2 text-md">
                     <RefreshCcw />
                     Sử dụng lại bài đăng
                   </DropdownMenuItem>

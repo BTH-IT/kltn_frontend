@@ -24,9 +24,9 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
-import { ClassesContext } from '@/contexts/ClassesContext';
+import { CoursesContext } from '@/contexts/CoursesContext';
 import { cn } from '@/libs/utils';
-import classService from '@/services/classService';
+import classService from '@/services/courseService';
 import { ClassContext } from '@/contexts/ClassContext';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 
@@ -46,7 +46,7 @@ const ClassOptionModal = ({
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
-  const { classesCreated, setClassesCreated } = useContext(ClassesContext);
+  const { createdCourses, setcreatedCourses } = useContext(CoursesContext);
   const { subjects } = useContext(CreateSubjectContext);
 
   const FormSchema = z.object({
@@ -103,10 +103,10 @@ const ClassOptionModal = ({
 
       const res = await classService.updateClass(classes.classId, data);
 
-      classesCreated.forEach((c, index) => {
+      createdCourses.forEach((c, index) => {
         if (c.classId === classes.classId) {
-          classesCreated[index] = res.data;
-          setClassesCreated([...classesCreated]);
+          createdCourses[index] = res.data;
+          setcreatedCourses([...createdCourses]);
           return;
         }
       });

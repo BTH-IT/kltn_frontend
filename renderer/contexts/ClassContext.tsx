@@ -3,15 +3,15 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { IClasses } from '@/types';
+import { ICourse } from '@/types';
 
 const ClassContext = React.createContext({
-  classes: {} as IClasses | null,
-  setClasses: (_classes: IClasses | null) => {},
+  classes: {} as ICourse | null,
+  setClasses: (_classes: ICourse | null) => {},
 });
 
-const ClassProvider = ({ children, classes }: { children: React.ReactNode; classes: IClasses | null }) => {
-  const [data, setData] = useState<IClasses | null>(null);
+const ClassProvider = ({ children, classes }: { children: React.ReactNode; classes: ICourse | null }) => {
+  const [data, setData] = useState<ICourse | null>(null);
 
   useEffect(() => {
     setData(classes);

@@ -1,7 +1,9 @@
 import { IBaseModel } from '.';
 
 export interface ISubject extends IBaseModel {
-  SubjectId: string;
-  Name: string;
-  Description: string;
+  subjectId: string;
+  name: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
 }

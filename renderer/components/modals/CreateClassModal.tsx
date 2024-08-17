@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,20 +14,13 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
-import classService from '@/services/classService';
-import { IClasses, ISubject } from '@/types';
+import courseService from '@/services/courseService';
 import { API_URL } from '@/constants/endpoints';
-import { ClassesContext } from '@/contexts/ClassesContext';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
-
-import CreateSubjectModal from './CreateSubjectModal';
 
 const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [isCreateSubjectModalOpen, setIsCreateSubjectModalOpen] = useState(false);
-  const [subjectCreated, setSubjectCreated] = useState<ISubject | null>(null);
-  const { classesCreated, setClassesCreated } = useContext(ClassesContext);
   const { subjects } = useContext(CreateSubjectContext);
   const router = useRouter();
 
@@ -35,16 +28,12 @@ const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
     name: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
     }),
-    subjectId: z
-      .object({
-        label: z.string(),
-        value: z.string().min(1, {
-          message: 'Mã học phần là trường bắt buộc.',
-        }),
-      })
-      .refine((subjectId) => subjects.find((subject) => subject.subjectId === subjectId.value), {
-        message: 'Mã học phần không hợp lệ.',
+    subjectId: z.object({
+      label: z.string(),
+      value: z.string().min(1, {
+        message: 'Mã học phần là trường bắt buộc.',
       }),
+    }),
   });
 
   const form = useForm({
@@ -55,15 +44,6 @@ const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  useEffect(() => {
-    if (subjectCreated) {
-      form.setValue('subjectId', {
-        label: `${subjectCreated.subjectId} - ${subjectCreated.name}`,
-        value: subjectCreated.subjectId,
-      });
-    }
-  }, [subjectCreated, form]);
-
   const isLoading = hasSubmitted;
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
@@ -73,9 +53,8 @@ const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
         subjectId: values.subjectId.value,
       };
       setHasSubmitted(true);
-      const res = await classService.createClass(data as IClasses);
-      setClassesCreated([...classesCreated, res.data]);
-      router.push(`${API_URL.CLASSES}/${res.data.classId}`);
+      const res = await courseService.createCourse(data as any);
+      router.push(`${API_URL.COURSES}/${res.data.courseId}`);
       setHasSubmitted(false);
       setOpenModal(false);
       form.reset();
@@ -135,7 +114,7 @@ const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
                             className={cn(isLoading && 'hidden')}
                             options={subjects?.map((s) => {
                               return {
-                                label: `${s.subjectId} - ${s.name}`,
+                                label: `${s.name}`,
                                 value: s.subjectId,
                               };
                             })}
@@ -150,12 +129,9 @@ const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
                 />
               </div>
               <DialogFooter className="!justify-between">
-                <Button type="button" variant="primaryReverge" onClick={() => setIsCreateSubjectModalOpen(true)}>
-                  Tạo học phần mới
-                </Button>
                 <Button disabled={form.formState.isSubmitting} variant="primary" type="submit">
                   {form.formState.isSubmitting && (
-                    <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                    <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
                   Tạo lớp học
                 </Button>
@@ -164,11 +140,6 @@ const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
           </Form>
         </DialogContent>
       </Dialog>
-      <CreateSubjectModal
-        isOpen={isCreateSubjectModalOpen}
-        setIsOpen={setIsCreateSubjectModalOpen}
-        setSubjectCreated={setSubjectCreated}
-      />
     </>
   );
 };

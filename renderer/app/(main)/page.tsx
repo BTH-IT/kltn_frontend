@@ -1,25 +1,42 @@
-import { Suspense } from 'react';
+'use client';
+
+import { Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { fetcher } from '@/actions';
 import Loading from '@/components/loading/loading';
+import withPermission from '@/libs/hoc/withPermission';
 import CreateClassModal from '@/components/modals/CreateClassModal';
-import JoinClassModal from '@/components/modals/JoinClassModal';
-import { API_URL } from '@/constants/endpoints';
-import ClassCard from '@/components/common/ClassCard';
 import { Button } from '@/components/ui/button';
+import { ICourse } from '@/types';
+import courseService from '@/services/courseService';
+import CourseCard from '@/components/common/CourseCard';
+import JoinClassModal from '@/components/modals/JoinClassModal';
 
 const HomePage = async () => {
-  const {
-    data: { classesCreated, classesEnrolled },
-  } = await fetcher<any>(`${API_URL.CLASSES}/user/1`);
+  const [coursesCreated, setCoursesCreated] = useState<ICourse[]>([]);
+  const [coursesEnrolled, setCoursesEnrolled] = useState<ICourse[]>([]);
 
-  const classData = [...classesCreated, ...classesEnrolled];
+  useEffect(() => {
+    const fetchCoursesCreated = async () => {
+      const res = await courseService.getCourses();
+
+      setCoursesCreated(res);
+    };
+
+    const fetchCoursesEnrolled = async () => {
+      const res = await courseService.getCourses();
+
+      setCoursesEnrolled(res);
+    };
+
+    // fetchCoursesCreated();
+    // fetchCoursesEnrolled();
+  }, []);
 
   return (
     <>
       <Suspense fallback={<Loading />}>
-        {classesCreated.length == 0 && classesEnrolled.length == 0 ? (
+        {coursesCreated.length == 0 && coursesEnrolled.length == 0 ? (
           <div className="flex pt-32">
             <div className="flex flex-col flex-1">
               <div className="flex items-center justify-center flex-1">
@@ -50,8 +67,8 @@ const HomePage = async () => {
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-4 p-6">
-            {classData.map((item) => (
-              <ClassCard key={item.classId} item={item} />
+            {[...coursesCreated, ...coursesEnrolled].map((item) => (
+              <CourseCard key={item.courseId} item={item} />
             ))}
           </div>
         )}
@@ -60,4 +77,4 @@ const HomePage = async () => {
   );
 };
 
-export default HomePage;
+export default withPermission(HomePage);

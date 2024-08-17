@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent2, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { IClasses } from '@/types';
+import { ICourse } from '@/types';
 
 const InviteStudentModal = ({
   isOpen,
@@ -19,7 +19,7 @@ const InviteStudentModal = ({
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  classes: IClasses;
+  classes: ICourse;
 }) => {
   const [canSubmit, setCanSubmit] = useState(false);
 

@@ -4,13 +4,13 @@ import React, { useContext } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Button from '@/components/common/Button';
-import classService from '@/services/classService';
-import { ClassesContext } from '@/contexts/ClassesContext';
+import classService from '@/services/courseService';
+import { CoursesContext } from '@/contexts/CoursesContext';
 
 const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
-  const { setClassesEnrolled, classesEnrolled } = useContext(ClassesContext);
+  const { setenrolledCourses, enrolledCourses } = useContext(CoursesContext);
 
   return (
     <Button
@@ -23,7 +23,7 @@ const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
           if (res.data) {
             setLoading(false);
 
-            setClassesEnrolled([...classesEnrolled, res.data]);
+            setenrolledCourses([...enrolledCourses, res.data]);
             return router.replace(`/classes/${res.data.classId}`);
           }
         } catch (error) {

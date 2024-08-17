@@ -2,7 +2,6 @@ import { EllipsisVertical, UserRoundPlus, ChevronDown, ArrowDownAZ } from 'lucid
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -14,15 +13,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { IClasses, IUser } from '@/types';
+import { ICourse, IUser } from '@/types';
 import InviteStudentModal from '@/components/modals/InviteStudentModal';
 import CommonModal from '@/components/modals/CommonModal';
-import classService from '@/services/classService';
+import classService from '@/services/courseService';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn, sortUsersByName } from '@/libs/utils';
 import { useCheckedState, PersonState } from '@/libs/hooks/useCheckState';
 
-const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data: IUser[]; classes: IClasses }) => {
+const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data: IUser[]; classes: ICourse }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleteManyModalOpen, setIsDeleteManyModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -31,7 +30,8 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
   const [selectedRemoveMany, setSelectedRemoveMany] = useState<IUser[]>([]);
   const [sortAscending, setSortAscending] = useState(false);
 
-  const { user } = useUser();
+  const user = null;
+
   const router = useRouter();
 
   const {
@@ -66,9 +66,9 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
 
   return (
     <section className={(cn('flex flex-col gap-3 mx-auto max-w-[800px]'), isTeacher ? 'mb-10' : '')}>
-      <div className="flex gap-3 justify-between items-center py-2 border-b">
+      <div className="flex items-center justify-between gap-3 py-2 border-b">
         <h2 className="text-3xl">{isTeacher ? 'Giáo viên' : 'Sinh viên'}</h2>
-        <div className="flex gap-3 justify-end items-center">
+        <div className="flex items-center justify-end gap-3">
           {!isTeacher && (
             <>
               <p className="text-sm font-semibold text-primaryGray">{list.length} sinh viên</p>
@@ -97,8 +97,8 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
         </div>
       </div>
       {!isTeacher && user?.id === classes.teacherId && (
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex gap-5 items-center">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-5">
             <Checkbox
               checked={allChecked ? true : indeterminate ? 'indeterminate' : false}
               onCheckedChange={handleAllCheckedChange}
@@ -231,7 +231,7 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
         desc={
           <div className="overflow-y-auto max-h-[250px]">
             {selectedRemoveMany.map((item) => (
-              <div key={item.userId} className="flex gap-3 items-center p-2">
+              <div key={item.userId} className="flex items-center gap-3 p-2">
                 <Image
                   src={item.avatarUrl || '/images/avt.png'}
                   height={3000}

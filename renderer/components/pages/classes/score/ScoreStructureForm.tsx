@@ -4,7 +4,7 @@
 import React, { FormEvent, useContext, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import classService from '@/services/classService';
+import classService from '@/services/courseService';
 import { ClassContext } from '@/contexts/ClassContext';
 import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
 

@@ -3,7 +3,6 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { faGoogleDrive, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
@@ -28,7 +27,9 @@ import { MetaLinkData } from '@/types';
 import { formatDuration, getFileType } from '@/utils';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-const GooglePicker = dynamic(() => import('react-google-picker'), { ssr: false });
+const GooglePicker = dynamic(() => import('react-google-picker'), {
+  ssr: false,
+});
 
 const AssignmentForm = ({
   form,
@@ -47,7 +48,8 @@ const AssignmentForm = ({
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
   exam?: boolean;
 }) => {
-  const { user } = useUser();
+  const user = null;
+
   const { classes } = useContext(ClassContext);
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);

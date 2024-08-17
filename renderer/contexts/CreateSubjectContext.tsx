@@ -4,18 +4,24 @@
 import React, { useEffect, useState } from 'react';
 
 import { ISubject } from '@/types';
+import subjectService from '@/services/subjectService';
 
 const CreateSubjectContext = React.createContext({
   subjects: [] as ISubject[],
   setSubjects: (_subjects: ISubject[]) => {},
 });
 
-const CreateSubjectProvider = ({ children, subjects }: { children: React.ReactNode; subjects: ISubject[] }) => {
+const CreateSubjectProvider = ({ children }: { children: React.ReactNode }) => {
   const [data, setData] = useState<ISubject[]>([]);
 
   useEffect(() => {
-    setData(subjects);
-  }, [subjects]);
+    const fetchData = async () => {
+      const res = await subjectService.getSubjects();
+      setData(res);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <CreateSubjectContext.Provider
