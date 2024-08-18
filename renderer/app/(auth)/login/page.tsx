@@ -37,8 +37,8 @@ export default withPermission(() => {
 
   const onSubmit = async (values: SignUpFormInputs) => {
     try {
-      const data: any = await authService.login(values);
-      SET_LOCALSTORAGE(data);
+      const res: any = await authService.login(values);
+      SET_LOCALSTORAGE(res.data);
       router.push('/');
       toast.error('Success: login');
     } catch (error) {

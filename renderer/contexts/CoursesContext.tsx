@@ -18,24 +18,14 @@ const CoursesProvider = ({ children }: { children: React.ReactNode }) => {
   const [createdCourses, setCreatedCourses] = useState<ICourse[]>([]);
   const [enrolledCourses, setEnrolledCourses] = useState<ICourse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-      setUser(storedUser);
-    }
-  }, []);
 
   useEffect(() => {
     const getCourse = async () => {
       try {
-        if (user) {
-          setIsLoading(true);
-          const res = await courseService.getCoursesByUser(user.userId);
-          setCreatedCourses(res.data.courses);
-          setEnrolledCourses(res.data.courses);
-        }
+        setIsLoading(true);
+        const res = await courseService.getCoursesByUser();
+        setCreatedCourses(res.data.createdCourses);
+        setEnrolledCourses(res.data.enrolledCourses);
       } catch (error) {
         console.error(error);
       } finally {
@@ -43,10 +33,8 @@ const CoursesProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    if (user) {
-      getCourse();
-    }
-  }, [user]);
+    getCourse();
+  }, []);
 
   return (
     <CoursesContext.Provider

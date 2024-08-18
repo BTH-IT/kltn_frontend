@@ -1,5 +1,6 @@
 export const API_URL = {
   USERS: '/users',
+  ACCOUNTS: '/accounts',
   SUBJECTS: '/subjects',
   COURSES: '/courses',
   COMMENTS: '/comments',

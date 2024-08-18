@@ -15,6 +15,7 @@ export * from './score-structure';
 export interface ApiResponse<T> {
   message?: string;
   data: T;
+  statusCode: number;
 }
 
 export interface MetaLinkData {

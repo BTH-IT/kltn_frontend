@@ -4,7 +4,7 @@ import { API_URL } from '@/constants/endpoints';
 import configService from './configService';
 
 const subjectService = {
-  getSubjects(): Promise<ISubject[]> {
+  getSubjects(): Promise<ApiResponse<ISubject[]>> {
     return configService.get(`${API_URL.SUBJECTS}`);
   },
 

@@ -35,7 +35,8 @@ configService.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config;
-    if (error.response.status === 403 && !originalRequest._retry) {
+
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const data = {
         token: localStorage.getItem(KEY_LOCALSTORAGE.ACCESS_TOKEN),
@@ -44,6 +45,13 @@ configService.interceptors.response.use(
       const res = await authService.refresh(data);
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.token;
       return configService(originalRequest);
+    } else {
+      if (error.response.status === 401) {
+        localStorage.removeItem(KEY_LOCALSTORAGE.ACCESS_TOKEN);
+        localStorage.removeItem(KEY_LOCALSTORAGE.REFRESH_TOKEN);
+        localStorage.removeItem(KEY_LOCALSTORAGE.CURRENT_USER);
+        // window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   },

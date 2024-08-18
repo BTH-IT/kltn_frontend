@@ -17,20 +17,14 @@ const HomePage = async () => {
   const [coursesEnrolled, setCoursesEnrolled] = useState<ICourse[]>([]);
 
   useEffect(() => {
-    const fetchCoursesCreated = async () => {
-      const res = await courseService.getCourses();
+    const fetchCourses = async () => {
+      const res = await courseService.getCoursesByUser();
 
-      setCoursesCreated(res);
+      setCoursesCreated(res.data.createdCourses);
+      setCoursesEnrolled(res.data.enrolledCourses);
     };
 
-    const fetchCoursesEnrolled = async () => {
-      const res = await courseService.getCourses();
-
-      setCoursesEnrolled(res);
-    };
-
-    // fetchCoursesCreated();
-    // fetchCoursesEnrolled();
+    fetchCourses();
   }, []);
 
   return (

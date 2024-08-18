@@ -4,7 +4,7 @@ import { API_URL } from '@/constants/endpoints';
 import configService from './configService';
 
 const courseService = {
-  getCourses(): Promise<ICourse[]> {
+  getCourses(): Promise<ApiResponse<ICourse[]>> {
     return configService.get(`${API_URL.COURSES}`);
   },
 
@@ -12,12 +12,12 @@ const courseService = {
     return configService.get(`${API_URL.COURSES}/${courseId}`);
   },
 
-  getCoursesByUser(userId: string): Promise<
+  getCoursesByUser(): Promise<
     ApiResponse<{
       [key: string]: ICourse[];
     }>
   > {
-    return configService.get(`${API_URL.COURSES}/user/${userId}`);
+    return configService.get(`${API_URL.ACCOUNTS}${API_URL.COURSES}`);
   },
 
   getCoursesByUserAndInviteCode(userId: string, inviteCode: string): Promise<ApiResponse<ICourse | null>> {

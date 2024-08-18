@@ -8,17 +8,17 @@ import BulletinInput from '../pages/classes/BulletinInput';
 
 import AnnouncementList from './AnnouncementList';
 
-const AnnouncementInput = ({ classes }: { classes: ICourse | null }) => {
+const AnnouncementInput = ({ course }: { course: ICourse | null }) => {
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
 
   useEffect(() => {
-    setAnnouncements(classes?.announcements || []);
-  }, [classes]);
+    setAnnouncements([]);
+  }, [course]);
 
   return (
     <div className="flex flex-col gap-4">
-      <BulletinInput classes={classes} setAnnouncements={setAnnouncements} />
-      <AnnouncementList announcements={announcements} setAnnouncements={setAnnouncements} classes={classes} />
+      <BulletinInput classes={course} setAnnouncements={setAnnouncements} />
+      <AnnouncementList announcements={announcements} setAnnouncements={setAnnouncements} classes={course} />
     </div>
   );
 };
