@@ -1,9 +1,10 @@
 import { IBaseModel } from '.';
 
 export interface IGroup extends IBaseModel {
-  GroupId: string;
-  CourseId: string;
-  GroupName: string;
-  ProjectId: string;
-  NumberOfMembers: number;
+  groupId: string;
+  courseId: string;
+  groupName: string;
+  projectId: string;
+  numberOfMembers: number;
+  project?: any;
 }
