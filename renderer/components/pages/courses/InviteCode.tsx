@@ -15,27 +15,32 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/libs/utils';
-import classService from '@/services/courseService';
 import CommonModal from '@/components/modals/CommonModal';
+import courseService from '@/services/courseService';
+import { IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; inviteCode: string; name: string }) => {
-  const user = null;
-
   const { toast } = useToast();
   const { Canvas } = useQRCode();
 
+  const [user, setUser] = useState<IUser | null>(null);
   const [code, setCode] = useState(inviteCode);
   const [updatingInvCode, setUpdatingInvCode] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     setCode(inviteCode);
+    if (typeof window !== 'undefined') {
+      const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+      setUser(user);
+    }
   }, [inviteCode]);
 
   const handleChangeInvCodeClick = async () => {
     setUpdatingInvCode(true);
     try {
-      const res = await classService.updateClassInviteCode(inviteCode);
+      const res = await courseService.updateCourseInviteCode(inviteCode);
       if (res.data) {
         setCode(res.data.inviteCode);
         toast({
@@ -67,7 +72,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
 
   const handleCopyInvLinkClick = async () => {
     try {
-      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/classes/invite/${inviteCode}`);
+      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/courses/invite/${inviteCode}`);
       toast({
         title: 'Đã sao chép link mời tham gia lớp',
         variant: 'done',
@@ -115,7 +120,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
       <div className="flex items-center gap-5">
         <p className={cn('text-2xl font-semibold', updatingInvCode && 'hidden')}>{inviteCode}</p>
         <Skeleton className={cn('h-10 w-[88px]', !updatingInvCode && 'hidden')} />
-        <ShowCodeModal invCode={code} classesName={name}>
+        <ShowCodeModal invCode={code} courseName={name}>
           <Scan className="cursor-pointer" />
         </ShowCodeModal>
       </div>
@@ -128,7 +133,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
         desc={
           <div className="mx-auto mt-5 w-fit">
             <Canvas
-              text={`${process.env.NEXT_PUBLIC_URL}/classes/invite/${inviteCode}`}
+              text={`${process.env.NEXT_PUBLIC_URL}/courses/invite/${inviteCode}`}
               options={{
                 errorCorrectionLevel: 'M',
                 margin: 3,

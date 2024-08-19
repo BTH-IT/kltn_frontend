@@ -15,7 +15,7 @@ export function convertToNumber(value: string) {
 }
 
 export function sortUsersByName(list: IUser[], ascending = true): IUser[] {
-  return list.sort((a, b) => (ascending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
+  return list.sort((a, b) => (ascending ? a.fullName.localeCompare(b.fullName) : b.fullName.localeCompare(a.fullName)));
 }
 
 export const normalizePath = (path: string) => {

@@ -26,13 +26,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { CoursesContext } from '@/contexts/CoursesContext';
 import { cn } from '@/libs/utils';
-import classService from '@/services/courseService';
-import { ClassContext } from '@/contexts/ClassContext';
+import courseService from '@/services/courseService';
+import { CourseContext } from '@/contexts/CourseContext';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 
 import ShowCodeModal from './ShowCodeModal';
 
-const ClassOptionModal = ({
+const CourseOptionModal = ({
   onOpenModal,
   setOnOpenModal,
 }: {
@@ -41,12 +41,12 @@ const ClassOptionModal = ({
 }) => {
   const { toast } = useToast();
   const router = useRouter();
-  const { classes } = useContext(ClassContext);
+  const { course } = useContext(CourseContext);
 
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
-  const { createdCourses, setcreatedCourses } = useContext(CoursesContext);
+  const { createdCourses, setCreatedCourses } = useContext(CoursesContext);
   const { subjects } = useContext(CreateSubjectContext);
 
   const FormSchema = z.object({
@@ -76,37 +76,37 @@ const ClassOptionModal = ({
   });
 
   useEffect(() => {
-    if (classes && classes.subject) {
-      form.setValue('name', classes.name);
+    if (course && course.subjectId) {
+      form.setValue('name', course.name);
       form.setValue('subjectId', {
-        label: `${classes.subjectId} - ${classes.subject.name}`,
-        value: classes.subjectId,
+        label: `${course.subjectId} - ${course.subjectName}`,
+        value: course.subjectId,
       });
-      form.setValue('enableInvite', String(classes.enableInvite));
+      form.setValue('enableInvite', String(course.enableInvite));
     }
-  }, [classes, form]);
+  }, [course, form]);
 
   const isLoading = hasSubmitted;
 
   const onSubmit = async (values: z.infer<typeof FormSchema>): Promise<void> => {
-    if (!classes) return;
+    if (!course) return;
 
     try {
       setHasSubmitted(true);
 
       const data = {
-        ...classes,
+        ...course,
         name: values.name,
         subjectId: values.subjectId.value,
         enableInvite: values.enableInvite === 'true',
       };
 
-      const res = await classService.updateClass(classes.classId, data);
+      const res = await courseService.updateCourse(course.courseId, data);
 
       createdCourses.forEach((c, index) => {
-        if (c.classId === classes.classId) {
+        if (c.courseId === course.courseId) {
           createdCourses[index] = res.data;
-          setcreatedCourses([...createdCourses]);
+          setCreatedCourses([...createdCourses]);
           return;
         }
       });
@@ -145,10 +145,10 @@ const ClassOptionModal = ({
   };
 
   const handleCopyInvLinkClick = async () => {
-    if (!classes) return;
+    if (!course) return;
 
     try {
-      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/classes/invite/${classes.inviteCode}`);
+      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/course/invite/${course.inviteCode}`);
       toast({
         title: 'Đã sao chép link mời tham gia lớp',
         variant: 'done',
@@ -162,21 +162,21 @@ const ClassOptionModal = ({
   return (
     <>
       <Dialog open={onOpenModal} onOpenChange={onCloseModal}>
-        <DialogContent2 className="p-0 w-screen h-screen max-h-screen font-sans text-gray-700">
+        <DialogContent2 className="w-screen h-screen max-h-screen p-0 font-sans text-gray-700">
           <DialogTitle className="hidden"></DialogTitle>
           <div className="flex justify-center">
             <Form {...form}>
               <form
                 onChange={() => onChangeForm()}
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="items-center space-y-8 w-full h-fit"
+                className="items-center w-full space-y-8 h-fit"
               >
-                <div className="flex sticky top-0 right-0 left-0 justify-between items-center px-5 py-3 w-full bg-white border-b-2">
+                <div className="sticky top-0 left-0 right-0 flex items-center justify-between w-full px-5 py-3 bg-white border-b-2">
                   <div className="font-semibold text-md">Cài đặt lớp học</div>
-                  <div className="flex gap-7 items-center">
+                  <div className="flex items-center gap-7">
                     <Button type="submit" disabled={!canSubmit || hasSubmitted} className="w-20" variant="primary">
                       {hasSubmitted && (
-                        <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                        <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                       )}
                       Lưu
                     </Button>
@@ -251,7 +251,7 @@ const ClassOptionModal = ({
                         name="enableInvite"
                         render={({ field }) => (
                           <FormItem>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                               <div>
                                 <div className="font-medium">Quản lý mã mời</div>
                                 <div className="text-xs">
@@ -276,26 +276,26 @@ const ClassOptionModal = ({
                           </FormItem>
                         )}
                       />
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <div className="font-medium">Đường liên kết mời</div>
-                        <div className="flex gap-1 items-center">
-                          <div className="text-sm">{`${process.env.NEXT_PUBLIC_URL}/classes/invite/${classes?.inviteCode}`}</div>
+                        <div className="flex items-center gap-1">
+                          <div className="text-sm">{`${process.env.NEXT_PUBLIC_URL}/course/invite/${course?.inviteCode}`}</div>
                           <div
                             onClick={() => handleCopyInvLinkClick()}
-                            className="flex justify-center items-center p-0 w-12 h-12 rounded-full cursor-pointer hover:bg-gray-100/60"
+                            className="flex items-center justify-center w-12 h-12 p-0 rounded-full cursor-pointer hover:bg-gray-100/60"
                           >
                             <Copy width={20} height={20} />
                           </div>
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <div className="font-medium">Mã lớp</div>
-                        <div className="pr-4">{classes?.inviteCode}</div>
+                        <div className="pr-4">{course?.inviteCode}</div>
                       </div>
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <div className="font-medium">Chế độ xem lớp học</div>
-                        <ShowCodeModal invCode={classes?.inviteCode || ''} classesName={classes?.name || ''}>
-                          <div className="flex gap-2 justify-center items-center px-3 py-1 font-semibold text-blue-500 rounded-md cursor-pointer hover:bg-blue-100/30 hover:text-blue-800">
+                        <ShowCodeModal invCode={course?.inviteCode || ''} courseName={course?.courseGroup || ''}>
+                          <div className="flex items-center justify-center gap-2 px-3 py-1 font-semibold text-blue-500 rounded-md cursor-pointer hover:bg-blue-100/30 hover:text-blue-800">
                             <div className="text-sm mb-[2px]">Hiện mã lớp học</div>
                             <Scan width={20} height={20} />
                           </div>
@@ -313,4 +313,4 @@ const ClassOptionModal = ({
   );
 };
 
-export default ClassOptionModal;
+export default CourseOptionModal;

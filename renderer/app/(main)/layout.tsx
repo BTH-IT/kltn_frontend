@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import NavigationSidebar from '@/components/navigations/NavigationSidebar';
 import NavigationHeader from '@/components/navigations/NavigationHeader';
 import { CoursesProvider } from '@/contexts/CoursesContext';
-import { ClassProvider } from '@/contexts/ClassContext';
+import { CourseProvider } from '@/contexts/CourseContext';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 import { CreateSubjectProvider } from '@/contexts/CreateSubjectContext';
 
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <CoursesProvider>
-      <ClassProvider classes={null}>
+      <CourseProvider course={null}>
         <CreateSubjectProvider>
           <SidebarProvider isShow={true}>
             <div className="h-full">
@@ -31,7 +31,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
             </div>
           </SidebarProvider>
         </CreateSubjectProvider>
-      </ClassProvider>
+      </CourseProvider>
     </CoursesProvider>
   );
 };

@@ -16,12 +16,13 @@ import {
 import { ICourse, IUser } from '@/types';
 import InviteStudentModal from '@/components/modals/InviteStudentModal';
 import CommonModal from '@/components/modals/CommonModal';
-import classService from '@/services/courseService';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn, sortUsersByName } from '@/libs/utils';
 import { useCheckedState, PersonState } from '@/libs/hooks/useCheckState';
+import courseService from '@/services/courseService';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
-const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data: IUser[]; classes: ICourse }) => {
+const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data: IUser[]; course: ICourse }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleteManyModalOpen, setIsDeleteManyModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -30,7 +31,7 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
   const [selectedRemoveMany, setSelectedRemoveMany] = useState<IUser[]>([]);
   const [sortAscending, setSortAscending] = useState(false);
 
-  const user = null;
+  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
 
   const router = useRouter();
 
@@ -47,7 +48,7 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
     setList(data);
     setCheckedState(
       data.map((user) => ({
-        userId: user.userId,
+        userId: user.id,
         email: user.email,
         checked: false,
       })),
@@ -56,8 +57,8 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
 
   const handleRemove = async (id: string) => {
     try {
-      await classService.deleteStudentOfClass(String(classes.classId), id);
-      const newList = list.filter((item) => item.userId !== id);
+      await courseService.deleteStudentOfCourse(String(course.courseId), id);
+      const newList = list.filter((item) => item.id !== id);
       setList(newList);
     } catch (error) {
       console.log(error);
@@ -72,7 +73,7 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
           {!isTeacher && (
             <>
               <p className="text-sm font-semibold text-primaryGray">{list.length} sinh viên</p>
-              {user?.id === classes.teacherId && (
+              {user?.id === course.lecturerId && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -96,7 +97,7 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
           )}
         </div>
       </div>
-      {!isTeacher && user?.id === classes.teacherId && (
+      {!isTeacher && user?.id === course.courseId && (
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-5">
             <Checkbox
@@ -131,7 +132,7 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
                       setSelectedRemoveMany(
                         checkedState
                           .filter((item: PersonState) => item.checked)
-                          .map((item: PersonState) => list.find((user) => user.userId === item.userId))
+                          .map((item: PersonState) => list.find((user) => user.id === item.userId))
                           .filter(Boolean) as IUser[],
                       );
                     }}
@@ -157,12 +158,12 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
       {list.map((d, idx) => (
         <AvatarHeader
           key={idx}
-          imageUrl={d?.avatarUrl || '/images/avt.png'}
-          fullName={d?.name || 'anonymous'}
+          imageUrl={d?.avatar || '/images/avt.png'}
+          fullName={d?.fullName || 'anonymous'}
           type={isTeacher ? 'teacher' : 'student'}
           dropdownMenu={
             <>
-              {user?.id === classes.teacherId && (
+              {user?.id === course.lecturerId && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild className="cursor-pointer">
                     <EllipsisVertical />
@@ -188,12 +189,12 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
               )}
             </>
           }
-          showCheckbox={user?.id === classes.teacherId}
-          checked={!!checkedState.find((item: PersonState) => item.userId === d.userId)?.checked}
-          onCheckedChange={() => handleIndividualCheckedChange(d.userId)}
+          showCheckbox={user?.id === course.lecturerId}
+          checked={!!checkedState.find((item: PersonState) => item.userId === d.id)?.checked}
+          onCheckedChange={() => handleIndividualCheckedChange(d.id)}
         />
       ))}
-      <InviteStudentModal isOpen={isInviteModalOpen} setIsOpen={setIsInviteModalOpen} classes={classes} />
+      <InviteStudentModal isOpen={isInviteModalOpen} setIsOpen={setIsInviteModalOpen} course={course} />
       <CommonModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
@@ -204,7 +205,7 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
         acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
         ocClickAccept={async () => {
           if (selectedRemove) {
-            await handleRemove(selectedRemove.userId);
+            await handleRemove(selectedRemove.id);
           }
 
           setIsDeleteModalOpen(false);
@@ -222,7 +223,7 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
           if (selectedRemoveMany) {
             await Promise.all(
               selectedRemoveMany.map(async (item) => {
-                await handleRemove(item.userId);
+                await handleRemove(item.id);
               }),
             );
           }
@@ -231,15 +232,15 @@ const People = ({ isTeacher = true, data, classes }: { isTeacher?: boolean; data
         desc={
           <div className="overflow-y-auto max-h-[250px]">
             {selectedRemoveMany.map((item) => (
-              <div key={item.userId} className="flex items-center gap-3 p-2">
+              <div key={item.id} className="flex items-center gap-3 p-2">
                 <Image
-                  src={item.avatarUrl || '/images/avt.png'}
+                  src={item.avatar || '/images/avt.png'}
                   height={3000}
                   width={3000}
                   alt="avatar"
                   className="w-[35px] h-[35px] rounded-full"
                 />
-                <span className="font-sans font-medium line-clamp-1">{item.name + ` (${item.email})`}</span>
+                <span className="font-sans font-medium line-clamp-1">{item.fullName + ` (${item.email})`}</span>
               </div>
             ))}
           </div>

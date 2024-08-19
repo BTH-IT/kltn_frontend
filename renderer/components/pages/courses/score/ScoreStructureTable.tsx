@@ -5,7 +5,7 @@ import React, { useContext } from 'react';
 import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
 import { TableCellProps } from '@/types';
 import { buildTree, getLeafColumns } from '@/utils';
-import { ClassContext } from '@/contexts/ClassContext';
+import { CourseContext } from '@/contexts/CourseContext';
 
 import EditableCell from './EditTableCell';
 
@@ -37,7 +37,7 @@ const TableHeaderCell: React.FC<TableCellProps> = ({ data, item, leafColumns }) 
 
 const ScoreStructureTable = () => {
   const { scoreStructures } = useContext(ScoreStructureContext);
-  const { classes } = useContext(ClassContext);
+  const { course } = useContext(CourseContext);
   const tree = buildTree(scoreStructures);
 
   const leafColumns = tree.flatMap(getLeafColumns);
@@ -67,8 +67,8 @@ const ScoreStructureTable = () => {
         </tr>
       </thead>
       <tbody>
-        {classes &&
-          classes.students?.map((student, index) => (
+        {course &&
+          course.students?.map((student, index) => (
             <tr key={student.userId}>
               <td className="px-4 py-2 border">{student.name}</td>
               {leafColumns.map((col) => (

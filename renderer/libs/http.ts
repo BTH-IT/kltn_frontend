@@ -1,5 +1,10 @@
+import { redirect } from 'next/navigation';
 /* eslint-disable no-undef */
+import { cookies } from 'next/headers';
+
 import { KEY_LOCALSTORAGE } from '@/utils';
+import { ApiResponse } from '@/types';
+
 type CustomOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined;
 };
@@ -42,19 +47,19 @@ export class EntityError extends HttpError {
   }
 }
 
-export const isClient = () => typeof window !== 'undefined';
-
 const request = async <Response>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   url: string,
   options?: CustomOptions | undefined,
-): Promise<{ status: number; payload: Response }> => {
+): Promise<{ status: number; payload: ApiResponse<Response> }> => {
   let body: FormData | string | undefined = undefined;
   if (options?.body instanceof FormData) {
     body = options.body;
   } else if (options?.body) {
     body = JSON.stringify(options.body);
   }
+
+  const cookieStore = cookies();
 
   const baseHeaders: { [key: string]: string } =
     body instanceof FormData
@@ -63,7 +68,7 @@ const request = async <Response>(
           'Content-Type': 'application/json',
         };
 
-  const accessToken = isClient() ? localStorage.getItem(KEY_LOCALSTORAGE.ACCESS_TOKEN) : null;
+  const accessToken = cookieStore.get(KEY_LOCALSTORAGE.ACCESS_TOKEN)?.value;
   if (accessToken) {
     baseHeaders.Authorization = `Bearer ${accessToken}`;
   }
@@ -82,7 +87,17 @@ const request = async <Response>(
     method,
   });
 
-  let payload: Response = await res.json();
+  let payload: any = null;
+  const contentType = res.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    try {
+      payload = await res.json();
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      throw new Error('Failed to parse JSON response');
+    }
+  }
+
   let data = {
     status: res.status,
     payload,
@@ -96,61 +111,31 @@ const request = async <Response>(
           payload: EntityErrorPayload;
         },
       );
-    } else if (res.status === AUTHENTICATION_ERROR_STATUS && isClient()) {
-      const refreshToken = localStorage.getItem(KEY_LOCALSTORAGE.REFRESH_TOKEN);
-      if (refreshToken) {
-        try {
-          // Attempt to refresh the token
-          const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/accounts/refresh-token`, {
-            method: 'POST',
-            body: JSON.stringify({ refreshToken }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
+    } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
+      await handleRefreshToken(cookieStore.get(KEY_LOCALSTORAGE.REFRESH_TOKEN)?.value);
 
-          if (refreshResponse.ok) {
-            const { token: newAccessToken } = await refreshResponse.json();
+      // Retry original request after refreshing token
+      res = await fetch(fullUrl, {
+        ...options,
+        headers: {
+          ...baseHeaders,
+          ...options?.headers,
+        } as any,
+        body,
+        method,
+      });
 
-            // Update local storage with new tokens
-            localStorage.setItem(KEY_LOCALSTORAGE.ACCESS_TOKEN, newAccessToken);
+      payload = await res.json();
+      data = {
+        status: res.status,
+        payload,
+      };
 
-            // Retry the original request with the new access token
-            baseHeaders.Authorization = `Bearer ${newAccessToken}`;
-            res = await fetch(fullUrl, {
-              ...options,
-              headers: {
-                ...baseHeaders,
-                ...options?.headers,
-              } as any,
-              body,
-              method,
-            });
-
-            payload = await res.json();
-            data = {
-              status: res.status,
-              payload,
-            };
-
-            if (!res.ok) {
-              throw new HttpError(data);
-            }
-
-            return data;
-          } else {
-            throw new Error('Failed to refresh token');
-          }
-        } catch (error) {
-          console.log('Error when refreshing token', error);
-          localStorage.removeItem(KEY_LOCALSTORAGE.ACCESS_TOKEN);
-          localStorage.removeItem(KEY_LOCALSTORAGE.REFRESH_TOKEN);
-          localStorage.removeItem(KEY_LOCALSTORAGE.CURRENT_USER);
-          location.href = '/login';
-        }
-      } else {
+      if (!res.ok) {
         throw new HttpError(data);
       }
+
+      return data;
     } else {
       throw new HttpError(data);
     }
@@ -172,6 +157,34 @@ const http = {
   delete<Response>(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
     return request<Response>('DELETE', url, { ...options });
   },
+};
+
+const handleRefreshToken = async (refreshToken: string | undefined) => {
+  try {
+    const res = await fetch('/api/refresh-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        refreshToken,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to refresh token');
+    }
+
+    const data = await res.json();
+    if (!data.success) {
+      redirect('/login');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    redirect('/login');
+  }
 };
 
 export default http;

@@ -8,7 +8,11 @@ export async function POST(request: Request) {
       status: 200,
       headers: {
         // Xóa cookie sessionToken
-        'Set-Cookie': 'sessionToken=; Path=/; HttpOnly; Max-Age=0',
+        'Set-Cookie': [
+          'access_token=; Path=/; HttpOnly; Max-Age=0',
+          'refresh_token=; Path=/; HttpOnly; Max-Age=0',
+          'current_user=; Path=/; HttpOnly; Max-Age=0',
+        ].join(', '),
       },
     },
   );

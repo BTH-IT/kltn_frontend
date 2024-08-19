@@ -1,21 +1,30 @@
 import { Suspense } from 'react';
-import { Info } from 'lucide-react';
+import { Info, Pencil } from 'lucide-react';
+import { cookies } from 'next/headers';
 
 import AnnouncementInput from '@/components/common/AnnouncementInput';
 import Loading from '@/components/loading/loading';
-import InviteCode from '@/components/pages/classes/InviteCode';
+import InviteCode from '@/components/pages/courses/InviteCode';
 import { API_URL } from '@/constants/endpoints';
-import http from '@/libs/http';
 import { ICourse } from '@/types';
+import http from '@/libs/http';
+import { Button } from '@/components/ui/button';
+import CoursePersonalizeModal from '@/components/modals/CoursePersonalizeModal';
 
-export default async function ClassPage({ params }: { params: { courseId: string } }) {
-  const { payload: course } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
+export default async function CoursePage({ params }: { params: { courseId: string } }) {
+  const {
+    payload: { data: course },
+  } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
 
   const bgImageStyles = {
-    backgroundImage: `url(${course.background || ''})`,
+    backgroundImage: `url(${course.background || 'https://gstatic.com/classroom/themes/img_backtoschool.jpg'})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
   };
+
+  const cookieStore = cookies();
+  const userCookie = cookieStore.get('user')?.value;
+  const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
 
   return (
     <Suspense fallback={<Loading />}>
@@ -28,17 +37,17 @@ export default async function ClassPage({ params }: { params: { courseId: string
               {course.subjectId} - {course.subjectName}
             </p>
           </div>
-          {/* {user?.id === course.teacherId && (
-            <ClassPersonalizeModal data={course}>
+          {user?.id === course.lecturerId && (
+            <CoursePersonalizeModal data={course}>
               <Button
-                variant='ghost'
-                className='flex absolute top-4 right-4 gap-3 items-center py-1 px-3 text-[16px] text-blue-500 bg-white'
+                variant="ghost"
+                className="flex absolute top-4 right-4 gap-3 items-center py-1 px-3 text-[16px] text-blue-500 bg-white"
               >
                 <Pencil width={18} height={18} />
                 <span>Tùy chỉnh</span>
               </Button>
-            </ClassPersonalizeModal>
-          )} */}
+            </CoursePersonalizeModal>
+          )}
           <Info
             className="absolute right-4 bottom-4 flex-col p-2 text-white rounded-full transition-all hover:bg-[rgba(0, 0, 0, 0.8)] cursor-pointer"
             width={36}

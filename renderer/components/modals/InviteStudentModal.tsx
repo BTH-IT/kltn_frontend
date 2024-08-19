@@ -15,11 +15,11 @@ import { ICourse } from '@/types';
 const InviteStudentModal = ({
   isOpen,
   setIsOpen,
-  classes,
+  course,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  classes: ICourse;
+  course: ICourse;
 }) => {
   const [canSubmit, setCanSubmit] = useState(false);
 
@@ -36,14 +36,14 @@ const InviteStudentModal = ({
     },
   });
 
-  const inputChangeHandler = async (value: string) => {
-    try {
-      new URL(value);
-      setCanSubmit(true);
-    } catch (_) {
-      setCanSubmit(false);
-    }
-  };
+  // const inputChangeHandler = async (value: string) => {
+  //   try {
+  //     new URL(value);
+  //     setCanSubmit(true);
+  //   } catch (_) {
+  //     setCanSubmit(false);
+  //   }
+  // };
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
@@ -62,7 +62,7 @@ const InviteStudentModal = ({
         <div className="mt-6 text-sm">
           <div className="font-bold">Đường liên kết mời</div>
           <div className="flex items-center translate-y-[-10px]">
-            <div className="line-clamp-1 w-full">{`${process.env.NEXT_PUBLIC_URL}/classes/invite/${classes.inviteCode}`}</div>
+            <div className="w-full line-clamp-1">{`${process.env.NEXT_PUBLIC_URL}/courses/invite/${course.inviteCode}`}</div>
             <Button
               variant="secondary3"
               className="rounded-full border-none flex justify-center items-center !w-[52px] !h-[50px] !p-1"
@@ -97,7 +97,7 @@ const InviteStudentModal = ({
                   variant="primaryGhost"
                 >
                   {form.formState.isSubmitting && (
-                    <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                    <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
                   Mời
                 </Button>

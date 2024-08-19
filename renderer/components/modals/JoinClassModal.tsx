@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
-import classService from '@/services/courseService';
+import courseService from '@/services/courseService';
 import { CoursesContext } from '@/contexts/CoursesContext';
 
 const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
@@ -57,11 +57,11 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       setHasSubmitted(true);
-      const res = await classService.getClassByInviteCode(values.inviteCode.toLowerCase());
+      const res = await courseService.getClassByInviteCode(values.inviteCode.toLowerCase());
       if (res.data?.classId && user?.id) {
         await classService.addStudentToClass(String(res.data.classId), user.id);
         setenrolledCourses([...enrolledCourses, res.data]);
-        router.push(`/classes/${res.data.classId}`);
+        router.push(`/course/${res.data.classId}`);
 
         setHasSubmitted(false);
       } else {

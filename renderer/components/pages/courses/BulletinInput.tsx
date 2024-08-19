@@ -4,18 +4,19 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { RefreshCw } from 'lucide-react';
 
-import { IAnnouncement, ICourse } from '@/types';
+import { IAnnouncement, ICourse, IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 import BulletForm from './BulletForm';
 
 const BulletinInput = ({
-  classes,
+  course,
   setAnnouncements,
 }: {
-  classes: ICourse | null;
+  course: ICourse | null;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const user = null;
+  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
 
   const [isPost, setIsPost] = useState(false);
 
@@ -24,7 +25,7 @@ const BulletinInput = ({
       {!isPost ? (
         <div onClick={() => setIsPost((prev) => !prev)} className="flex items-center pr-4">
           <Image
-            src={user?.imageUrl || '/images/avt.png'}
+            src={user?.avatar || '/images/avt.png'}
             height={75}
             width={75}
             alt="avatar"
@@ -36,7 +37,7 @@ const BulletinInput = ({
           </div>
         </div>
       ) : (
-        <BulletForm setIsPost={setIsPost} classes={classes} setAnnouncements={setAnnouncements} />
+        <BulletForm setIsPost={setIsPost} course={course} setAnnouncements={setAnnouncements} />
       )}
     </div>
   );

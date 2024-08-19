@@ -6,24 +6,26 @@ import { usePathname } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
 import { Settings } from 'lucide-react';
 
-import { ClassContext } from '@/contexts/ClassContext';
+import { CourseContext } from '@/contexts/CourseContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import ClassOptionModal from '@/components/modals/ClassOptionModal';
+import CourseOptionModal from '@/components/modals/CourseOptionModal';
+import { KEY_LOCALSTORAGE } from '@/utils';
+import { IUser } from '@/types';
 
-const ClassesHeader = ({ data }: { data: any }) => {
+const CourseHeader = ({ data }: { data: any }) => {
   const pathname = usePathname().replace(/\/$/, '');
 
   const newPath = pathname.slice(pathname.lastIndexOf('/'));
 
-  const user = null;
+  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
 
   const [onOpenModal, setOnOpenModal] = useState(false);
 
-  const { setClasses } = useContext(ClassContext);
+  const { setCourse } = useContext(CourseContext);
 
   useEffect(() => {
     if (data) {
-      setClasses(data);
+      setCourse(data);
     }
   });
 
@@ -32,9 +34,9 @@ const ClassesHeader = ({ data }: { data: any }) => {
       <div className="sticky top-0 right-0 bg-white z-10 border-t-[1px] flex gap-3 justify-between items-center px-6 border-b">
         <div className="flex items-center">
           <Link
-            href={`/classes/${data.classId}`}
+            href={`/course/${data.courseId}`}
             className={`${
-              newPath === `/${data.classId}`
+              newPath === `/${data.courseId}`
                 ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
                 : ''
             } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
@@ -42,9 +44,9 @@ const ClassesHeader = ({ data }: { data: any }) => {
             Bảng tin
           </Link>
           <Link
-            href={`/classes/${data.classId}/assignments`}
+            href={`/course/${data.courseId}/assignments`}
             className={`${
-              pathname.includes(`/classes/${data.classId}/assignments`)
+              pathname.includes(`/course/${data.courseId}/assignments`)
                 ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
                 : ''
             } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
@@ -52,7 +54,7 @@ const ClassesHeader = ({ data }: { data: any }) => {
             Bài tập trên lớp
           </Link>
           <Link
-            href={`/classes/${data.classId}/people`}
+            href={`/course/${data.courseId}/people`}
             className={`${
               newPath === '/people'
                 ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
@@ -64,7 +66,7 @@ const ClassesHeader = ({ data }: { data: any }) => {
           {user?.id === data.teacherId && (
             <>
               <Link
-                href={`/classes/${data.classId}/score`}
+                href={`/course/${data.courseId}/score`}
                 className={`${
                   newPath === '/score'
                     ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
@@ -74,7 +76,7 @@ const ClassesHeader = ({ data }: { data: any }) => {
                 Điểm
               </Link>
               <Link
-                href={`/classes/${data.classId}/attendance`}
+                href={`/course/${data.courseId}/attendance`}
                 className={`${
                   newPath === '/attendance'
                     ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
@@ -124,9 +126,9 @@ const ClassesHeader = ({ data }: { data: any }) => {
         </TooltipProvider>
       </div>
 
-      <ClassOptionModal onOpenModal={onOpenModal} setOnOpenModal={setOnOpenModal} />
+      <CourseOptionModal onOpenModal={onOpenModal} setOnOpenModal={setOnOpenModal} />
     </>
   );
 };
 
-export default ClassesHeader;
+export default CourseHeader;

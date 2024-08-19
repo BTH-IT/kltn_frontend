@@ -4,7 +4,7 @@ import React, { useContext } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Button from '@/components/common/Button';
-import classService from '@/services/courseService';
+import courseService from '@/services/courseService';
 import { CoursesContext } from '@/contexts/CoursesContext';
 
 const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
@@ -18,13 +18,13 @@ const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
       onClick={async () => {
         try {
           setLoading(true);
-          const res = await classService.addStudentToClassByInviteCode(inviteCode);
+          const res = await courseService.addStudentToClassByInviteCode(inviteCode);
 
           if (res.data) {
             setLoading(false);
 
             setenrolledCourses([...enrolledCourses, res.data]);
-            return router.replace(`/classes/${res.data.classId}`);
+            return router.replace(`/course/${res.data.classId}`);
           }
         } catch (error) {
           console.error('Error adding student to class:', error);

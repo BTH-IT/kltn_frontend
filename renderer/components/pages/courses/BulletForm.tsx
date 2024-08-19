@@ -22,8 +22,8 @@ import { CoursesContext } from '@/contexts/CoursesContext';
 import announcementService from '@/services/announcementService';
 import uploadService from '@/services/uploadService';
 import userService from '@/services/userService';
-import { IAnnouncement, ICourse, MetaLinkData } from '@/types';
-import { formatDuration, getFileType } from '@/utils';
+import { IAnnouncement, ICourse, IUser, MetaLinkData } from '@/types';
+import { formatDuration, getFileType, KEY_LOCALSTORAGE } from '@/utils';
 import { cn } from '@/libs/utils';
 
 import AnnouncementFileList from './AnnoucementFileList';
@@ -33,15 +33,16 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const BulletForm = ({
   setIsPost,
-  classes,
+  course,
   setAnnouncements,
 }: {
   setIsPost: React.Dispatch<React.SetStateAction<boolean>>;
-  classes: ICourse | null;
+  course: ICourse | null;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
   const { toast } = useToast();
-  const { user } = useUser();
+  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -51,10 +52,10 @@ const BulletForm = ({
   const { control, handleSubmit, reset, formState } = useForm();
   const { createdCourses } = useContext(CoursesContext);
   const [mentionOptionSelected, setMentionOptionSelected] = useState<Option[] | null>(null);
-  const [classOptionSelected, setClassOptionSelected] = useState<Option[] | null>([
+  const [courseOptionSelected, setCourseOptionSelected] = useState<Option[] | null>([
     {
-      label: classes?.name ?? '',
-      value: classes?.classId ?? '',
+      label: course?.courseGroup ?? '',
+      value: course?.courseId ?? '',
       default: true,
     },
   ]);
@@ -149,23 +150,23 @@ const BulletForm = ({
     setFiles(updatedFiles);
   };
 
-  const classHandleChange = useCallback(
+  const courseHandleChange = useCallback(
     (selected: Option[]) => {
       if (!selected.some((opt) => opt.default === true)) {
-        setClassOptionSelected([
+        setCourseOptionSelected([
           {
-            label: classes?.name ?? '',
-            value: classes?.classId ?? '',
+            label: course?.courseGroup ?? '',
+            value: course?.courseId ?? '',
             default: true,
           },
           ...selected,
         ]);
-      } else setClassOptionSelected(selected);
+      } else setCourseOptionSelected(selected);
       if (selected.length > 1) {
         setMentionOptionSelected(null);
       }
     },
-    [classes],
+    [course],
   );
 
   const mentionHandleChange = useCallback((selected: Option[]) => {
@@ -188,38 +189,39 @@ const BulletForm = ({
   };
 
   const onSubmit = async (values: any) => {
-    if (!user?.id || !classes?.classId) return;
+    if (!user?.id || !course?.classId) return;
 
     try {
       const resAttachments = await uploadService.uploadMultipleFileWithAWS3(files);
 
       const res = await announcementService.createAnnouncement({
         content: values.content,
-        classId: classes.classId,
+        courseId: course.courseId,
         userId: user.id,
         attachedLinks: JSON.stringify(links),
         attachments: JSON.stringify(resAttachments),
-        mentions: JSON.stringify(
-          mentionOptionSelected && mentionOptionSelected.length !== classes.students.length
-            ? mentionOptionSelected?.map((opt) => opt.value)
-            : ['all'],
-        ),
+        // mentions: JSON.stringify(
+        //   mentionOptionSelected &&
+        //     mentionOptionSelected.length !== course.students.length
+        //     ? mentionOptionSelected?.map((opt) => opt.value)
+        //     : ['all']
+        // ),
       });
 
       let announceCount = 1;
 
-      if (classOptionSelected) {
+      if (courseOptionSelected) {
         await Promise.all(
-          classOptionSelected.map(async (opt) => {
+          courseOptionSelected.map(async (opt) => {
             console.log(opt.value);
-            if (opt.value !== classes.classId) {
+            if (opt.value !== course.courseId) {
               const res = await announcementService.createAnnouncement({
                 content: values.content,
-                classId: String(opt.value),
+                courseId: String(opt.value),
                 userId: user.id,
                 attachedLinks: JSON.stringify(links),
                 attachments: JSON.stringify(resAttachments),
-                mentions: JSON.stringify(['all']),
+                // mentions: JSON.stringify(['all']),
               });
               if (res.data) {
                 announceCount++;
@@ -251,8 +253,8 @@ const BulletForm = ({
       ?.map((c) => {
         return {
           label: c.name,
-          value: c.classId,
-          default: c.classId === classes?.classId,
+          value: c.courseId,
+          default: c.courseId === course?.courseId,
         };
       })
       .sort((a, b) => {
@@ -260,39 +262,47 @@ const BulletForm = ({
         if (b.default) return 1;
         return 0;
       });
-  }, [createdCourses, classes]);
+  }, [createdCourses, course]);
 
   const generateMentionOptions = useCallback(() => {
-    return classes?.students.map((student) => {
+    // return course?.students.map((student) => {
+    //   return {
+    //     image: student.avatarUrl,
+    //     label: student.name,
+    //     value: student.userId,
+    //   };
+    // });
+
+    return [].map((student) => {
       return {
-        image: student.avatarUrl,
-        label: student.name,
-        value: student.userId,
+        image: '',
+        label: 'student.name',
+        value: 'student.userId',
       };
     });
-  }, [classes]);
+  }, [course]);
 
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 p-4">
         <div className="flex flex-col gap-4 px-3">
-          {user?.id === classes?.teacherId && (
+          {user?.id === course?.lecturerId && (
             <div className="flex items-center gap-10">
               <div>
                 <div className="mb-2 font-medium">Đăng trong</div>
                 <MultiSelectClassroom
                   options={generateClassOptions()}
-                  onChange={classHandleChange}
-                  value={classOptionSelected}
+                  onChange={courseHandleChange}
+                  value={courseOptionSelected}
                   isSelectAll={true}
                   menuPlacement={'bottom'}
                   className="w-[300px]"
                 />
               </div>
-              <div className={cn('', (classOptionSelected?.length ?? 0) > 1 && 'hidden')}>
+              <div className={cn('', (courseOptionSelected?.length ?? 0) > 1 && 'hidden')}>
                 <div className="mb-2 font-medium">Dành cho</div>
                 <MultiSelectPeople
-                  isDisabled={(classOptionSelected?.length ?? 0) > 1}
+                  isDisabled={(courseOptionSelected?.length ?? 0) > 1}
                   options={generateMentionOptions()}
                   onChange={mentionHandleChange}
                   value={mentionOptionSelected}
@@ -398,11 +408,11 @@ const BulletForm = ({
               <Button
                 type="submit"
                 disabled={
-                  user?.id === classes?.teacherId &&
+                  user?.id === course?.courseId &&
                   (formState.isSubmitting ||
-                    !(classOptionSelected !== null && classOptionSelected?.length > 0) ||
+                    !(courseOptionSelected !== null && courseOptionSelected?.length > 0) ||
                     !(
-                      classOptionSelected.length > 1 ||
+                      courseOptionSelected.length > 1 ||
                       (mentionOptionSelected !== null && mentionOptionSelected?.length > 0)
                     ))
                 }
