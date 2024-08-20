@@ -6,4 +6,5 @@ export interface ISubject extends IBaseModel {
   description: string;
   startDate: Date;
   endDate: Date;
+  subjectCode: string;
 }

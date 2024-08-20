@@ -12,7 +12,7 @@ export interface ICourse {
   createdAt: string;
   updatedAt: string | null;
   deletedAt: string | null;
-  subjectName: string;
-  semesterName: string;
-  lecturerName: string;
+  subject?: any;
+  lecturer?: any;
+  semester?: any;
 }
