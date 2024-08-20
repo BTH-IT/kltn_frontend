@@ -1,20 +1,18 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import nprogress from 'nprogress';
 import { useRouter } from 'next/navigation';
-import 'nprogress/nprogress.css';
 
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import uploadService from '@/services/uploadService';
-import classService from '@/services/courseService';
 import { ICourse } from '@/types';
+import courseService from '@/services/courseService';
 
 import UploadComponent from '../common/UploadComponent';
 
-const ClassPersonalizeModal = ({ children, data }: { children: React.ReactNode; data: ICourse }) => {
+const CoursePersonalizeModal = ({ children, data }: { children: React.ReactNode; data: ICourse }) => {
   const { toast } = useToast();
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
@@ -30,7 +28,7 @@ const ClassPersonalizeModal = ({ children, data }: { children: React.ReactNode; 
   }, [file, uploadedImageUrl]);
 
   useEffect(() => {
-    setUploadedImageUrl(data.background);
+    setUploadedImageUrl(data.background || '');
     setSelectedImageUrl(data.background || '');
   }, [data]);
 
@@ -45,12 +43,10 @@ const ClassPersonalizeModal = ({ children, data }: { children: React.ReactNode; 
   const handleUpload = async () => {
     if (!file) return;
 
-    nprogress.start(); // Start the progress bar
-
     try {
       const url = await uploadService.uploadFile(file);
 
-      await classService.updateClass(String(data.classId), {
+      await courseService.updateCourse(String(data.classId), {
         ...data,
         background: url,
       });
@@ -65,8 +61,6 @@ const ClassPersonalizeModal = ({ children, data }: { children: React.ReactNode; 
       router.refresh();
     } catch (error) {
       console.error('Upload failed', error);
-    } finally {
-      nprogress.done(); // End the progress bar
     }
   };
 
@@ -87,4 +81,4 @@ const ClassPersonalizeModal = ({ children, data }: { children: React.ReactNode; 
   );
 };
 
-export default ClassPersonalizeModal;
+export default CoursePersonalizeModal;

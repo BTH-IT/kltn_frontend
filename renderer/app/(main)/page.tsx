@@ -1,36 +1,27 @@
-'use client';
-
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import Image from 'next/image';
 
 import Loading from '@/components/loading/loading';
-import withPermission from '@/libs/hoc/withPermission';
-import CreateClassModal from '@/components/modals/CreateClassModal';
+import CreateCourseModal from '@/components/modals/CreateCourseModal';
 import { Button } from '@/components/ui/button';
 import { ICourse } from '@/types';
-import courseService from '@/services/courseService';
 import CourseCard from '@/components/common/CourseCard';
 import JoinClassModal from '@/components/modals/JoinClassModal';
+import { API_URL } from '@/constants/endpoints';
+import http from '@/libs/http';
 
 const HomePage = async () => {
-  const [coursesCreated, setCoursesCreated] = useState<ICourse[]>([]);
-  const [coursesEnrolled, setCoursesEnrolled] = useState<ICourse[]>([]);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const res = await courseService.getCoursesByUser();
-
-      setCoursesCreated(res.data.createdCourses);
-      setCoursesEnrolled(res.data.enrolledCourses);
-    };
-
-    fetchCourses();
-  }, []);
+  const {
+    payload: { data: courses },
+  } = await http.get<{
+    createdCourses: ICourse[];
+    enrolledCourses: ICourse[];
+  }>(`${API_URL.ACCOUNTS}${API_URL.COURSES}`);
 
   return (
     <>
       <Suspense fallback={<Loading />}>
-        {coursesCreated.length == 0 && coursesEnrolled.length == 0 ? (
+        {courses.createdCourses.length == 0 && courses.enrolledCourses.length == 0 ? (
           <div className="flex pt-32">
             <div className="flex flex-col flex-1">
               <div className="flex items-center justify-center flex-1">
@@ -44,11 +35,11 @@ const HomePage = async () => {
                   />
                   <p className="mb-4">Thêm một lớp học để bắt đầu</p>
                   <div>
-                    <CreateClassModal>
+                    <CreateCourseModal>
                       <Button variant="secondary2" className="px-4 py-2 mr-2">
                         Tạo lớp học
                       </Button>
-                    </CreateClassModal>
+                    </CreateCourseModal>
                     <JoinClassModal>
                       <Button variant="primary" className="px-4 py-2">
                         Tham gia lớp học
@@ -61,7 +52,7 @@ const HomePage = async () => {
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-4 p-6">
-            {[...coursesCreated, ...coursesEnrolled].map((item) => (
+            {[...courses.createdCourses, ...courses.enrolledCourses].map((item) => (
               <CourseCard key={item.courseId} item={item} />
             ))}
           </div>
@@ -71,4 +62,4 @@ const HomePage = async () => {
   );
 };
 
-export default withPermission(HomePage);
+export default HomePage;

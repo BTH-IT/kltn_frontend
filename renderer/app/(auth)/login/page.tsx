@@ -39,8 +39,15 @@ export default withPermission(() => {
     try {
       const res: any = await authService.login(values);
       SET_LOCALSTORAGE(res.data);
+      await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(res.data),
+      });
       router.push('/');
-      toast.error('Success: login');
+      toast.success('Success: login');
     } catch (error) {
       toast.error("Error: Can't login");
     }

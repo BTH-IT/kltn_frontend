@@ -26,7 +26,7 @@ export interface MetaLinkData {
 }
 
 export interface IBaseModel {
-  CreatedAt: Date;
-  UpdatedAt: Date;
-  DeletedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 }

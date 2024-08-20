@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
-import { ClassContext } from '@/contexts/ClassContext';
+import { CourseContext } from '@/contexts/CourseContext';
 import { CoursesContext } from '@/contexts/CoursesContext';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
@@ -26,12 +26,12 @@ import MultiSelectPeople, { Option } from '../common/MultiSelectPeople';
 import AssignmentForm from '../forms/AssignmentForm';
 
 const AssignmentDocsModal = ({
-  classes,
+  course,
   onOpenModal,
   setOnOpenModal,
   setAssignments,
 }: {
-  classes: ICourse | null;
+  course: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignments: React.Dispatch<React.SetStateAction<IAssignment[]>>;
@@ -46,16 +46,16 @@ const AssignmentDocsModal = ({
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
-    if (classes) {
+    if (course) {
       setClassOptionSelected([
         {
-          label: classes?.name ?? '',
-          value: classes?.classId ?? '',
+          label: course?.name ?? '',
+          value: course?.classId ?? '',
           default: true,
         },
       ]);
     }
-  }, [classes]);
+  }, [course]);
 
   const [links, setLinks] = useState<MetaLinkData[]>([]);
 
@@ -68,8 +68,8 @@ const AssignmentDocsModal = ({
       if (!selected.some((opt) => opt.default === true)) {
         setClassOptionSelected([
           {
-            label: classes?.name ?? '',
-            value: classes?.classId ?? '',
+            label: course?.name ?? '',
+            value: course?.classId ?? '',
             default: true,
           },
           ...selected,
@@ -79,18 +79,18 @@ const AssignmentDocsModal = ({
         setStudentSelected(null);
       }
     },
-    [classes],
+    [course],
   );
 
   const generateStudentOptions = useCallback(() => {
-    return classes?.students.map((student) => {
+    return course?.students.map((student) => {
       return {
         image: student.avatarUrl,
         value: student.userId,
         label: student.name,
       };
     });
-  }, [classes]);
+  }, [course]);
 
   const generateClassOptions = useCallback(() => {
     return createdCourses
@@ -98,7 +98,7 @@ const AssignmentDocsModal = ({
         return {
           label: c.name,
           value: c.classId,
-          default: c.classId === classes?.classId,
+          default: c.classId === course?.classId,
         };
       })
       .sort((a, b) => {
@@ -106,7 +106,7 @@ const AssignmentDocsModal = ({
         if (b.default) return 1;
         return 0;
       });
-  }, [createdCourses, classes]);
+  }, [createdCourses, course]);
 
   const FormSchema = z.object({
     title: z.string().min(1, {
@@ -161,13 +161,13 @@ const AssignmentDocsModal = ({
   };
 
   const onSubmit = async (values: z.infer<typeof FormSchema>): Promise<void> => {
-    if (!classes) return;
+    if (!course) return;
 
     try {
-      const mainClassId = classes.classId;
+      const mainClassId = course.classId;
       let assignmentCount = 0;
 
-      const createAssignmentsForClasses = async () => {
+      const createAssignmentsForcourse = async () => {
         const classIds = classOptionSelected?.map((opt) => opt.value.toString()) || [];
         const uniqueClassIds = new Set([mainClassId, ...classIds]);
 
@@ -184,7 +184,7 @@ const AssignmentDocsModal = ({
         );
       };
 
-      await createAssignmentsForClasses();
+      await createAssignmentsForcourse();
 
       toast({
         title: `Đã đăng (${assignmentCount}) tài liệu thành công`,

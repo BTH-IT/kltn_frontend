@@ -9,7 +9,7 @@ interface SidebarItemClassProps {
 }
 
 const SidebarItemClass: React.FC<SidebarItemClassProps> = ({ label, subLabel, href, isActive }) => {
-  const classes = `w-fill tracking-wide py-2 pr-2 pl-6 flex items-center cursor-pointer  ${
+  const course = `w-fill tracking-wide py-2 pr-2 pl-6 flex items-center cursor-pointer  ${
     isActive ? 'bg-sky-100 rounded-r-full' : 'hover:bg-gray-100 rounded-r-full'
   }`;
 
@@ -22,7 +22,7 @@ const SidebarItemClass: React.FC<SidebarItemClassProps> = ({ label, subLabel, hr
 
   return (
     <>
-      <li className={classes}>
+      <li className={course}>
         <Link className="flex gap-3 w-fill" href={href}>
           <div className="flex flex-shrink-0 justify-center items-center w-9">{icon}</div>
           <div

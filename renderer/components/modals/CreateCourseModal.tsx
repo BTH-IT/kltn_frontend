@@ -18,7 +18,7 @@ import courseService from '@/services/courseService';
 import { API_URL } from '@/constants/endpoints';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 
-const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
+const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const { subjects } = useContext(CreateSubjectContext);
@@ -144,4 +144,4 @@ const CreateClassModal = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default CreateClassModal;
+export default CreateCourseModal;

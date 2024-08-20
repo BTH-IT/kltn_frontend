@@ -47,7 +47,7 @@ const AssignmentAccordion = ({
   const handleCopyLinkClick = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${process.env.NEXT_PUBLIC_URL}/classes/${assignment.classId}/assignments/${assignment.assignmentId}`,
+        `${process.env.NEXT_PUBLIC_URL}/course/${assignment.classId}/assignments/${assignment.assignmentId}`,
       );
       toast({
         title: 'Đã sao chép link bài tập',
@@ -125,7 +125,9 @@ const AssignmentAccordion = ({
           <div className="flex flex-col gap-4 pl-5 pr-8 pb-5">
             <div className="flex items-center justify-between text-sm">
               <div className="text-gray-500">
-                {`Đã đăng vào ${formatVNDate(assignment.createdAt, false)} ${assignment.updatedAt != assignment.createdAt ? `(Đã chỉnh sửa ${assignment.updatedAt})` : ''}`}
+                {`Đã đăng vào ${formatVNDate(assignment.createdAt, false)} ${
+                  assignment.updatedAt != assignment.createdAt ? `(Đã chỉnh sửa ${assignment.updatedAt})` : ''
+                }`}
               </div>
               <div className="text-green-600">Đã giao</div>
             </div>
@@ -137,7 +139,7 @@ const AssignmentAccordion = ({
           </div>
           <div className="pt-5 px-3 border-t-[1px]">
             <Link
-              href={`/classes/${assignment.classId}/assignments/${assignment.assignmentId}`}
+              href={`/course/${assignment.classId}/assignments/${assignment.assignmentId}`}
               className="font-medium p-3 text-blue-600 hover:text-blue-800 hover:bg-blue-100/30 transition-all duration-300 ease-in-out rounded-md text-center"
             >
               {type === 'document' ? 'Xem tài liệu' : 'Xem Hướng dẫn'}

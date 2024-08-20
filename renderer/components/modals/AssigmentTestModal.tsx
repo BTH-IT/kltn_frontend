@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
-import { ClassContext } from '@/contexts/ClassContext';
+import { CourseContext } from '@/contexts/CourseContext';
 import { CoursesContext } from '@/contexts/CoursesContext';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
@@ -27,12 +27,12 @@ import AssignmentForm from '../forms/AssignmentForm';
 import Loading from '../loading/loading';
 
 const AssignmentTestModal = ({
-  classes,
+  course,
   onOpenModal,
   setOnOpenModal,
   setAssignments,
 }: {
-  classes: ICourse | null;
+  course: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignments: React.Dispatch<React.SetStateAction<IAssignment[]>>;
@@ -51,8 +51,8 @@ const AssignmentTestModal = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (classes) {
-      const scoreCols = JSON.parse(classes?.scoreStructure)
+    if (course) {
+      const scoreCols = JSON.parse(course?.scoreStructure)
         .filter((item: any) => !(item.divideColumnFirst && item.divideColumnFirst.length > 0))
         .sort((a: any, b: any) => a.columnName.localeCompare(b.columnName));
 
@@ -60,13 +60,13 @@ const AssignmentTestModal = ({
 
       setClassOptionSelected([
         {
-          label: classes?.name ?? '',
-          value: classes?.classId ?? '',
+          label: course?.name ?? '',
+          value: course?.classId ?? '',
           default: true,
         },
       ]);
     }
-  }, [classes]);
+  }, [course]);
 
   const [links, setLinks] = useState<MetaLinkData[]>([]);
 
@@ -79,8 +79,8 @@ const AssignmentTestModal = ({
       if (!selected.some((opt) => opt.default === true)) {
         setClassOptionSelected([
           {
-            label: classes?.name ?? '',
-            value: classes?.classId ?? '',
+            label: course?.name ?? '',
+            value: course?.classId ?? '',
             default: true,
           },
           ...selected,
@@ -90,18 +90,18 @@ const AssignmentTestModal = ({
         setStudentSelected(null);
       }
     },
-    [classes],
+    [course],
   );
 
   const generateStudentOptions = useCallback(() => {
-    return classes?.students.map((student) => {
+    return course?.students.map((student) => {
       return {
         image: student.avatarUrl,
         value: student.userId,
         label: student.name,
       };
     });
-  }, [classes]);
+  }, [course]);
 
   const generateClassOptions = useCallback(() => {
     return createdCourses
@@ -109,7 +109,7 @@ const AssignmentTestModal = ({
         return {
           label: c.name,
           value: c.classId,
-          default: c.classId === classes?.classId,
+          default: c.classId === course?.classId,
         };
       })
       .sort((a, b) => {
@@ -117,7 +117,7 @@ const AssignmentTestModal = ({
         if (b.default) return 1;
         return 0;
       });
-  }, [createdCourses, classes]);
+  }, [createdCourses, course]);
 
   const FormSchema = z.object({
     title: z.string().min(1, {
@@ -178,13 +178,13 @@ const AssignmentTestModal = ({
   };
 
   const onSubmit = async (values: z.infer<typeof FormSchema>): Promise<void> => {
-    if (!classes) return;
+    if (!course) return;
 
     try {
-      const mainClassId = classes.classId;
+      const mainClassId = course.classId;
       let assignmentCount = 0;
 
-      const createAssignmentsForClasses = async () => {
+      const createAssignmentsForcourse = async () => {
         const classIds = classOptionSelected?.map((opt) => opt.value.toString()) || [];
         const uniqueClassIds = new Set([mainClassId, ...classIds]);
 
@@ -201,7 +201,7 @@ const AssignmentTestModal = ({
         );
       };
 
-      await createAssignmentsForClasses();
+      await createAssignmentsForcourse();
 
       toast({
         title: `Đã đăng (${assignmentCount}) bài tập thành công`,

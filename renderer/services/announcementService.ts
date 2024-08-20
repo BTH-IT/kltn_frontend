@@ -13,7 +13,7 @@ const announcementService = {
   },
 
   createAnnouncement(
-    announcementData: Omit<IAnnouncement, 'announcementId' | 'pin' | 'user' | 'comments' | 'createdAt' | 'updatedAt'>,
+    announcementData: Omit<IAnnouncement, 'announcementId' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'pin'>,
   ): Promise<ApiResponse<IAnnouncement>> {
     return configService.post(`${API_URL.ANNOUNCEMENTS}`, announcementData);
   },

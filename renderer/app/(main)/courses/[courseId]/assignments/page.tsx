@@ -13,18 +13,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ClassContext } from '@/contexts/ClassContext';
+import { CourseContext } from '@/contexts/CourseContext';
 import AssignmentHmWorkModal from '@/components/modals/AssigmentHmWorkModal';
 import AssignmentDocsModal from '@/components/modals/AssignmentDocsModal';
 import AssignmentTestModal from '@/components/modals/AssigmentTestModal';
-import AssignmentList from '@/components/pages/classes/assignment/AssignmentList';
+import AssignmentList from '@/components/pages/courses/assignment/AssignmentList';
 import Loading from '@/components/loading/loading';
 import { IAssignment } from '@/types';
 import assignmentService from '@/services/assignmentService';
 import { cn } from '@/libs/utils';
 
 const AssignmentPage = () => {
-  const { classes } = useContext(ClassContext);
+  const { course } = useContext(CourseContext);
 
   const [onOpenAssignModal, setOnOpenAssignModal] = useState(false);
   const [onOpenTestModal, setOnOpenTestModal] = useState(false);
@@ -37,11 +37,11 @@ const AssignmentPage = () => {
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        if (classes && user) {
-          if (user?.id === classes.teacherId) {
-            setAssignments(classes.assignments);
+        if (course && user) {
+          if (user?.id === course.teacherId) {
+            setAssignments(course.assignments);
           } else {
-            const res = await assignmentService.getAssignmentsByUserId(classes.classId, user?.id);
+            const res = await assignmentService.getAssignmentsByUserId(course.classId, user?.id);
             if (res.data) {
               setAssignments(res.data);
             }
@@ -55,7 +55,7 @@ const AssignmentPage = () => {
     };
 
     fetchAssignments();
-  }, [classes, user]);
+  }, [course, user]);
 
   console.log(assignments);
 
@@ -110,7 +110,7 @@ const AssignmentPage = () => {
             <AssignmentList
               assignments={assignments}
               setAssignments={setAssignments}
-              isTeacher={user?.id === classes?.teacherId}
+              isTeacher={user?.id === course?.teacherId}
             />
           ) : (
             <div className="flex flex-col gap-2 justify-center items-center mt-[135px] text-primaryGray">
@@ -128,19 +128,19 @@ const AssignmentPage = () => {
             </div>
           )}
           <AssignmentHmWorkModal
-            classes={classes}
+            course={course}
             onOpenModal={onOpenAssignModal}
             setOnOpenModal={setOnOpenAssignModal}
             setAssignments={setAssignments}
           />
           <AssignmentTestModal
-            classes={classes}
+            course={course}
             onOpenModal={onOpenTestModal}
             setOnOpenModal={setOnOpenTestModal}
             setAssignments={setAssignments}
           />
           <AssignmentDocsModal
-            classes={classes}
+            course={course}
             onOpenModal={onOpenDocsModal}
             setOnOpenModal={setOnOpenDocsModal}
             setAssignments={setAssignments}

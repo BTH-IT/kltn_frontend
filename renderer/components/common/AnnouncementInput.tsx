@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { IAnnouncement, ICourse } from '@/types';
 
-import BulletinInput from '../pages/classes/BulletinInput';
+import BulletinInput from '../pages/course/BulletinInput';
 
 import AnnouncementList from './AnnouncementList';
 
@@ -17,8 +17,8 @@ const AnnouncementInput = ({ course }: { course: ICourse | null }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <BulletinInput classes={course} setAnnouncements={setAnnouncements} />
-      <AnnouncementList announcements={announcements} setAnnouncements={setAnnouncements} classes={course} />
+      <BulletinInput course={course} setAnnouncements={setAnnouncements} />
+      <AnnouncementList announcements={announcements} setAnnouncements={setAnnouncements} course={course} />
     </div>
   );
 };

@@ -11,11 +11,11 @@ import { cn } from '@/libs/utils';
 const ShowCodeModal = ({
   children,
   invCode,
-  classesName,
+  courseName,
 }: {
   children: React.ReactNode;
   invCode: string;
-  classesName: string;
+  courseName: string;
 }) => {
   const { toast } = useToast();
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -51,9 +51,9 @@ const ShowCodeModal = ({
         >
           {invCode}
         </div>
-        <div className="flex justify-between items-center text-blue-600">
-          <div className="font-medium">{classesName}</div>
-          <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between text-blue-600">
+          <div className="font-medium">{courseName}</div>
+          <div className="flex items-center justify-between">
             <Button
               onClick={() => handleCopyInvCodeClick()}
               variant="ghost"

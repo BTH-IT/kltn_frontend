@@ -8,11 +8,11 @@ import announcementService from '@/services/announcementService';
 import AnnouncementItem from './AnnouncementItem';
 
 const AnnouncementList = ({
-  classes,
+  course,
   announcements,
   setAnnouncements,
 }: {
-  classes: ICourse | null;
+  course: ICourse | null;
   announcements: IAnnouncement[];
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
@@ -33,7 +33,7 @@ const AnnouncementList = ({
 
   const handleRemove = async (id: string) => {
     try {
-      await announcementService.deleteAnnouncement(classes?.classId ?? '', id);
+      await announcementService.deleteAnnouncement(course?.classId ?? '', id);
 
       const newAnnouncements = announcements.filter((a) => a.announcementId !== id);
 
@@ -48,7 +48,7 @@ const AnnouncementList = ({
       {announcements.map((announcement: IAnnouncement, idx: any) => (
         <AnnouncementItem
           key={idx}
-          classes={classes}
+          course={course}
           announcement={announcement}
           handlePin={handlePin}
           handleRemove={handleRemove}

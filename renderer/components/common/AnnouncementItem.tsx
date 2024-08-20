@@ -26,13 +26,13 @@ import AnnouncementAttachList from './AnnouncementAttachList';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const AnnouncementItem = ({
-  classes,
+  course,
   announcement,
   handlePin,
   handleRemove,
   setAnnouncements,
 }: {
-  classes: ICourse | null;
+  course: ICourse | null;
   announcement: IAnnouncement;
   handlePin: (announcement: IAnnouncement) => void;
   handleRemove: (id: string) => void;
@@ -104,7 +104,7 @@ const AnnouncementItem = ({
           fullName={announcement.user?.name || ''}
           timestamp={announcement.createdAt}
           mentions={JSON.parse(announcement.mentions.toString() || '[]')}
-          students={classes?.students}
+          students={course?.students}
           dropdownMenu={
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -186,7 +186,7 @@ const AnnouncementItem = ({
       <EditAnnoucementModal
         isOpen={isEditModalOpen}
         setIsOpen={setIsEditModalOpen}
-        classes={classes}
+        course={course}
         announcement={announcement}
         setAnnouncements={setAnnouncements}
       />

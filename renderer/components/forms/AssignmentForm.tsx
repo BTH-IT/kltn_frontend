@@ -15,13 +15,13 @@ import { Controller } from 'react-hook-form';
 import { YoutubeCardProps } from '@/components/common/YoutubeCard';
 import AddLinkModal from '@/components/modals/AddLinkModal';
 import AddYoutubeLinkModal from '@/components/modals/AddYoutubeLinkModal';
-import AnnouncementFileList from '@/components/pages/classes/AnnoucementFileList';
-import AnnouncementLinkList from '@/components/pages/classes/AnnouncementLinkList';
+import AnnouncementFileList from '@/components/pages/courses/AnnoucementFileList';
+import AnnouncementLinkList from '@/components/pages/courses/AnnouncementLinkList';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { GOOGLE_FORM_TITLE } from '@/constants/common';
-import { ClassContext } from '@/contexts/ClassContext';
+import { CourseContext } from '@/contexts/CourseContext';
 import userService from '@/services/userService';
 import { MetaLinkData } from '@/types';
 import { formatDuration, getFileType } from '@/utils';
@@ -50,7 +50,7 @@ const AssignmentForm = ({
 }) => {
   const user = null;
 
-  const { classes } = useContext(ClassContext);
+  const { course } = useContext(CourseContext);
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);

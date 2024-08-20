@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 import { cn } from '@/libs/utils';
-import CreateClassModal from '@/components/modals/CreateClassModal';
+import CreateCourseModal from '@/components/modals/CreateCourseModal';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,7 +15,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { navigationItemList } from '@/constants/common';
-import { ClassContext } from '@/contexts/ClassContext';
+import { CourseContext } from '@/contexts/CourseContext';
 import { SidebarContext } from '@/contexts/SidebarContext';
 
 const NavigationHeader = () => {
@@ -23,7 +23,7 @@ const NavigationHeader = () => {
   const pathname = usePathname() ?? '';
   const path = pathname?.slice(1, pathname.length - 1);
 
-  const { classes } = useContext(ClassContext);
+  const { course } = useContext(CourseContext);
 
   const handleMenuClick = () => {
     setSidebar(!isShow);
@@ -63,7 +63,7 @@ const NavigationHeader = () => {
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="ml-2 text-xl text-black">
-                    {navigationItemList[path] ?? classes?.name}
+                    {navigationItemList[path] ?? course?.name}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -71,11 +71,11 @@ const NavigationHeader = () => {
           )}
         </div>
         <div className="flex items-center">
-          <CreateClassModal>
+          <CreateCourseModal>
             <button className={cn('mr-4 p-3 rounded-full hover:bg-gray-100', path === '' ? '' : 'hidden')}>
               <Plus />
             </button>
-          </CreateClassModal>
+          </CreateCourseModal>
           {/* dawdad */}
         </div>
       </div>

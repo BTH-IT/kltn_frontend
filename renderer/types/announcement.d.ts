@@ -1,4 +1,4 @@
-import { IBaseModel } from '.';
+import { IBaseModel, ICourse } from '.';
 
 export interface IAnnouncement extends IBaseModel {
   announcementId: string;
@@ -7,5 +7,8 @@ export interface IAnnouncement extends IBaseModel {
   content: string;
   attachedLinks?: any;
   createUser?: any;
-  course?: any;
+  course?: ICourse;
+  pin?: string;
+  attachments?: any;
+  attachedLinks?: any;
 }

@@ -24,8 +24,8 @@ import { YoutubeCardProps } from '@/components/common/YoutubeCard';
 import { formatDuration, getFileType } from '@/utils';
 import uploadService from '@/services/uploadService';
 import userService from '@/services/userService';
-import AnnouncementFileList from '@/components/pages/classes/AnnoucementFileList';
-import AnnouncementLinkList from '@/components/pages/classes/AnnouncementLinkList';
+import AnnouncementFileList from '@/components/pages/courses/AnnoucementFileList';
+import AnnouncementLinkList from '@/components/pages/courses/AnnouncementLinkList';
 
 import AnnouncementAttachList from '../common/AnnouncementAttachList';
 
@@ -34,13 +34,13 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 const EditAnnoucementModal = ({
   isOpen,
   setIsOpen,
-  classes,
+  course,
   announcement,
   setAnnouncements,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  classes: ICourse | null;
+  course: ICourse | null;
   announcement: IAnnouncement;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
@@ -60,7 +60,7 @@ const EditAnnoucementModal = ({
   useEffect(() => {
     if (JSON.parse(announcement.mentions)[0] === 'all') {
       setSelected(
-        classes?.students.map((student) => ({
+        course?.students.map((student) => ({
           value: student.userId,
           label: student.name,
           image: student.avatarUrl,
@@ -68,7 +68,7 @@ const EditAnnoucementModal = ({
       );
     } else {
       setSelected(
-        classes?.students
+        course?.students
           .filter((student) => announcement.mentions.includes(student.userId))
           .map((student) => ({ value: student.userId, label: student.name })) ?? [],
       );
@@ -76,7 +76,7 @@ const EditAnnoucementModal = ({
 
     setFileString(JSON.parse(announcement.attachedLinks || '[]'));
     setLinkString(JSON.parse(announcement.attachments || '[]'));
-  }, [announcement, classes, isOpen]);
+  }, [announcement, course, isOpen]);
 
   const handleOpenPicker = () => {
     gapi.load('client:auth2', () => {
@@ -187,7 +187,7 @@ const EditAnnoucementModal = ({
   };
 
   const onSubmit = async (values: any) => {
-    if (!user?.id || !classes?.classId) return;
+    if (!user?.id || !course?.classId) return;
 
     try {
       const resAttachments = await uploadService.uploadMultipleFileWithAWS3(files);
@@ -197,17 +197,17 @@ const EditAnnoucementModal = ({
         attachments: JSON.stringify(resAttachments),
         attachedLinks: JSON.stringify(links),
         pin: announcement.pin,
-        classId: classes.classId,
+        classId: course.classId,
         userId: user.id,
         mentions: JSON.stringify(
-          optionSelected && optionSelected.length !== classes.students.length
+          optionSelected && optionSelected.length !== course.students.length
             ? optionSelected?.map((opt) => opt.value)
             : ['all'],
         ),
       };
 
       const res = await announcementService.updateAnnouncement(
-        classes.classId,
+        course.classId,
         announcement.announcementId,
         announcementData,
       );
@@ -229,7 +229,7 @@ const EditAnnoucementModal = ({
     }
   };
 
-  const options = classes?.students.map((student) => {
+  const options = course?.students.map((student) => {
     return {
       image: student.avatarUrl,
       value: student.userId,

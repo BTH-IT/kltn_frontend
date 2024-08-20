@@ -4,15 +4,15 @@
 import React, { FormEvent, useContext, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import classService from '@/services/courseService';
-import { ClassContext } from '@/contexts/ClassContext';
+import courseService from '@/services/courseService';
+import { CourseContext } from '@/contexts/CourseContext';
 import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
 
 import ScoreStructureAccordion from './ScoreStructureAccordion';
 
 const ScoreStructureForm = () => {
   const { scoreStructures } = useContext(ScoreStructureContext);
-  const { classes, setClasses } = useContext(ClassContext);
+  const { course, setcourse } = useContext(CourseContext);
   const [error, setError] = useState<string | null>(null);
 
   const validatePercentages = () => {
@@ -41,13 +41,13 @@ const ScoreStructureForm = () => {
       return;
     }
 
-    if (!classes) return;
+    if (!course) return;
 
     try {
-      const res = await classService.updateClass(classes.classId, {
+      const res = await courseService.updateCourse(course.classId, {
         scoreStructure: JSON.stringify(scoreStructures),
       });
-      setClasses(res.data);
+      setcourse(res.data);
     } catch (error) {
       setError('Cập nhật lớp học thất bại. Vui lòng thử lại.');
     }

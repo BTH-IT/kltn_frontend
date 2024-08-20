@@ -2,18 +2,18 @@
 
 import React, { useContext } from 'react';
 
-import People from '@/components/pages/classes/People';
-import { ClassContext } from '@/contexts/ClassContext';
+import People from '@/components/pages/courses/People';
+import { CourseContext } from '@/contexts/CourseContext';
 
 const PeoplePage = () => {
-  const { classes } = useContext(ClassContext);
+  const { course } = useContext(CourseContext);
 
-  if (!classes) return <></>;
+  if (!course) return <></>;
 
   return (
     <>
-      {classes.teacher && <People isTeacher data={[classes.teacher]} classes={classes} />}
-      <People isTeacher={false} data={classes.students} classes={classes} />
+      {course.teacher && <People isTeacher data={[course.teacher]} course={course} />}
+      <People isTeacher={false} data={course.students} course={course} />
     </>
   );
 };
