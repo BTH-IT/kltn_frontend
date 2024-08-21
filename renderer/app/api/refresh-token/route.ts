@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { KEY_LOCALSTORAGE } from '@/utils';
 
 export async function POST(request: NextRequest) {
-  const { refreshToken } = await request.json();
+  const { refreshToken, token } = await request.json();
 
   const refreshResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/accounts/refresh-token`, {
     method: 'POST',
-    body: JSON.stringify({ refreshToken }),
+    body: JSON.stringify({ token, refreshToken }),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -36,6 +36,14 @@ export async function POST(request: NextRequest) {
     });
 
     response.cookies.set(KEY_LOCALSTORAGE.REFRESH_TOKEN, '', {
+      httpOnly: true,
+      secure: true,
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 0, // To delete the cookie
+    });
+
+    response.cookies.set(KEY_LOCALSTORAGE.CURRENT_USER, '', {
       httpOnly: true,
       secure: true,
       path: '/',

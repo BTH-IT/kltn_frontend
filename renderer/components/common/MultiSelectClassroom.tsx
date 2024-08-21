@@ -1,4 +1,6 @@
 /* eslint-disable no-unsafe-optional-chaining */
+'use client';
+
 import React, { useState, useRef } from 'react';
 import { default as ReactSelect, components, InputAction } from 'react-select';
 
@@ -13,7 +15,7 @@ const MultiSelectClassroom = (props: any) => {
   const isAllSelected = useRef<boolean>(false);
 
   const filterOptions = (options: Option[], input: string) =>
-    options?.filter(({ label }: Option) => label.toLowerCase().includes(input.toLowerCase()));
+    options?.filter(({ label }: Option) => label?.toLowerCase().includes(input.toLowerCase()));
 
   let filteredOptions = filterOptions(props.options, selectInput);
   let filteredSelectedOptions = filterOptions(props.value, selectInput);
@@ -40,8 +42,8 @@ const MultiSelectClassroom = (props: any) => {
             className="w-4 h-4 line-clamp-1"
           />
         )}
-        <div className="flex flex-row pt-1 gap-3 items-center ml-5">
-          <div className="flex justify-center items-center w-9 h-9 text-sm font-medium text-white uppercase bg-blue-500 rounded-full">
+        <div className="flex flex-row items-center gap-3 pt-1 ml-5">
+          <div className="flex items-center justify-center text-sm font-medium text-white uppercase bg-blue-500 rounded-full w-9 h-9">
             {props.value !== '*' ? props.label[0] ?? 'A' : 'All'}
           </div>
           <label className="line-clamp-1">{props.label}</label>
@@ -67,7 +69,7 @@ const MultiSelectClassroom = (props: any) => {
   );
 
   const customFilterOption = ({ value, label }: Option, input: string) =>
-    (value !== '*' && label.toLowerCase().includes(input.toLowerCase())) ||
+    (value !== '*' && label?.toLowerCase().includes(input.toLowerCase())) ||
     (value === '*' && filteredOptions?.length > 0);
 
   const onInputChange = (inputValue: string, event: { action: InputAction }) => {

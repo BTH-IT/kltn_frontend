@@ -17,7 +17,7 @@ const CourseHeader = ({ data }: { data: any }) => {
 
   const newPath = pathname.slice(pathname.lastIndexOf('/'));
 
-  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+  const [user, setUser] = useState<IUser | null>(null);
 
   const [onOpenModal, setOnOpenModal] = useState(false);
 
@@ -27,14 +27,16 @@ const CourseHeader = ({ data }: { data: any }) => {
     if (data) {
       setCourse(data);
     }
-  });
+    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+    setUser(user);
+  }, [data, setCourse]);
 
   return (
     <>
       <div className="sticky top-0 right-0 bg-white z-10 border-t-[1px] flex gap-3 justify-between items-center px-6 border-b">
         <div className="flex items-center">
           <Link
-            href={`/course/${data.courseId}`}
+            href={`/courses/${data.courseId}`}
             className={`${
               newPath === `/${data.courseId}`
                 ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
@@ -44,9 +46,9 @@ const CourseHeader = ({ data }: { data: any }) => {
             Bảng tin
           </Link>
           <Link
-            href={`/course/${data.courseId}/assignments`}
+            href={`/courses/${data.courseId}/assignments`}
             className={`${
-              pathname.includes(`/course/${data.courseId}/assignments`)
+              pathname.includes(`/courses/${data.courseId}/assignments`)
                 ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
                 : ''
             } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
@@ -54,7 +56,7 @@ const CourseHeader = ({ data }: { data: any }) => {
             Bài tập trên lớp
           </Link>
           <Link
-            href={`/course/${data.courseId}/people`}
+            href={`/courses/${data.courseId}/people`}
             className={`${
               newPath === '/people'
                 ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
@@ -63,10 +65,10 @@ const CourseHeader = ({ data }: { data: any }) => {
           >
             Mọi người
           </Link>
-          {user?.id === data.teacherId && (
+          {user?.id === data.lecturerId && (
             <>
               <Link
-                href={`/course/${data.courseId}/score`}
+                href={`/courses/${data.courseId}/score`}
                 className={`${
                   newPath === '/score'
                     ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
@@ -76,7 +78,7 @@ const CourseHeader = ({ data }: { data: any }) => {
                 Điểm
               </Link>
               <Link
-                href={`/course/${data.courseId}/attendance`}
+                href={`/courses/${data.courseId}/attendance`}
                 className={`${
                   newPath === '/attendance'
                     ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
@@ -110,7 +112,7 @@ const CourseHeader = ({ data }: { data: any }) => {
                 <p>Thư mục của lớp học</p>
               </TooltipContent>
             </Tooltip>
-            {user?.id === data.teacherId && (
+            {user?.id === data.lecturerId && (
               <>
                 <Tooltip>
                   <TooltipTrigger>

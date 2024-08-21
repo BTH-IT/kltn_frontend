@@ -1,147 +1,10 @@
-import { redirect } from 'next/navigation';
 /* eslint-disable no-undef */
-import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import { KEY_LOCALSTORAGE } from '@/utils';
-import { ApiResponse } from '@/types';
+import request from './actions';
 
-type CustomOptions = Omit<RequestInit, 'method'> & {
+export type CustomOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined;
-};
-
-export const normalizePath = (path: string) => {
-  return path.startsWith('/') ? path.slice(1) : path;
-};
-
-const ENTITY_ERROR_STATUS = 422;
-const AUTHENTICATION_ERROR_STATUS = 401;
-
-type EntityErrorPayload = {
-  message: string;
-  errors: {
-    field: string;
-    message: string;
-  }[];
-};
-
-export class HttpError extends Error {
-  status: number;
-  payload: {
-    message: string;
-    [key: string]: any;
-  };
-  constructor({ status, payload }: { status: number; payload: any }) {
-    super('Http Error');
-    this.status = status;
-    this.payload = payload;
-  }
-}
-
-export class EntityError extends HttpError {
-  status: 422;
-  payload: EntityErrorPayload;
-  constructor({ status, payload }: { status: 422; payload: EntityErrorPayload }) {
-    super({ status, payload });
-    this.status = status;
-    this.payload = payload;
-  }
-}
-
-const request = async <Response>(
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-  url: string,
-  options?: CustomOptions | undefined,
-): Promise<{ status: number; payload: ApiResponse<Response> }> => {
-  let body: FormData | string | undefined = undefined;
-  if (options?.body instanceof FormData) {
-    body = options.body;
-  } else if (options?.body) {
-    body = JSON.stringify(options.body);
-  }
-
-  const cookieStore = cookies();
-
-  const baseHeaders: { [key: string]: string } =
-    body instanceof FormData
-      ? {}
-      : {
-          'Content-Type': 'application/json',
-        };
-
-  const accessToken = cookieStore.get(KEY_LOCALSTORAGE.ACCESS_TOKEN)?.value;
-  if (accessToken) {
-    baseHeaders.Authorization = `Bearer ${accessToken}`;
-  }
-
-  const baseUrl = options?.baseUrl === undefined ? process.env.NEXT_PUBLIC_API_URL : process.env.NEXT_PUBLIC_API_URL;
-
-  const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
-
-  let res = await fetch(fullUrl, {
-    ...options,
-    headers: {
-      ...baseHeaders,
-      ...options?.headers,
-    } as any,
-    body,
-    method,
-  });
-
-  let payload: any = null;
-  const contentType = res.headers.get('content-type');
-  if (contentType && contentType.includes('application/json')) {
-    try {
-      payload = await res.json();
-    } catch (error) {
-      console.error('Error parsing JSON:', error);
-      throw new Error('Failed to parse JSON response');
-    }
-  }
-
-  let data = {
-    status: res.status,
-    payload,
-  };
-
-  if (!res.ok) {
-    if (res.status === ENTITY_ERROR_STATUS) {
-      throw new EntityError(
-        data as {
-          status: 422;
-          payload: EntityErrorPayload;
-        },
-      );
-    } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
-      await handleRefreshToken(cookieStore.get(KEY_LOCALSTORAGE.REFRESH_TOKEN)?.value);
-
-      // Retry original request after refreshing token
-      res = await fetch(fullUrl, {
-        ...options,
-        headers: {
-          ...baseHeaders,
-          ...options?.headers,
-        } as any,
-        body,
-        method,
-      });
-
-      payload = await res.json();
-      data = {
-        status: res.status,
-        payload,
-      };
-
-      if (!res.ok) {
-        throw new HttpError(data);
-      }
-
-      return data;
-    } else {
-      throw new HttpError(data);
-    }
-  }
-
-  return data;
 };
 
 const http = {
@@ -159,16 +22,14 @@ const http = {
   },
 };
 
-const handleRefreshToken = async (refreshToken: string | undefined) => {
+export const handleRefreshToken = async (token: string | undefined, refreshToken: string | undefined) => {
   try {
-    const res = await fetch('/api/refresh-token', {
+    const res = await fetch('http://localhost:8888/api/refresh-token', {
       method: 'POST',
+      body: JSON.stringify({ token, refreshToken }),
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        refreshToken,
-      }),
     });
 
     if (!res.ok) {

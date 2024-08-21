@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { IAnnouncement, ICourse } from '@/types';
 
-import BulletinInput from '../pages/course/BulletinInput';
+import BulletinInput from '../pages/courses/BulletinInput';
 
 import AnnouncementList from './AnnouncementList';
 
