@@ -1,3 +1,5 @@
+'use client';
+
 import { EllipsisVertical, UserRoundPlus, ChevronDown, ArrowDownAZ } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -31,7 +33,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
   const [selectedRemoveMany, setSelectedRemoveMany] = useState<IUser[]>([]);
   const [sortAscending, setSortAscending] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+  const [user, setUser] = useState<IUser | null>(null);
 
   const router = useRouter();
 
@@ -53,6 +55,10 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
         checked: false,
       })),
     );
+
+    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+
+    setUser(user);
   }, [data, setCheckedState]);
 
   const handleRemove = async (id: string) => {

@@ -1,3 +1,6 @@
+import { ISubject } from './subject';
+import { IUser } from './user';
+
 export interface ICourse {
   name: any;
   classId: any;
@@ -12,7 +15,8 @@ export interface ICourse {
   createdAt: string;
   updatedAt: string | null;
   deletedAt: string | null;
-  subject?: any;
-  lecturer?: any;
+  subject?: ISubject;
+  lecturer?: IUser;
   semester?: any;
+  students: IUser[];
 }

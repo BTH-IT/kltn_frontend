@@ -43,6 +43,8 @@ const CourseOptionModal = ({
   const router = useRouter();
   const { course } = useContext(CourseContext);
 
+  console.log(course);
+
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
@@ -50,7 +52,7 @@ const CourseOptionModal = ({
   const { subjects } = useContext(CreateSubjectContext);
 
   const FormSchema = z.object({
-    name: z.string().min(1, {
+    courseGroup: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
     }),
     subjectId: z
@@ -69,7 +71,7 @@ const CourseOptionModal = ({
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: '',
+      courseGroup: '',
       subjectId: { label: '', value: '' },
       enableInvite: 'true',
     },
@@ -77,14 +79,14 @@ const CourseOptionModal = ({
 
   useEffect(() => {
     if (course && course.subjectId) {
-      form.setValue('name', course.name);
+      form.setValue('courseGroup', course.courseGroup);
       form.setValue('subjectId', {
-        label: `${course.subjectId} - ${course.subjectName}`,
+        label: `${course.subject?.subjectCode} - ${course.subject?.name}`,
         value: course.subjectId,
       });
       form.setValue('enableInvite', String(course.enableInvite));
     }
-  }, [course, form]);
+  }, [course, onOpenModal, form]);
 
   const isLoading = hasSubmitted;
 
@@ -96,7 +98,7 @@ const CourseOptionModal = ({
 
       const data = {
         ...course,
-        name: values.name,
+        courseGroup: values.courseGroup,
         subjectId: values.subjectId.value,
         enableInvite: values.enableInvite === 'true',
       };
@@ -148,7 +150,7 @@ const CourseOptionModal = ({
     if (!course) return;
 
     try {
-      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/course/invite/${course.inviteCode}`);
+      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/courses/invite/${course.inviteCode}`);
       toast({
         title: 'Đã sao chép link mời tham gia lớp',
         variant: 'done',
@@ -192,7 +194,7 @@ const CourseOptionModal = ({
                     <div className="grid gap-4 py-4">
                       <FormField
                         control={form.control}
-                        name="name"
+                        name="courseGroup"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-xs font-bold uppercase">Tên lớp học</FormLabel>
@@ -279,7 +281,7 @@ const CourseOptionModal = ({
                       <div className="flex items-center justify-between">
                         <div className="font-medium">Đường liên kết mời</div>
                         <div className="flex items-center gap-1">
-                          <div className="text-sm">{`${process.env.NEXT_PUBLIC_URL}/course/invite/${course?.inviteCode}`}</div>
+                          <div className="text-sm">{`${process.env.NEXT_PUBLIC_URL}/courses/invite/${course?.inviteCode}`}</div>
                           <div
                             onClick={() => handleCopyInvLinkClick()}
                             className="flex items-center justify-center w-12 h-12 p-0 rounded-full cursor-pointer hover:bg-gray-100/60"
