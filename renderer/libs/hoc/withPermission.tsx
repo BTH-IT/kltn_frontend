@@ -4,6 +4,7 @@ import React, { ElementType, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Loading from '@/components/loading/loading';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 function withPermission(WrappedComponent: ElementType) {
   const PermissionComponent = (props: any) => {
@@ -11,8 +12,18 @@ function withPermission(WrappedComponent: ElementType) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-      const token = localStorage.getItem('access_token');
+      const cookies: { [key: string]: string } = document.cookie.split('; ').reduce(
+        (prev, current) => {
+          const [name, ...value] = current.split('=');
+          prev[name as string] = value.join('=');
+          return prev;
+        },
+        {} as { [key: string]: string },
+      );
+
+      const token = cookies[KEY_LOCALSTORAGE.ACCESS_TOKEN];
       setMounted(true);
+
       if (!token) {
         router.replace('/login');
       } else {

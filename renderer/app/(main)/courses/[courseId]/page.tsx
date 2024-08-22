@@ -34,7 +34,7 @@ export default async function CoursePage({ params }: { params: { courseId: strin
           <div className="absolute flex flex-col w-full gap-2 text-white bottom-4 left-4">
             <h2 className="text-3xl font-bold">{course.courseGroup}</h2>
             <p className="text-xl font-medium">
-              {course.subjectId} - {course.subjectName}
+              {course.subject?.subjectCode} - {course.subject?.name}
             </p>
           </div>
           {user?.id === course.lecturerId && (

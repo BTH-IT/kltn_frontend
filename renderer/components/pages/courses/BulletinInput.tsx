@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { RefreshCw } from 'lucide-react';
 
@@ -16,9 +16,13 @@ const BulletinInput = ({
   course: ICourse | null;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
-
+  const [user, setUser] = useState<IUser | null>(null);
   const [isPost, setIsPost] = useState(false);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+    setUser(user);
+  }, []);
 
   return (
     <div className="border rounded-md shadow">

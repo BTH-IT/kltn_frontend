@@ -2,13 +2,24 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import '@/styles/components/navigation/nav-sidebar.scss';
-import { House, Calendar, GraduationCap, Import, Settings, Users, FolderMinus, NotebookPen } from 'lucide-react';
+import {
+  House,
+  Calendar,
+  GraduationCap,
+  Import,
+  Settings,
+  Users,
+  FolderMinus,
+  NotebookPen,
+  LayoutDashboard,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Separator } from '@/components/ui/separator';
 import { API_URL } from '@/constants/endpoints';
 import { SidebarContext } from '@/contexts/SidebarContext';
 import { CoursesContext } from '@/contexts/CoursesContext';
+import { IUser } from '@/types';
 
 import SidebarItem from '../items/SidebarItem';
 import SidebarItemClass from '../items/SidebarItemClass';
@@ -23,11 +34,11 @@ const NavigationSidebar = () => {
   const path = pathname?.slice(1, pathname.length - 1);
 
   const [isMounted, setIsMounted] = useState(false);
-  // const [userData, setUserData] = useState<IUser | null>(null);
+  const [userData, setUserData] = useState<IUser | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
-    // setUserData(JSON.parse(localStorage.getItem('user') || ''));
+    setUserData(JSON.parse(localStorage.getItem('user') || '{}') as IUser);
   }, []);
 
   return (
@@ -56,7 +67,7 @@ const NavigationSidebar = () => {
                       <SidebarItemClass
                         key={item.courseId}
                         label={item.courseGroup}
-                        subLabel={item.subjectId}
+                        subLabel={item.subject?.subjectCode}
                         href={`${API_URL.COURSES}/${item.courseId}`}
                         isActive={`/${path}`.includes(`${API_URL.COURSES}/${item.courseId}`)}
                       />
@@ -76,7 +87,7 @@ const NavigationSidebar = () => {
                   <SidebarItemClass
                     key={item.courseId}
                     label={item.courseGroup}
-                    subLabel={item.subjectId}
+                    subLabel={item.subject?.subjectCode}
                     href={`${API_URL.COURSES}/${item.courseId}`}
                     isActive={`/${path}`.includes(`${API_URL.COURSES}/${item.courseId}`)}
                   />
@@ -94,13 +105,9 @@ const NavigationSidebar = () => {
             isActive={path === '/archived'}
           />
           <SidebarItem label="Cài đặt" icon={<Settings size={20} />} href="/settings" isActive={path === 'settings'} />
-          {/* {userData?.roleId === 1 && (
-            <SidebarItem
-              label='Trang Admin'
-              icon={<LayoutDashboard size={20} />}
-              href='/dashboard'
-            />
-          )} */}
+          {userData?.userType === 1 && (
+            <SidebarItem label="Trang Admin" icon={<LayoutDashboard size={20} />} href="/dashboard" />
+          )}
         </ul>
       </nav>
     )

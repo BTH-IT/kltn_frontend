@@ -12,7 +12,7 @@ const PeoplePage = () => {
 
   return (
     <>
-      {course.teacher && <People isTeacher data={[course.teacher]} course={course} />}
+      {course.lecturer && <People isTeacher data={[course.lecturer]} course={course} />}
       <People isTeacher={false} data={course.students} course={course} />
     </>
   );

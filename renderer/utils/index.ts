@@ -315,7 +315,15 @@ export const CLEAR_LOCALSTORAGE = () => {
 };
 
 export const SET_LOCALSTORAGE = (data: any) => {
-  localStorage.setItem(KEY_LOCALSTORAGE.ACCESS_TOKEN, data.token);
-  localStorage.setItem(KEY_LOCALSTORAGE.CURRENT_USER, JSON.stringify(data.user));
-  localStorage.setItem(KEY_LOCALSTORAGE.REFRESH_TOKEN, data.refreshToken);
+  if (data.token) {
+    localStorage.setItem(KEY_LOCALSTORAGE.ACCESS_TOKEN, data.token);
+  }
+
+  if (data.user) {
+    localStorage.setItem(KEY_LOCALSTORAGE.CURRENT_USER, JSON.stringify(data.user));
+  }
+
+  if (data.refreshToken) {
+    localStorage.setItem(KEY_LOCALSTORAGE.REFRESH_TOKEN, data.refreshToken);
+  }
 };
