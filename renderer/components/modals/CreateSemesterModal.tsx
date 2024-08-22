@@ -19,61 +19,72 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
-import subjectService from '@/services/subjectService';
-import { ApiResponse, ISubject } from '@/types';
-import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
+import semesterService from '@/services/semesterService';
+import { ApiResponse } from '@/types';
+import { CreateSemesterContext } from '@/contexts/CreateSemesterContext';
 import { AxiosError } from 'axios';
+import { ISemester } from '@/types/semester';
 
-const CreateSubjectModal = ({
+const CreateSemesterModal = ({
   isOpen,
   setIsOpen,
-  setSubjectCreated,
+  setSemesterCreated,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setSubjectCreated: React.Dispatch<React.SetStateAction<ISubject | null>>;
+  setSemesterCreated: React.Dispatch<React.SetStateAction<ISemester | null>>;
 }) => {
   const [submitError, setSubmitError] = useState(false);
   const [errorMessage, setErrorMessages] = useState('');
-  const { subjects, setSubjects } = useContext(CreateSubjectContext);
+  const { semesters, setSemesters } = useContext(CreateSemesterContext);
 
-  const FormSchema = z.object({
-    subjectCode: z
-      .string()
-      .min(1, { message: 'Mã học phần là trường bắt buộc.' })
-      .refine(
-        (subjectCode) => {
-          return !subjects.some((subject) => subject.subjectCode == subjectCode);
-        },
-        { message: 'Mã học phần đã tồn tại.' },
-      ),
-    subjectName: z.string().min(1, { message: 'Tên học phần là trường bắt buộc.' }),
-    description: z.string(),
-  });
-
+  const FormSchema = z
+    .object({
+      name: z
+        .string()
+        .min(1, { message: 'Tên học kì là trường bắt buộc.' })
+        .refine(
+          (name) => {
+            return !semesters.some((semester) => semester.name == name);
+          },
+          { message: 'Tên học kì đã tồn tại.' },
+        ),
+      startDate: z.coerce.date(),
+      endDate: z.coerce.date(),
+    })
+    .refine(
+      (ctx) => {
+        console.log('kk');
+        return ctx.endDate > ctx.startDate;
+      },
+      {
+        message: 'Ngày kết thúc phải lớn hơn ngày bắt đầu',
+        path: ['endDate'],
+      },
+    );
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      subjectName: '',
-      subjectCode: '',
-      description: '',
+      name: '',
+      startDate: new Date(),
+      endDate: new Date(),
     },
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    let res: ApiResponse<ISubject>;
+    let res: ApiResponse<ISemester>;
     try {
       const data = {
-        subjectId: '',
-        description: values.description,
-        subjectCode: values.subjectCode,
-        name: values.subjectName,
+        semesterId: '',
+        name: values.name,
+        startDate: values.startDate,
+        endDate: values.endDate,
       };
 
-      res = await subjectService.createSubject(data);
+      res = await semesterService.createSemester(data);
       if (res.data) {
-        setSubjects([...subjects, res.data]);
-        setSubjectCreated(res.data);
+        setSemesters([...semesters, res.data]);
+        setSemesterCreated(res.data);
       }
       form.reset();
       setIsOpen(false);
@@ -93,7 +104,7 @@ const CreateSubjectModal = ({
         <DialogContent className="sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle className="mx-auto">
-              {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Tạo học phần mới'}
+              {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Tạo học kì mới'}
             </DialogTitle>
           </DialogHeader>
           <Form {...form}>
@@ -101,10 +112,10 @@ const CreateSubjectModal = ({
               <div className="grid gap-4 py-4">
                 <FormField
                   control={form.control}
-                  name="subjectCode"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-bold uppercase">Mã học phần</FormLabel>
+                      <FormLabel className="text-xs font-bold uppercase">Tên học kì</FormLabel>
                       <FormControl>
                         <>
                           <Input
@@ -113,7 +124,7 @@ const CreateSubjectModal = ({
                               'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
                               form.formState.isSubmitting && 'hidden',
                             )}
-                            id="subjectCode"
+                            id="name"
                             {...field}
                           />
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
@@ -125,20 +136,22 @@ const CreateSubjectModal = ({
                 />
                 <FormField
                   control={form.control}
-                  name="subjectName"
+                  name="startDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-bold uppercase">Tên học phần</FormLabel>
+                      <FormLabel className="text-xs font-bold uppercase">Ngày bắt đầu</FormLabel>
                       <FormControl>
                         <>
                           <Input
+                            type="date"
                             disabled={form.formState.isSubmitting}
                             className={cn(
                               'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
                               form.formState.isSubmitting && 'hidden',
                             )}
-                            id="subjectName"
+                            id="startDate"
                             {...field}
+                            value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
                           />
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                         </>
@@ -149,20 +162,22 @@ const CreateSubjectModal = ({
                 />
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="endDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-bold uppercase">Mô tả</FormLabel>
+                      <FormLabel className="text-xs font-bold uppercase">Ngày kết thúc</FormLabel>
                       <FormControl>
                         <>
                           <Input
+                            type="date"
                             disabled={form.formState.isSubmitting}
                             className={cn(
                               'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
                               form.formState.isSubmitting && 'hidden',
                             )}
-                            id="description"
+                            id="endDate"
                             {...field}
+                            value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
                           />
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                         </>
@@ -177,7 +192,7 @@ const CreateSubjectModal = ({
                   {form.formState.isSubmitting && (
                     <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
                   )}
-                  Tạo học phần
+                  Tạo học kì
                 </Button>
               </DialogFooter>
             </form>
@@ -206,4 +221,4 @@ const CreateSubjectModal = ({
   );
 };
 
-export default CreateSubjectModal;
+export default CreateSemesterModal;

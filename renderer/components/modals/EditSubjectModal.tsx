@@ -21,8 +21,9 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
 import subjectService from '@/services/subjectService';
-import { ISubject } from '@/types';
+import { ApiResponse, ISubject } from '@/types';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
+import { AxiosError } from 'axios';
 
 const EditSubjectModal = ({
   isOpen,
@@ -35,23 +36,28 @@ const EditSubjectModal = ({
 }) => {
   const [submitError, setSubmitError] = useState(false);
   const { subjects, setSubjects } = useContext(CreateSubjectContext);
+  const [errorMessage, setErrorMessages] = useState('');
 
   const router = useRouter();
 
   const FormSchema = z.object({
     subjectName: z.string().min(1, { message: 'Tên học phần là trường bắt buộc.' }),
+    description: z.string(),
   });
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       subjectName: '',
+      description: '',
+      subjectCode: subject.subjectCode,
     },
   });
 
   useEffect(() => {
     if (subject) {
       form.setValue('subjectName', String(subject.name));
+      form.setValue('description', String(subject.description));
     }
   }, [subject, form, isOpen]);
 
@@ -59,24 +65,30 @@ const EditSubjectModal = ({
     try {
       const data = {
         name: values.subjectName,
+        description: values.description,
+        subjectCode: subject.subjectCode,
       };
 
-      const res = await subjectService.updateSubject(subject.subjectId, data);
+      const res = await subjectService.updateSubjectNew(subject.subjectId, data);
       if (res.data) {
-        setSubjects([...subjects, res.data]);
+        const updatedSubjects = subjects.map((sub) => {
+          return sub.subjectId == res.data.subjectId ? res.data : sub;
+        });
+        setSubjects(updatedSubjects);
         router.refresh();
         form.reset();
         setIsOpen(false);
       }
     } catch (error) {
-      console.log(error);
+      const axiousError = error as AxiosError;
+      setErrorMessages((axiousError.response?.data as ApiResponse<string>).message as string);
       setSubmitError(true);
     }
   };
 
   const onClose = () => {
     form.reset();
-    setIsOpen(!isOpen);
+    setIsOpen(false);
   };
 
   return (
@@ -106,6 +118,30 @@ const EditSubjectModal = ({
                               form.formState.isSubmitting && 'hidden',
                             )}
                             id="subjectName"
+                            {...field}
+                          />
+                          <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Mô tả</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            disabled={form.formState.isSubmitting}
+                            className={cn(
+                              'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                              form.formState.isSubmitting && 'hidden',
+                            )}
+                            id="description"
                             {...field}
                           />
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />

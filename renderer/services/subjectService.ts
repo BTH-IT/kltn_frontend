@@ -12,17 +12,22 @@ const subjectService = {
     return configService.get(`${API_URL.SUBJECTS}/${subjectId}`);
   },
 
-  createSubject(subjectData: Omit<ISubject, 'createdAt' | 'updatedAt'>): Promise<ApiResponse<ISubject>> {
+  createSubject(subjectData: Omit<ISubject, 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<ApiResponse<ISubject>> {
     return configService.post(`${API_URL.SUBJECTS}`, subjectData);
   },
 
   updateSubject(
     subjectId: string,
-    subjectData: Omit<ISubject, 'subjectId' | 'createdAt' | 'updatedAt'>,
+    subjectData: Omit<ISubject, 'subjectId' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'subjectCode'>,
   ): Promise<ApiResponse<ISubject>> {
     return configService.patch(`${API_URL.SUBJECTS}/${subjectId}`, subjectData);
   },
-
+  updateSubjectNew(
+    subjectId: string,
+    subjectData: Omit<ISubject, 'subjectId' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+  ): Promise<ApiResponse<ISubject>> {
+    return configService.put(`${API_URL.SUBJECTS}/${subjectId}`, subjectData);
+  },
   deleteSubject(subjectId: string): Promise<ApiResponse<boolean>> {
     return configService.delete(`${API_URL.SUBJECTS}/${subjectId}`);
   },

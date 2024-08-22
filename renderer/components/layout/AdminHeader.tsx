@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { UserButton } from '@clerk/nextjs';
 import { MenuIcon } from 'lucide-react';
 
 import { cn } from '@/libs/utils';
@@ -10,6 +9,7 @@ import { cn } from '@/libs/utils';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 
 import { NavigationDashboard } from './NavigationDashboard';
+import { Button } from '../ui/button';
 
 const AdminHeader = () => {
   const [open, setOpen] = useState(false);
@@ -59,13 +59,7 @@ const AdminHeader = () => {
             </div>
 
             <div className="flex gap-2 items-center">
-              <UserButton
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: 'size-8',
-                  },
-                }}
-              />
+              <Button></Button>
             </div>
           </nav>
         </div>

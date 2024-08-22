@@ -8,4 +8,5 @@ export const API_URL = {
   ASSIGNMENTS: '/assignments',
   ROLES: '/roles',
   UPLOAD: '/upload',
+  SEMESTERS: '/semesters',
 };
