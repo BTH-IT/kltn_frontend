@@ -2,14 +2,14 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import { ISubject } from '@/types';
 import { createColumns } from '@/libs/utils';
 
 import { CellAction } from './cell-action';
+import { ISemester } from '@/types/semester';
 
-export const columns: ColumnDef<ISubject>[] = createColumns([
+export const columns: ColumnDef<ISemester>[] = createColumns([
   {
-    accessorKey: 'subjectCode',
+    accessorKey: 'semesterId',
     header: 'SUBJECT CODE',
   },
   {
@@ -18,8 +18,14 @@ export const columns: ColumnDef<ISubject>[] = createColumns([
     sortable: true,
   },
   {
-    accessorKey: 'description',
-    header: 'DESCRIPTION',
+    accessorKey: 'startDate',
+    header: 'START DATE',
+    sortable: true,
+    hideable: true,
+  },
+  {
+    accessorKey: 'endDate',
+    header: 'END DATE',
     sortable: true,
     hideable: true,
   },

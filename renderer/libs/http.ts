@@ -161,7 +161,7 @@ const http = {
 
 const handleRefreshToken = async (refreshToken: string | undefined) => {
   try {
-    const res = await fetch('/api/refresh-token', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/accounts/refresh-token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
