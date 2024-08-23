@@ -5,6 +5,7 @@ export * from './schema';
 export * from './user';
 export * from './course';
 export * from './subject';
+export * from './project';
 export * from './role';
 export * from './comment';
 export * from './announcement';

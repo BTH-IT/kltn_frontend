@@ -1,8 +1,8 @@
 import { API_URL } from '@/constants/endpoints';
-
-import configService from './configService';
 import { ApiResponse } from '@/types';
 import { ISemester } from '@/types/semester';
+
+import configService from './configService';
 
 const semesterService = {
   getSemesters(): Promise<ApiResponse<ISemester[]>> {

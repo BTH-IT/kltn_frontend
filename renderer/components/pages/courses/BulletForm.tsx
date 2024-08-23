@@ -252,7 +252,7 @@ const BulletForm = ({
     return createdCourses
       ?.map((c) => {
         return {
-          label: c.name,
+          label: c.courseGroup,
           value: c.courseId,
           default: c.courseId === course?.courseId,
         };
@@ -265,19 +265,11 @@ const BulletForm = ({
   }, [createdCourses, course]);
 
   const generateMentionOptions = useCallback(() => {
-    // return course?.students.map((student) => {
-    //   return {
-    //     image: student.avatarUrl,
-    //     label: student.name,
-    //     value: student.userId,
-    //   };
-    // });
-
-    return [].map((student) => {
+    return course?.students.map((student) => {
       return {
-        image: '',
-        label: 'student.name',
-        value: 'student.userId',
+        image: student.avatar,
+        label: student.fullName,
+        value: student.id,
       };
     });
   }, [course]);

@@ -2,8 +2,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 
 import { ICourse } from '@/types';
+import courseService from '@/services/courseService';
 
 const CourseContext = React.createContext({
   course: {} as ICourse | null,
@@ -12,10 +14,23 @@ const CourseContext = React.createContext({
 
 const CourseProvider = ({ children, course }: { children: React.ReactNode; course: ICourse | null }) => {
   const [data, setData] = useState<ICourse | null>(null);
+  const params = useParams();
 
   useEffect(() => {
-    setData(course);
-  }, [course]);
+    async function fetchCourse() {
+      try {
+        const res = await courseService.getCourseById(params.courseId as string);
+        setData(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if (course) {
+      setData(course);
+    } else {
+      fetchCourse();
+    }
+  }, [course, params.courseId]);
 
   return (
     <CourseContext.Provider

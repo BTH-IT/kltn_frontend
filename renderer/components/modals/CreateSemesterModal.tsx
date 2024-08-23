@@ -4,25 +4,19 @@
 import React, { useContext, useState } from 'react';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
 import semesterService from '@/services/semesterService';
 import { ApiResponse } from '@/types';
 import { CreateSemesterContext } from '@/contexts/CreateSemesterContext';
-import { AxiosError } from 'axios';
 import { ISemester } from '@/types/semester';
 
 const CreateSemesterModal = ({
@@ -88,9 +82,9 @@ const CreateSemesterModal = ({
       }
       form.reset();
       setIsOpen(false);
-    } catch (error: any) {
+    } catch (error) {
       const axiousError = error as AxiosError;
-      setErrorMessages((axiousError.response?.data as ApiResponse<string>).message as string);
+      toast.error((axiousError.response?.data as ApiResponse<string>).message as string);
       setSubmitError(true);
     }
   };
@@ -190,31 +184,13 @@ const CreateSemesterModal = ({
               <DialogFooter>
                 <Button disabled={form.formState.isSubmitting} className="px-3 py-2" variant="primary" type="submit">
                   {form.formState.isSubmitting && (
-                    <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                    <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
                   Tạo học kì
                 </Button>
               </DialogFooter>
             </form>
           </Form>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={submitError} onOpenChange={setSubmitError}>
-        <DialogContent className="sm:max-w-[300px]">
-          <DialogHeader>
-            <DialogTitle>Đã xảy ra lỗi</DialogTitle>
-            <DialogDescription className="pt-2 text-black">{errorMessage}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              onClick={() => setSubmitError(false)}
-              variant="ghost"
-              type="submit"
-              className="text-blue-500 hover:bg-blue-50/50 hover:text-blue-500"
-            >
-              OK
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

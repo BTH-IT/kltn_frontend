@@ -1,16 +1,19 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable max-len */
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Copy } from 'lucide-react';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent2, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ICourse } from '@/types';
+
+import { MultiValueInput } from '../common/MultiValueInput';
 
 const InviteStudentModal = ({
   isOpen,
@@ -21,32 +24,22 @@ const InviteStudentModal = ({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   course: ICourse;
 }) => {
-  const [canSubmit, setCanSubmit] = useState(false);
-
   const FormSchema = z.object({
-    link: z.string().url({
-      message: 'Đường liên kết không hợp lệ',
+    emails: z.array(z.string().email({ message: 'Địa chỉ email không hợp lệ' })).min(1, {
+      message: 'Ít nhất một email phải được nhập',
     }),
   });
 
-  const form = useForm({
+  const formMethods = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      link: '',
+      emails: [],
     },
   });
 
-  // const inputChangeHandler = async (value: string) => {
-  //   try {
-  //     new URL(value);
-  //     setCanSubmit(true);
-  //   } catch (_) {
-  //     setCanSubmit(false);
-  //   }
-  // };
-
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
+      console.log(values); // Process the emails
       setIsOpen(false);
     } catch (error) {
       console.log(error);
@@ -71,16 +64,21 @@ const InviteStudentModal = ({
             </Button>
           </div>
         </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormProvider {...formMethods}>
+          <form onSubmit={formMethods.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid gap-4 py-4">
               <FormField
-                control={form.control}
-                name="link"
+                control={formMethods.control}
+                name="emails"
                 render={({ field }) => (
                   <FormItem>
-                    <FormControl></FormControl>
-                    <FormMessage />
+                    <MultiValueInput
+                      name={field.name}
+                      placeholder="Nhập email, phân tách bằng dấu phẩy..."
+                      regex={/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/}
+                      className="max-w-[500px]"
+                    />
+                    {field.value.length <= 0 && <FormMessage />}
                   </FormItem>
                 )}
               />
@@ -92,11 +90,11 @@ const InviteStudentModal = ({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={!canSubmit || form.formState.isSubmitting}
+                  disabled={formMethods.formState.isSubmitting}
                   className="w-20 h-8"
                   variant="primaryGhost"
                 >
-                  {form.formState.isSubmitting && (
+                  {formMethods.formState.isSubmitting && (
                     <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
                   Mời
@@ -104,7 +102,7 @@ const InviteStudentModal = ({
               </DialogFooter>
             </div>
           </form>
-        </Form>
+        </FormProvider>
       </DialogContent2>
     </Dialog>
   );
