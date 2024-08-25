@@ -6,23 +6,18 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams } from 'next/navigation';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
 import projectService from '@/services/projectService';
-import { ApiResponse, IProject } from '@/types';
+import { IProject, IUser } from '@/types';
 import { CreateProjectContext } from '@/contexts/CreateProjectContext';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 const CreateProjectModal = ({
   isOpen,
@@ -33,7 +28,7 @@ const CreateProjectModal = ({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProjectCreated: React.Dispatch<React.SetStateAction<IProject | null>>;
 }) => {
-  const [submitError, setSubmitError] = useState(false);
+  const params = useParams();
   const { projects, setProjects } = useContext(CreateProjectContext);
 
   const FormSchema = z.object({
@@ -50,9 +45,21 @@ const CreateProjectModal = ({
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    let res: ApiResponse<IProject>;
+    const userId = (JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser).id;
+
+    if (!userId) {
+      toast.error('Đã xảy ra lỗi');
+      return;
+    }
+
     try {
-      res = await projectService.createProject(values);
+      const res = await projectService.createProject({
+        ...values,
+        courseId: params.courseId as string,
+        createUserId: userId,
+        isApproved: true,
+      });
+
       if (res.data) {
         setProjects([...projects, res.data]);
         setProjectCreated(res.data);
@@ -60,8 +67,9 @@ const CreateProjectModal = ({
       form.reset();
       setIsOpen(false);
     } catch (error) {
-      toast.error('Đã xảy ra lỗi');
-      setSubmitError(true);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     }
   };
   const onClose = () => {
@@ -133,7 +141,7 @@ const CreateProjectModal = ({
                 {form.formState.isSubmitting && (
                   <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                 )}
-                Tạo học phần
+                Tạo đề tài
               </Button>
             </DialogFooter>
           </form>

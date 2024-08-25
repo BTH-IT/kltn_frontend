@@ -13,7 +13,7 @@ const commentService = {
   },
 
   createComment(
-    commentData: Omit<IComment, 'commentId' | 'user' | 'createdAt' | 'updatedAt'>,
+    commentData: Omit<IComment, 'commentId' | 'user' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<ApiResponse<IComment>> {
     return configService.post(`${API_URL.COMMENTS}`, commentData);
   },
@@ -21,7 +21,7 @@ const commentService = {
   updateComment(
     announcementId: string,
     commentId: string,
-    commentData: Omit<IComment, 'commentId' | 'user' | 'createdAt' | 'updatedAt'>,
+    commentData: Omit<IComment, 'commentId' | 'user' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<ApiResponse<IComment>> {
     return configService.patch(`${API_URL.COMMENTS}/${announcementId}/${commentId}`, commentData);
   },

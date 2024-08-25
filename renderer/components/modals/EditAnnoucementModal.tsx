@@ -19,9 +19,9 @@ import AddYoutubeLinkModal from '@/components/modals/AddYoutubeLinkModal';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import announcementService from '@/services/announcementService';
-import { Attachment, IAnnouncement, ICourse, MetaLinkData } from '@/types';
+import { Attachment, IAnnouncement, ICourse, IUser, MetaLinkData } from '@/types';
 import { YoutubeCardProps } from '@/components/common/YoutubeCard';
-import { formatDuration, getFileType } from '@/utils';
+import { formatDuration, getFileType, KEY_LOCALSTORAGE } from '@/utils';
 import uploadService from '@/services/uploadService';
 import userService from '@/services/userService';
 import AnnouncementFileList from '@/components/pages/courses/AnnoucementFileList';
@@ -44,7 +44,7 @@ const EditAnnoucementModal = ({
   announcement: IAnnouncement;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const user = null;
+  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
 
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
@@ -61,16 +61,16 @@ const EditAnnoucementModal = ({
     if (JSON.parse(announcement.mentions)[0] === 'all') {
       setSelected(
         course?.students.map((student) => ({
-          value: student.userId,
-          label: student.name,
-          image: student.avatarUrl,
+          value: student.id,
+          label: student.fullName,
+          image: student.avatar,
         })) ?? [],
       );
     } else {
       setSelected(
         course?.students
-          .filter((student) => announcement.mentions.includes(student.userId))
-          .map((student) => ({ value: student.userId, label: student.name })) ?? [],
+          .filter((student) => announcement.mentions.includes(student.id))
+          .map((student) => ({ value: student.id, label: student.fullName })) ?? [],
       );
     }
 
@@ -196,14 +196,14 @@ const EditAnnoucementModal = ({
         content: values.content,
         attachments: JSON.stringify(resAttachments),
         attachedLinks: JSON.stringify(links),
-        pin: announcement.pin,
-        classId: course.classId,
+        isPinned: announcement.isPinned,
+        courseId: course.courseId,
         userId: user.id,
-        mentions: JSON.stringify(
-          optionSelected && optionSelected.length !== course.students.length
-            ? optionSelected?.map((opt) => opt.value)
-            : ['all'],
-        ),
+        // mentions: JSON.stringify(
+        //   optionSelected && optionSelected.length !== course.students.length
+        //     ? optionSelected?.map((opt) => opt.value)
+        //     : ['all']
+        // ),
       };
 
       const res = await announcementService.updateAnnouncement(
@@ -231,9 +231,9 @@ const EditAnnoucementModal = ({
 
   const options = course?.students.map((student) => {
     return {
-      image: student.avatarUrl,
-      value: student.userId,
-      label: student.name,
+      image: student.avatar,
+      value: student.id,
+      label: student.fullName,
     };
   });
 

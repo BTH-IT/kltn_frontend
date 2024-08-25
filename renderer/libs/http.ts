@@ -24,7 +24,7 @@ const http = {
 
 export const handleRefreshToken = async (token: string | undefined, refreshToken: string | undefined) => {
   try {
-    const res = await fetch('http://localhost:8888/api/refresh-token', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/refresh-token`, {
       method: 'POST',
       body: JSON.stringify({ token, refreshToken }),
       headers: {

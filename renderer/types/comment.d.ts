@@ -1,9 +1,9 @@
-import { IBaseModel } from '.';
+import { IBaseModel, IUser } from '.';
 
 export interface IComment extends IBaseModel {
   commentId: string;
-  annoucementId: string;
+  announcementId: string;
   content: string;
   ownerUserId: string;
-  ownerName: string;
+  user?: IUser;
 }

@@ -18,9 +18,9 @@ const AnnouncementList = ({
 }) => {
   const handlePin = async (announcement: IAnnouncement) => {
     try {
-      const res = await announcementService.updateAnnouncement(announcement.classId, announcement.announcementId, {
+      const res = await announcementService.updateAnnouncement(announcement.courseId, announcement.announcementId, {
         ...announcement,
-        pin: new Date().toISOString(),
+        isPinned: true,
       });
 
       const newAnnouncements = announcements.filter((a) => a.announcementId !== res.data.announcementId);

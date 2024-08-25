@@ -40,7 +40,7 @@ const AvatarHeader = ({
 }) => {
   const [isMentionModalOpen, setIsMentionModalOpen] = useState(false);
 
-  const studentMentioned = students?.filter((student) => mentions?.includes(student.userId)) || [];
+  const studentMentioned = students?.filter((student) => mentions?.includes(student.id)) || [];
 
   return (
     <div
@@ -60,10 +60,10 @@ const AvatarHeader = ({
         className="w-[35px] h-[35px] rounded-full"
       />
 
-      <div className="flex flex-1 gap-3 items-center">
+      <div className="flex items-center flex-1 gap-3">
         {type === 'comment' && (
-          <div className="flex flex-col flex-1 justify-around w-full">
-            <div className="flex gap-3 items-center">
+          <div className="flex flex-col justify-around flex-1 w-full">
+            <div className="flex items-center gap-3">
               <h2 className="text-sm font-semibold">{fullName}</h2>
               <p className="text-xs font-light">{moment(timestamp).fromNow()}</p>
             </div>
@@ -82,7 +82,7 @@ const AvatarHeader = ({
                     <Button
                       onClick={() => setIsMentionModalOpen(true)}
                       variant="link"
-                      className="text-sm font-semibold p-0 h-fit"
+                      className="p-0 text-sm font-semibold h-fit"
                     >
                       {mentions.length} sinh viên
                     </Button>
@@ -108,15 +108,15 @@ const AvatarHeader = ({
         desc={
           <div className="overflow-y-auto max-h-[250px]">
             {studentMentioned.map((item) => (
-              <div key={item.userId} className="flex items-center gap-3 p-2">
+              <div key={item.id} className="flex items-center gap-3 p-2">
                 <Image
-                  src={item.avatarUrl || '/images/avt.png'}
+                  src={item.avatar || '/images/avt.png'}
                   height={3000}
                   width={3000}
                   alt="avatar"
                   className="w-[35px] h-[35px] rounded-full"
                 />
-                <span className="line-clamp-1 font-sans font-medium">{item.name + ` (${item.email})`}</span>
+                <span className="font-sans font-medium line-clamp-1">{item.fullName + ` (${item.email})`}</span>
               </div>
             ))}
           </div>

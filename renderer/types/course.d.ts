@@ -1,3 +1,4 @@
+import { IAnnouncement } from './announcement';
 import { ISubject } from './subject';
 import { IUser } from './user';
 
@@ -19,4 +20,5 @@ export interface ICourse {
   lecturer?: IUser;
   semester?: any;
   students: IUser[];
+  announcements: IAnnouncement[];
 }

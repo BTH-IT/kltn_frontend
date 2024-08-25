@@ -13,7 +13,10 @@ const announcementService = {
   },
 
   createAnnouncement(
-    announcementData: Omit<IAnnouncement, 'announcementId' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'pin'>,
+    announcementData: Omit<
+      IAnnouncement,
+      'announcementId' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'isPinned' | 'comments' | 'course'
+    >,
   ): Promise<ApiResponse<IAnnouncement>> {
     return configService.post(`${API_URL.ANNOUNCEMENTS}`, announcementData);
   },
@@ -21,7 +24,10 @@ const announcementService = {
   updateAnnouncement(
     classId: string,
     announcementId: string,
-    announcementData: Omit<IAnnouncement, 'announcementId' | 'user' | 'comments' | 'createdAt' | 'updatedAt'>,
+    announcementData: Omit<
+      IAnnouncement,
+      'announcementId' | 'user' | 'comments' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'course'
+    >,
   ): Promise<ApiResponse<IAnnouncement>> {
     return configService.patch(`${API_URL.ANNOUNCEMENTS}/${classId}/${announcementId}`, announcementData);
   },

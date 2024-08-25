@@ -7,7 +7,7 @@ export const API_URL = {
   ANNOUNCEMENTS: '/announcements',
   ASSIGNMENTS: '/assignments',
   ROLES: '/roles',
-  UPLOAD: '/upload',
+  UPLOAD: '/uploads',
   SEMESTERS: '/semesters',
   PROJECTS: '/projects',
 };

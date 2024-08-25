@@ -17,7 +17,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import commentService from '@/services/commentService';
-import { IAnnouncement, ICourse, IComment } from '@/types';
+import { IAnnouncement, ICourse, IComment, IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 import AvatarHeader from './AvatarHeader';
 import CommentList from './CommentList';
@@ -38,7 +39,7 @@ const AnnouncementItem = ({
   handleRemove: (id: string) => void;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const currentUser = null;
+  const currentUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
 
   const [isFocus, setIsFocus] = useState(false);
 
@@ -60,9 +61,8 @@ const AnnouncementItem = ({
     try {
       const res = await commentService.createComment({
         content: data.content,
-        userId: currentUser.id,
+        ownerUserId: currentUser.id,
         announcementId: announcement.announcementId,
-        classId: announcement.classId,
       });
 
       reset();
@@ -100,9 +100,9 @@ const AnnouncementItem = ({
     <div className="flex flex-col gap-3 bg-white border rounded-lg">
       <div className="flex flex-col gap-2 p-4">
         <AvatarHeader
-          imageUrl={announcement.user?.avatarUrl || ''}
-          fullName={announcement.user?.name || ''}
-          timestamp={announcement.createdAt}
+          imageUrl={announcement?.user?.avatar || ''}
+          fullName={announcement?.user?.fullName || ''}
+          timestamp={announcement.createdAt.toISOString()}
           mentions={JSON.parse(announcement.mentions.toString() || '[]')}
           students={course?.students}
           dropdownMenu={
@@ -142,7 +142,7 @@ const AnnouncementItem = ({
           className={`flex gap-3 items-center p-4 comment ${isFocus ? 'active' : ''}`}
         >
           <Image
-            src={currentUser?.imageUrl || '/images/avt.png'}
+            src={currentUser?.avatar || '/images/avt.png'}
             height={3000}
             width={3000}
             alt="avatar"

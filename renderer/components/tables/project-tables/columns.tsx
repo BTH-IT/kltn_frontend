@@ -6,6 +6,7 @@ import { createColumns } from '@/libs/utils';
 import { IProject } from '@/types';
 
 import { CellAction } from './cell-action';
+import { CellSwitch } from './cell-swtich';
 
 export const columns: ColumnDef<IProject>[] = createColumns([
   {
@@ -16,6 +17,11 @@ export const columns: ColumnDef<IProject>[] = createColumns([
     accessorKey: 'title',
     header: 'PROJECT TITLE',
     sortable: true,
+  },
+  {
+    id: 'APPROVED',
+    header: 'APPROVED',
+    cell: ({ row }: any) => <CellSwitch data={row.original} />,
   },
   {
     id: 'ACTION',

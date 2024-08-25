@@ -86,7 +86,10 @@ const YoutubeSearchForm = ({
   };
   return (
     <Form {...form}>
-      <form className={cn('flex flex-col items-center px-6 pb-6', isQueryUrl || isQueryText ? 'hidden' : '')}>
+      <form
+        className={cn('flex flex-col items-center px-6 pb-6', isQueryUrl || isQueryText ? 'hidden' : '')}
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <Image
           src="https://www.gstatic.com/newt/images/newt_uploadvideo@1x.gif"
           alt="Youtube GIF"
@@ -101,14 +104,13 @@ const YoutubeSearchForm = ({
               <FormControl>
                 <div className="flex w-[500px] rounded-md items-center border-[1px] border-gray-600 hover:border-black">
                   <Input
-                    className="h-14 text-lg text-black"
+                    className="text-lg text-black h-14"
                     type="search"
                     placeholder="Tìm trên Youtube hoặc dán URL"
                     {...field}
                   />
                   <Button
-                    type="button"
-                    onClick={form.handleSubmit(onSubmit)}
+                    type="submit"
                     variant="secondary3"
                     className="h-14 rounded-s-none border-[1px] border-s-gray-300"
                   >

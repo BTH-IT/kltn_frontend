@@ -16,14 +16,14 @@ import { columns } from './columns';
 export const ProjectClient = ({ data }: { data: IProject[] }) => {
   const [projects, setProjects] = useState<IProject[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [semesterCreated, setProjectCreated] = useState<IProject | null>(null);
+  const [projectCreated, setProjectCreated] = useState<IProject | null>(null);
 
   useEffect(() => {
     setProjects(data);
-    if (semesterCreated) {
-      setProjects((prev) => [...prev, semesterCreated]);
+    if (projectCreated) {
+      setProjects((prev) => [...prev, projectCreated]);
     }
-  }, [semesterCreated, data]);
+  }, [projectCreated, data]);
 
   return (
     <>
@@ -31,7 +31,7 @@ export const ProjectClient = ({ data }: { data: IProject[] }) => {
         <div className="flex items-start justify-between">
           <Heading title={`Projects (${projects.length})`} description="Manage projects" />
           <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Add New
+            <Plus className="w-4 h-4 mr-2" /> Thêm mới
           </Button>
         </div>
         <Separator />

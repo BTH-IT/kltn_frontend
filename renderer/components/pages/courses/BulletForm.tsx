@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import useDrivePicker from 'react-google-drive-picker';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 import MultiSelectClassroom from '@/components/common/MultiSelectClassroom';
 import MultiSelectPeople, { Option } from '@/components/common/MultiSelectPeople';
@@ -16,12 +17,10 @@ import TooltipBottom from '@/components/common/TooltipBottom';
 import { YoutubeCardProps } from '@/components/common/YoutubeCard';
 import AddLinkModal from '@/components/modals/AddLinkModal';
 import AddYoutubeLinkModal from '@/components/modals/AddYoutubeLinkModal';
-import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { CoursesContext } from '@/contexts/CoursesContext';
 import announcementService from '@/services/announcementService';
 import uploadService from '@/services/uploadService';
-import userService from '@/services/userService';
 import { IAnnouncement, ICourse, IUser, MetaLinkData } from '@/types';
 import { formatDuration, getFileType, KEY_LOCALSTORAGE } from '@/utils';
 import { cn } from '@/libs/utils';
@@ -40,7 +39,6 @@ const BulletForm = ({
   course: ICourse | null;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const { toast } = useToast();
   const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
 
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
@@ -67,13 +65,13 @@ const BulletForm = ({
           apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY!,
         })
         .then(async () => {
-          const res = await userService.getCurrentUserToken();
-          const { token } = res.data;
+          const tokenInfo = gapi.auth.getToken();
+
           const pickerConfig: any = {
             clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
             developerKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY!,
             viewId: 'DOCS',
-            token: token ?? null,
+            token: tokenInfo ? tokenInfo.access_token : null,
             showUploadView: true,
             showUploadFolders: true,
             supportDrives: true,
@@ -86,13 +84,9 @@ const BulletForm = ({
                 elements[i].style.zIndex = '2000';
               }
               if (data.action === 'picked') {
-                if (!token) {
-                  const res = await userService.getCurrentUserToken();
-                  const { token } = res.data;
-                }
                 const fetchOptions = {
                   headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${tokenInfo.access_token}`,
                   },
                 };
                 const driveFileUrl = 'https://www.googleapis.com/drive/v3/files';
@@ -189,7 +183,7 @@ const BulletForm = ({
   };
 
   const onSubmit = async (values: any) => {
-    if (!user?.id || !course?.classId) return;
+    if (!user?.id || !course?.courseId) return;
 
     try {
       const resAttachments = await uploadService.uploadMultipleFileWithAWS3(files);
@@ -198,8 +192,8 @@ const BulletForm = ({
         content: values.content,
         courseId: course.courseId,
         userId: user.id,
-        attachedLinks: JSON.stringify(links),
-        attachments: JSON.stringify(resAttachments),
+        attachedLinks: links,
+        attachments: resAttachments || [],
         // mentions: JSON.stringify(
         //   mentionOptionSelected &&
         //     mentionOptionSelected.length !== course.students.length
@@ -232,11 +226,7 @@ const BulletForm = ({
       }
 
       if (res.data) {
-        toast({
-          title: `Đã đăng (${announceCount}) thông báo thành công`,
-          variant: 'done',
-          duration: 2000,
-        });
+        toast.success(`Đã đăng (${announceCount}) thông báo thành công`);
       }
 
       reset();
@@ -244,7 +234,9 @@ const BulletForm = ({
 
       setAnnouncements((prev) => [res.data, ...prev]);
     } catch (error) {
-      console.log(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     }
   };
 

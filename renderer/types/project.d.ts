@@ -2,7 +2,7 @@ import { IBaseModel } from '.';
 
 export interface IProject extends IBaseModel {
   projectId: string;
-  subjectId: string;
+  courseId: string;
   createUserId: string;
   title: string;
   description: string;

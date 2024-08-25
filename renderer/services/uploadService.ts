@@ -36,7 +36,7 @@ const uploadService = {
         },
       });
 
-      return (res as any).files; // Assuming the response contains the URL in res.data.url
+      return (res as any).data; // Assuming the response contains the URL in res.data.url
     } catch (error) {
       console.error('Error uploading file:', error);
       return [];

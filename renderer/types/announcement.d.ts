@@ -1,4 +1,4 @@
-import { IBaseModel, ICourse } from '.';
+import { IBaseModel, IComment, ICourse, IUser } from '.';
 
 export interface IAnnouncement extends IBaseModel {
   announcementId: string;
@@ -8,7 +8,10 @@ export interface IAnnouncement extends IBaseModel {
   attachedLinks?: any;
   createUser?: any;
   course?: ICourse;
-  pin?: string;
+  isPinned?: boolean;
   attachments?: any;
   attachedLinks?: any;
+  mentions?: any;
+  comments: IComment[];
+  user?: IUser;
 }
