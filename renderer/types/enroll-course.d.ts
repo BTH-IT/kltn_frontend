@@ -1,6 +1,6 @@
 import { IBaseModel } from '.';
 
-export interface IGroup extends IBaseModel {
+export interface IGroupCC extends IBaseModel {
   studentId: string;
   courseId: string;
 }

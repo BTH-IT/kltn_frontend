@@ -10,4 +10,5 @@ export const API_URL = {
   UPLOAD: '/uploads',
   SEMESTERS: '/semesters',
   PROJECTS: '/projects',
+  GROUPS: '/groups',
 };

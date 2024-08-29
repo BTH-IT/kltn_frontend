@@ -13,7 +13,7 @@ const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) =>
   const cookieStore = cookies();
   const userCookie = cookieStore.get('user')?.value;
   const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
-
+  console.log('kk' + user);
   if (!user) {
     return redirect('/login');
   }

@@ -43,7 +43,7 @@ const CourseOptionModal = ({
   const router = useRouter();
   const { course } = useContext(CourseContext);
 
-  console.log(course);
+  // console.log(course);
 
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
