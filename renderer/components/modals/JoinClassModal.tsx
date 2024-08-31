@@ -27,7 +27,7 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
-  const { enrolledCourses, setenrolledCourses } = useContext(CoursesContext);
+  const { enrolledCourses, setEnrolledCourses } = useContext(CoursesContext);
   const router = useRouter();
   const user = null;
 

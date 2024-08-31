@@ -211,6 +211,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
         acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
         ocClickAccept={async () => {
           if (selectedRemove) {
+            console.log(selectedRemove.id);
             await handleRemove(selectedRemove.id);
           }
 
