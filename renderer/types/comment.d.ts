@@ -4,6 +4,6 @@ export interface IComment extends IBaseModel {
   commentId: string;
   announcementId: string;
   content: string;
-  ownerUserId: string;
+  userId: string;
   user?: IUser;
 }

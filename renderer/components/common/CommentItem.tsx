@@ -51,12 +51,12 @@ const CommentItem = ({
   return (
     <>
       <AvatarHeader
-        imageUrl={comment.user?.avatarUrl || ''}
-        fullName={comment.user?.name || ''}
+        imageUrl={comment.user?.avatar || ''}
+        fullName={comment.user?.fullName || ''}
         timestamp={comment.createdAt}
         type="comment"
         dropdownMenu={
-          comment.user?.userId === comment.userId ? (
+          comment.user?.id === comment.userId ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="cursor-pointer">
                 <EllipsisVertical />
@@ -88,7 +88,7 @@ const CommentItem = ({
                 />
               )}
             />
-            <div className="flex gap-3 justify-end items-center">
+            <div className="flex items-center justify-end gap-3">
               <Button
                 onClick={() => {
                   setIsEdit(false);
@@ -102,10 +102,10 @@ const CommentItem = ({
                 buttonType="primary"
                 type="submit"
                 disabled={formState.isSubmitting}
-                className="flex gap-3 items-center"
+                className="flex items-center gap-3"
               >
                 {formState.isSubmitting && (
-                  <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                  <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                 )}
                 Lưu
               </Button>

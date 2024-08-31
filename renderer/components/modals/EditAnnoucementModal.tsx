@@ -58,7 +58,7 @@ const EditAnnoucementModal = ({
   const [optionSelected, setSelected] = useState<Option[] | null>(null);
 
   useEffect(() => {
-    if (JSON.parse(announcement.mentions)[0] === 'all') {
+    if (announcement.mentions.length <= 0) {
       setSelected(
         course?.students.map((student) => ({
           value: student.id,
@@ -74,8 +74,8 @@ const EditAnnoucementModal = ({
       );
     }
 
-    setFileString(JSON.parse(announcement.attachedLinks || '[]'));
-    setLinkString(JSON.parse(announcement.attachments || '[]'));
+    setFileString(announcement.attachedLinks || []);
+    setLinkString(announcement.attachments || []);
   }, [announcement, course, isOpen]);
 
   const handleOpenPicker = () => {
@@ -187,7 +187,7 @@ const EditAnnoucementModal = ({
   };
 
   const onSubmit = async (values: any) => {
-    if (!user?.id || !course?.classId) return;
+    if (!user?.id || !course?.courseId) return;
 
     try {
       const resAttachments = await uploadService.uploadMultipleFileWithAWS3(files);
@@ -199,15 +199,14 @@ const EditAnnoucementModal = ({
         isPinned: announcement.isPinned,
         courseId: course.courseId,
         userId: user.id,
-        // mentions: JSON.stringify(
-        //   optionSelected && optionSelected.length !== course.students.length
-        //     ? optionSelected?.map((opt) => opt.value)
-        //     : ['all']
-        // ),
+        mentions:
+          optionSelected && optionSelected.length !== course.students.length
+            ? optionSelected?.map((opt) => opt.value)
+            : [],
       };
 
       const res = await announcementService.updateAnnouncement(
-        course.classId,
+        course.courseId,
         announcement.announcementId,
         announcementData,
       );

@@ -32,8 +32,8 @@ const courseService = {
     return configService.patch(`${API_URL.COURSES}/${courseId}`, courseData);
   },
 
-  updateCourseInviteCode(inviteCode: string): Promise<ApiResponse<{ inviteCode: string }>> {
-    return configService.patch(`${API_URL.COURSES}/invite/${inviteCode}`);
+  updateCourseInviteCode(courseId: string): Promise<ApiResponse<string>> {
+    return configService.get(`${API_URL.COURSES}/${courseId}/regeneratecode`);
   },
 
   deleteCourse(courseId: string): Promise<ApiResponse<boolean>> {

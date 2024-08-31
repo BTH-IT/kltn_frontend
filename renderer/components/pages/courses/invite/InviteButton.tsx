@@ -24,7 +24,7 @@ const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
             setLoading(false);
 
             setEnrolledCourses([...enrolledCourses, res.data]);
-            return router.replace(`/courses/${res.data.classId}`);
+            return router.replace(`/courses/${res.data.courseId}`);
           }
         } catch (error) {
           console.error('Error adding student to class:', error);

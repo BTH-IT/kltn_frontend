@@ -33,7 +33,7 @@ const AnnouncementList = ({
 
   const handleRemove = async (id: string) => {
     try {
-      await announcementService.deleteAnnouncement(course?.classId ?? '', id);
+      await announcementService.deleteAnnouncement(course?.courseId ?? '', id);
 
       const newAnnouncements = announcements.filter((a) => a.announcementId !== id);
 

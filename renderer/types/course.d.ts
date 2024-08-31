@@ -4,7 +4,6 @@ import { IUser } from './user';
 
 export interface ICourse {
   name: any;
-  classId: any;
   courseId: string;
   subjectId: string;
   semesterId: string;
