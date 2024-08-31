@@ -47,7 +47,9 @@ const courseService = {
   },
 
   deleteStudentOfCourse(courseId: string, userId: string): Promise<ApiResponse<boolean>> {
-    return configService.delete(`${API_URL.COURSES}/${courseId}/students/`, {});
+    return configService.delete(`${API_URL.COURSES}/${courseId}/students/`, {
+      data: { studentId: userId },
+    });
   },
 
   addStudentToCourseByInviteCode(inviteCode: string): Promise<ApiResponse<ICourse | null>> {

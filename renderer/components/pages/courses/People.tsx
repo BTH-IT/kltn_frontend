@@ -103,7 +103,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
           )}
         </div>
       </div>
-      {!isTeacher && user?.id === course.courseId && (
+      {!isTeacher && user?.id === course.lecturerId && (
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-5">
             <Checkbox

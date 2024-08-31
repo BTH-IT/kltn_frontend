@@ -15,7 +15,7 @@ const commentService = {
   createComment(
     commentData: Omit<IComment, 'commentId' | 'user' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<ApiResponse<IComment>> {
-    return configService.post(`/comment/${commentData.announcementId}${API_URL.COMMENTS}`, commentData);
+    return configService.post(`/comment/${commentData.annoucementId}${API_URL.COMMENTS}`, commentData);
   },
 
   updateComment(

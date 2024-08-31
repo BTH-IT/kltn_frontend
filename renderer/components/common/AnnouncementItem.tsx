@@ -62,7 +62,7 @@ const AnnouncementItem = ({
       const res = await commentService.createComment({
         content: data.content,
         userId: currentUser.id,
-        announcementId: announcement.announcementId,
+        annoucementId: announcement.announcementId,
       });
 
       reset();
@@ -78,7 +78,7 @@ const AnnouncementItem = ({
     try {
       await commentService.deleteComment(announcement.announcementId, id);
 
-      setComments(comments.filter((c) => c.announcementId !== id));
+      setComments(comments.filter((c) => c.annoucementId !== id));
     } catch (error) {
       console.log(error);
     }
