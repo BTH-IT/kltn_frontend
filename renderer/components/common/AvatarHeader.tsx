@@ -75,7 +75,7 @@ const AvatarHeader = ({
           <div className="flex flex-col justify-start w-full">
             <div className="flex items-center gap-1">
               <h2 className="text-sm font-semibold">{fullName}</h2>
-              {mentions && mentions[0] !== 'all' && (
+              {mentions && mentions.length > 0 && (
                 <>
                   <Play size={10} fill="#242424" />
                   <div className="flex gap-1">

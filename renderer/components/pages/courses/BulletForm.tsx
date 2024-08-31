@@ -194,12 +194,10 @@ const BulletForm = ({
         userId: user.id,
         attachedLinks: links,
         attachments: resAttachments || [],
-        // mentions: JSON.stringify(
-        //   mentionOptionSelected &&
-        //     mentionOptionSelected.length !== course.students.length
-        //     ? mentionOptionSelected?.map((opt) => opt.value)
-        //     : ['all']
-        // ),
+        mentions:
+          mentionOptionSelected && mentionOptionSelected.length !== course.students.length
+            ? mentionOptionSelected?.map((opt) => opt.value)
+            : [],
       });
 
       let announceCount = 1;
@@ -213,9 +211,9 @@ const BulletForm = ({
                 content: values.content,
                 courseId: String(opt.value),
                 userId: user.id,
-                attachedLinks: JSON.stringify(links),
-                attachments: JSON.stringify(resAttachments),
-                // mentions: JSON.stringify(['all']),
+                attachedLinks: links,
+                attachments: resAttachments,
+                mentions: [],
               });
               if (res.data) {
                 announceCount++;

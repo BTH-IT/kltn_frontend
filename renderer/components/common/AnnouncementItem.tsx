@@ -61,7 +61,7 @@ const AnnouncementItem = ({
     try {
       const res = await commentService.createComment({
         content: data.content,
-        ownerUserId: currentUser.id,
+        userId: currentUser.id,
         announcementId: announcement.announcementId,
       });
 
@@ -100,10 +100,10 @@ const AnnouncementItem = ({
     <div className="flex flex-col gap-3 bg-white border rounded-lg">
       <div className="flex flex-col gap-2 p-4">
         <AvatarHeader
-          imageUrl={announcement?.user?.avatar || ''}
-          fullName={announcement?.user?.fullName || ''}
-          timestamp={announcement.createdAt.toISOString()}
-          mentions={JSON.parse(announcement.mentions.toString() || '[]')}
+          imageUrl={announcement?.createUser?.avatar || ''}
+          fullName={announcement?.createUser?.fullName || ''}
+          timestamp={announcement.createdAt}
+          mentions={announcement.mentions || []}
           students={course?.students}
           dropdownMenu={
             <DropdownMenu>
@@ -126,10 +126,7 @@ const AnnouncementItem = ({
           }
         />
         <div dangerouslySetInnerHTML={{ __html: announcement.content }} />
-        <AnnouncementAttachList
-          links={JSON.parse(announcement.attachedLinks || '[]')}
-          files={JSON.parse(announcement.attachments || '[]')}
-        />
+        <AnnouncementAttachList links={announcement.attachedLinks || []} files={announcement.attachments || []} />
       </div>
       <div className="border-t">
         <CommentList

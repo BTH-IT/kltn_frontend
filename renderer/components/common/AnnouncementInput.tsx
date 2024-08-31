@@ -12,7 +12,7 @@ const AnnouncementInput = ({ course }: { course: ICourse | null }) => {
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
 
   useEffect(() => {
-    setAnnouncements([]);
+    setAnnouncements(course?.announcements || []);
   }, [course]);
 
   return (

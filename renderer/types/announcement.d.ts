@@ -6,12 +6,11 @@ export interface IAnnouncement extends IBaseModel {
   userId: string;
   content: string;
   attachedLinks?: any;
-  createUser?: any;
+  createUser?: IUser;
   course?: ICourse;
   isPinned?: boolean;
   attachments?: any;
   attachedLinks?: any;
   mentions?: any;
   comments: IComment[];
-  user?: IUser;
 }

@@ -17,34 +17,34 @@ import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/libs/utils';
 import CommonModal from '@/components/modals/CommonModal';
 import courseService from '@/services/courseService';
-import { IUser } from '@/types';
+import { ICourse, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 
-const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; inviteCode: string; name: string }) => {
+const InviteCode = ({ teacherId, course, name }: { teacherId: string; course: ICourse | null; name: string }) => {
   const { toast } = useToast();
   const { Canvas } = useQRCode();
 
   const [user, setUser] = useState<IUser | null>(null);
-  const [code, setCode] = useState(inviteCode);
+  const [code, setCode] = useState(course?.inviteCode || '');
   const [updatingInvCode, setUpdatingInvCode] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
-    setCode(inviteCode);
+    setCode(course?.inviteCode || '');
     if (typeof window !== 'undefined') {
       const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
       setUser(user);
     }
-  }, [inviteCode]);
+  }, [course?.inviteCode]);
 
   const handleChangeInvCode = async () => {
     setUpdatingInvCode(true);
     try {
-      const res = await courseService.updateCourseInviteCode(inviteCode);
+      const res = await courseService.updateCourseInviteCode(course?.courseId || '');
       if (res.data) {
-        setCode(res.data.inviteCode);
+        setCode(res.data);
         toast({
-          title: `Mã lớp đã được đặt lại thành ${res.data.inviteCode}`,
+          title: `Mã lớp đã được đặt lại thành ${res.data}`,
           variant: 'done',
           duration: 2000,
         });
@@ -58,8 +58,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
 
   const handleCopyInvCode = async () => {
     try {
-      const classCode = inviteCode;
-      await navigator.clipboard.writeText(classCode);
+      await navigator.clipboard.writeText(code);
       toast({
         title: 'Đã sao chép mã lớp',
         variant: 'done',
@@ -72,7 +71,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
 
   const handleCopyInvLink = async () => {
     try {
-      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/courses/invite/${inviteCode}`);
+      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/courses/invite/${code}`);
       toast({
         title: 'Đã sao chép link mời tham gia lớp',
         variant: 'done',
@@ -114,7 +113,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
         </DropdownMenu>
       </div>
       <div className="flex items-center gap-5">
-        <p className={cn('text-2xl font-semibold', updatingInvCode && 'hidden')}>{inviteCode}</p>
+        <p className={cn('text-2xl font-semibold', updatingInvCode && 'hidden')}>{code}</p>
         <Skeleton className={cn('h-10 w-[88px]', !updatingInvCode && 'hidden')} />
         <ShowCodeModal invCode={code} courseName={name}>
           <Scan className="cursor-pointer" />
@@ -129,7 +128,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
         desc={
           <div className="mx-auto mt-5 w-fit">
             <Canvas
-              text={`${process.env.NEXT_PUBLIC_URL}/courses/invite/${inviteCode}`}
+              text={`${process.env.NEXT_PUBLIC_URL}/courses/invite/${code}`}
               options={{
                 errorCorrectionLevel: 'M',
                 margin: 3,
