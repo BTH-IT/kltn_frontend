@@ -2,8 +2,8 @@ import { IBaseModel, IUser } from '.';
 
 export interface IComment extends IBaseModel {
   commentId: string;
-  announcementId: string;
+  annoucementId: string;
   content: string;
-  ownerUserId: string;
+  userId: string;
   user?: IUser;
 }
