@@ -19,20 +19,8 @@ const projectService = {
     return configService.post(`${API_URL.PROJECTS}`, projectData);
   },
 
-  updateProject(
-    projectId: string,
-    projectData: Omit<IProject, 'projectId' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'createUserId'>,
-  ): Promise<ApiResponse<IProject>> {
+  updateProject(projectId: string, projectData: Partial<IProject>): Promise<ApiResponse<IProject>> {
     return configService.patch(`${API_URL.PROJECTS}/${projectId}`, projectData);
-  },
-  updateProjectNew(
-    projectId: string,
-    projectData: Omit<
-      IProject,
-      'projectId' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'createUserId' | 'isApproved' | 'subjectId'
-    >,
-  ): Promise<ApiResponse<IProject>> {
-    return configService.put(`${API_URL.PROJECTS}/${projectId}`, projectData);
   },
   deleteProject(projectId: string): Promise<ApiResponse<boolean>> {
     return configService.delete(`${API_URL.PROJECTS}/${projectId}`);

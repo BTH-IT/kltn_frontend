@@ -1,7 +1,7 @@
 'use client';
 
 import { useQRCode } from 'next-qrcode';
-import { Copy, EllipsisVertical, EyeOff, Link2, QrCode, RotateCcw, Scan } from 'lucide-react';
+import { Copy, EllipsisVertical, Link2, QrCode, RotateCcw, Scan } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 import ShowCodeModal from '@/components/modals/ShowCodeModal';
@@ -37,7 +37,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
     }
   }, [inviteCode]);
 
-  const handleChangeInvCodeClick = async () => {
+  const handleChangeInvCode = async () => {
     setUpdatingInvCode(true);
     try {
       const res = await courseService.updateCourseInviteCode(inviteCode);
@@ -56,7 +56,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
     }
   };
 
-  const handleCopyInvCodeClick = async () => {
+  const handleCopyInvCode = async () => {
     try {
       const classCode = inviteCode;
       await navigator.clipboard.writeText(classCode);
@@ -70,7 +70,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
     }
   };
 
-  const handleCopyInvLinkClick = async () => {
+  const handleCopyInvLink = async () => {
     try {
       await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/courses/invite/${inviteCode}`);
       toast({
@@ -93,11 +93,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-auto" align="start">
             <DropdownMenuGroup>
-              <DropdownMenuItem className="flex items-center gap-3">
-                <EyeOff width={20} height={20} />
-                <span>Ẩn mã lớp</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleChangeInvCodeClick()} className="flex items-center gap-3">
+              <DropdownMenuItem onClick={() => handleChangeInvCode()} className="flex items-center gap-3">
                 <RotateCcw width={20} height={20} />
                 <span>Đặt lại mã lớp</span>
               </DropdownMenuItem>
@@ -105,11 +101,11 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
                 <QrCode width={20} height={20} />
                 <span>QR tham gia lớp học</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleCopyInvCodeClick()} className="flex items-center gap-3">
+              <DropdownMenuItem onClick={() => handleCopyInvCode()} className="flex items-center gap-3">
                 <Copy width={20} height={20} />
                 <span>Sao chép mã lớp</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleCopyInvLinkClick()} className="flex items-center gap-3">
+              <DropdownMenuItem onClick={() => handleCopyInvLink()} className="flex items-center gap-3">
                 <Link2 width={20} height={20} />
                 <span>Sao chép liên kết tham gia lớp học</span>
               </DropdownMenuItem>
@@ -149,7 +145,7 @@ const InviteCode = ({ teacherId, inviteCode, name }: { teacherId: string; invite
         }
         acceptTitle="Sao chép link tham gia lớp học"
         acceptClassName="mx-auto bg-blue-400 text-primary-foreground hover:bg-blue-500 hover:shadow-lg"
-        ocClickAccept={handleCopyInvLinkClick}
+        ocClickAccept={handleCopyInvLink}
       />
     </div>
   ) : (

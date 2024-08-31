@@ -50,7 +50,7 @@ const courseService = {
     return configService.delete(`${API_URL.COURSES}/${courseId}/student/${userId}`);
   },
 
-  addStudentToCoursByInviteCode(inviteCode: string): Promise<ApiResponse<ICourse | null>> {
+  addStudentToCourseByInviteCode(inviteCode: string): Promise<ApiResponse<ICourse | null>> {
     return configService.post(`${API_URL.COURSES}/invite/${inviteCode}`);
   },
 

@@ -6,17 +6,32 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Lock, LockKeyhole, Mail, User } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
+import authService from '@/services/authService';
+import { SET_LOCALSTORAGE } from '@/utils';
 
 import InputForm from '../_components/InputForm';
+import { passwordSchema } from '../login/page';
 
-const signUpSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string().min(8, 'confirmPassword must be at least 8 characters'),
-});
+const signUpSchema = z
+  .object({
+    username: z.string().min(1, 'Username is required'),
+    email: z.string().email('Invalid email address'),
+    password: passwordSchema,
+    confirmPassword: z.string().min(8, 'confirmPassword must be at least 8 characters'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.confirmPassword !== data.password) {
+      ctx.addIssue({
+        code: 'not_finite',
+        path: ['confirmPassword'],
+        message: 'Passwords do not match',
+      });
+    }
+  });
 
 type SignUpFormInputs = z.infer<typeof signUpSchema>;
 
@@ -28,10 +43,26 @@ export default function Page() {
   } = useForm<SignUpFormInputs>({
     resolver: zodResolver(signUpSchema),
   });
+  const router = useRouter();
 
-  const onSubmit = (data: SignUpFormInputs) => {
-    console.log(data);
-    // Handle sign-up logic here
+  const onSubmit = async (data: SignUpFormInputs) => {
+    try {
+      const res: any = await authService.register(data);
+      SET_LOCALSTORAGE(res.data);
+      await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(res.data),
+      });
+      router.push('/');
+      toast.success('Success: login');
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`Error: ${error.message}`);
+      }
+    }
   };
 
   return (
@@ -56,7 +87,7 @@ export default function Page() {
 
             <InputForm
               name={'email'}
-              error={errors.username?.message}
+              error={errors.email?.message}
               control={control}
               placeholder="Email"
               type="text"
@@ -65,7 +96,7 @@ export default function Page() {
 
             <InputForm
               name={'password'}
-              error={errors.username?.message}
+              error={errors.password?.message}
               control={control}
               placeholder="Password"
               type="password"
@@ -75,7 +106,7 @@ export default function Page() {
 
             <InputForm
               name={'confirmPassword'}
-              error={errors.username?.message}
+              error={errors.confirmPassword?.message}
               control={control}
               placeholder="Confirm Password"
               iconStart={<LockKeyhole />}

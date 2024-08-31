@@ -43,8 +43,6 @@ const CourseOptionModal = ({
   const router = useRouter();
   const { course } = useContext(CourseContext);
 
-  // console.log(course);
-
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
@@ -246,38 +244,7 @@ const CourseOptionModal = ({
                   </div>
                   <div className="mx-auto border-2 rounded-lg p-5 !my-8 w-[700px]">
                     <div className="mt-2 mb-10 text-4xl font-medium">Cài đặt chung</div>
-                    <div className="my-2 text-2xl">Mã mời</div>
                     <div className="grid gap-4 py-4">
-                      <FormField
-                        control={form.control}
-                        name="enableInvite"
-                        render={({ field }) => (
-                          <FormItem>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <div className="font-medium">Quản lý mã mời</div>
-                                <div className="text-xs">
-                                  Chế độ cài đặt áp dụng cho cả mã lớp học và đường liên kết mời
-                                </div>
-                              </div>
-                              <FormControl>
-                                <ShadSelect defaultValue={field.value}>
-                                  <SelectTrigger className="w-24">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      <SelectItem value="true">Bật</SelectItem>
-                                      <SelectItem value="false">Tắt</SelectItem>
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </ShadSelect>
-                              </FormControl>
-                            </div>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                       <div className="flex items-center justify-between">
                         <div className="font-medium">Đường liên kết mời</div>
                         <div className="flex items-center gap-1">

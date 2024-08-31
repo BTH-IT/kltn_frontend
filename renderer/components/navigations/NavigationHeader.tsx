@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Menu, Plus } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { cn } from '@/libs/utils';
@@ -14,14 +14,27 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { navigationItemList } from '@/constants/common';
 import { CourseContext } from '@/contexts/CourseContext';
 import { SidebarContext } from '@/contexts/SidebarContext';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CLEAR_LOCALSTORAGE, KEY_LOCALSTORAGE } from '@/utils';
+import { IUser } from '@/types';
 
 const NavigationHeader = () => {
   const { setSidebar, isShow } = useContext(SidebarContext);
   const pathname = usePathname() ?? '';
   const path = pathname?.slice(1, pathname.length - 1);
+  const [user, setUser] = useState<IUser | null>(null);
+  const router = useRouter();
 
   const { course } = useContext(CourseContext);
 
@@ -33,7 +46,19 @@ const NavigationHeader = () => {
 
   useEffect(() => {
     setIsMounted(true);
+
+    const user = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER);
+    setUser(user ? JSON.parse(user) : null);
   }, []);
+
+  const handleLogout = async () => {
+    CLEAR_LOCALSTORAGE();
+    await fetch('/api/logout', {
+      method: 'POST',
+    });
+    router.refresh();
+    router.replace('/login');
+  };
 
   return (
     isMounted && (
@@ -76,7 +101,19 @@ const NavigationHeader = () => {
               <Plus />
             </button>
           </CreateCourseModal>
-          {/* dawdad */}
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar>
+                <AvatarImage src={user?.avatar || '/images/avt.png'} />
+                <AvatarFallback>{user?.fullName}</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     )

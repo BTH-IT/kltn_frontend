@@ -137,17 +137,7 @@ const request = async <Response>(
           status: res.status,
           payload,
         };
-
-        if (!res.ok) {
-          throw new HttpError(data);
-        }
-
-        return data;
       }
-
-      throw new HttpError(refreshData);
-    } else {
-      throw new HttpError(data);
     }
   }
 

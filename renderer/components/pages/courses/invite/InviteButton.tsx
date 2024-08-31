@@ -10,7 +10,7 @@ import { CoursesContext } from '@/contexts/CoursesContext';
 const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
-  const { setenrolledCourses, enrolledCourses } = useContext(CoursesContext);
+  const { setEnrolledCourses, enrolledCourses } = useContext(CoursesContext);
 
   return (
     <Button
@@ -18,13 +18,13 @@ const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
       onClick={async () => {
         try {
           setLoading(true);
-          const res = await courseService.addStudentToClassByInviteCode(inviteCode);
+          const res = await courseService.addStudentToCourseByInviteCode(inviteCode);
 
           if (res.data) {
             setLoading(false);
 
-            setenrolledCourses([...enrolledCourses, res.data]);
-            return router.replace(`/course/${res.data.classId}`);
+            setEnrolledCourses([...enrolledCourses, res.data]);
+            return router.replace(`/courses/${res.data.classId}`);
           }
         } catch (error) {
           console.error('Error adding student to class:', error);
@@ -33,11 +33,11 @@ const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
           router.replace('/');
         }
       }}
-      className="flex gap-3 items-center"
+      className="flex items-center gap-3"
       disabled={loading}
     >
       {loading && (
-        <div className="mr-1 w-4 h-4 rounded-full border-t-2 border-b-2 animate-spin border-primaryGray"></div>
+        <div className="w-4 h-4 mr-1 border-t-2 border-b-2 rounded-full animate-spin border-primaryGray"></div>
       )}
       Tham gia lớp học
     </Button>

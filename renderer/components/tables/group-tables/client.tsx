@@ -1,14 +1,17 @@
 'use client';
+
+import { Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { IGroup } from '@/types/group';
-import { Separator } from '@radix-ui/react-separator';
-import { Plus } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
-import { columns } from './columns';
+import { Separator } from '@/components/ui/separator';
 import { CreateGroupModal } from '@/components/modals/CreateGroupModal';
-import { GroupContext, useGroupContext } from '@/contexts/GroupContext';
+import { useGroupContext } from '@/contexts/GroupContext';
+
+import { columns } from './columns';
 
 const GroupClient = () => {
   const { groups, setGroups } = useGroupContext();
@@ -20,6 +23,7 @@ const GroupClient = () => {
       setGroups((prev) => [...prev, groupCreated]);
     }
   }, [groupCreated]);
+
   return (
     <>
       <div className="flex items-start justify-between">

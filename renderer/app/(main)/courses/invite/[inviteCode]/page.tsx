@@ -6,14 +6,15 @@ import { API_URL } from '@/constants/endpoints';
 import InviteButton from '@/components/pages/courses/invite/InviteButton';
 import http from '@/libs/http';
 import { ICourse } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) => {
   const { inviteCode } = params;
 
   const cookieStore = cookies();
-  const userCookie = cookieStore.get('user')?.value;
+  const userCookie = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_USER)?.value;
   const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
-  console.log('kk' + user);
+
   if (!user) {
     return redirect('/login');
   }
@@ -25,12 +26,6 @@ const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) =>
   if (!course) {
     return redirect('/');
   }
-
-  // const existUser = course?.students?.some((s: any) => s.id === user.id);
-
-  // if (existUser) {
-  //   return redirect('/');
-  // }
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full p-10">
@@ -52,8 +47,7 @@ const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) =>
           <p className="text-sm text-center">Bạn đang tham gia lớp học với tư cách học viên.</p>
           <InviteButton inviteCode={inviteCode} />
           <p className="text-sm text-center">
-            Bằng việc tham gia, bạn đồng ý chia sẻ thông tin liên hệ với những người trong lớp của bạn. Ứng dụng sẽ sử
-            dụng các dịch vụ của Google Workspace, trong đó có Drive và Lịch.
+            Bằng việc tham gia, bạn đồng ý chia sẻ thông tin liên hệ với những người trong lớp của bạn.
           </p>
         </div>
       </div>

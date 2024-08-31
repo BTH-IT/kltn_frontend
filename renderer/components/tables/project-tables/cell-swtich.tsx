@@ -14,12 +14,16 @@ interface CellSwitchProps {
 }
 
 export const CellSwitch: React.FC<CellSwitchProps> = ({ data }) => {
+  const [checked, setChecked] = useState(data.isApproved);
+
   const handleChange = async (checked: boolean) => {
     try {
       await projectService.updateProject(data.projectId, {
         ...data,
         isApproved: checked,
       });
+
+      setChecked(checked);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -27,5 +31,5 @@ export const CellSwitch: React.FC<CellSwitchProps> = ({ data }) => {
     }
   };
 
-  return <Switch checked={data.isApproved} onCheckedChange={handleChange} />;
+  return <Switch checked={checked} onCheckedChange={handleChange} />;
 };

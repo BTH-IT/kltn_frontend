@@ -26,18 +26,16 @@ export const ProjectClient = ({ data }: { data: IProject[] }) => {
   }, [projectCreated, data]);
 
   return (
-    <>
-      <CreateProjectProvider>
-        <div className="flex items-start justify-between">
-          <Heading title={`Projects (${projects.length})`} description="Manage projects" />
-          <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Thêm mới
-          </Button>
-        </div>
-        <Separator />
-        <DataTable columns={columns} data={projects} />
-        <CreateProjectModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} setProjectCreated={setProjectCreated} />
-      </CreateProjectProvider>
-    </>
+    <CreateProjectProvider>
+      <div className="flex items-start justify-between">
+        <Heading title={`Projects (${projects.length})`} description="Manage projects" />
+        <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" /> Thêm mới
+        </Button>
+      </div>
+      <Separator />
+      <DataTable columns={columns} data={projects} />
+      <CreateProjectModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} setProjectCreated={setProjectCreated} />
+    </CreateProjectProvider>
   );
 };
