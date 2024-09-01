@@ -103,7 +103,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
           )}
         </div>
       </div>
-      {!isTeacher && user?.id === course.courseId && (
+      {!isTeacher && user?.id === course.lecturerId && (
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-5">
             <Checkbox
@@ -165,7 +165,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
         <AvatarHeader
           key={idx}
           imageUrl={d?.avatar || '/images/avt.png'}
-          fullName={d?.fullName || 'anonymous'}
+          fullName={d?.fullName || d?.userName || 'anonymous'}
           type={isTeacher ? 'teacher' : 'student'}
           dropdownMenu={
             <>
@@ -227,10 +227,9 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
         acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
         ocClickAccept={async () => {
           if (selectedRemoveMany) {
-            await Promise.all(
-              selectedRemoveMany.map(async (item) => {
-                await handleRemove(item.id);
-              }),
+            await courseService.deleteStudentsOfCourse(
+              course.courseId,
+              selectedRemoveMany.map((item) => item.id),
             );
           }
           setIsDeleteManyModalOpen(false);

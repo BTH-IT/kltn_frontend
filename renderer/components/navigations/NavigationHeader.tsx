@@ -88,7 +88,7 @@ const NavigationHeader = () => {
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="ml-2 text-xl text-black">
-                    {navigationItemList[path] ?? course?.name}
+                    {navigationItemList[path] ?? course?.courseGroup}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>

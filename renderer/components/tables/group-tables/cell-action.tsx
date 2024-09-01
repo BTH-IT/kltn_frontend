@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 'use client';
-import { ChevronRight, Edit, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+
+import { Edit, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -10,7 +9,6 @@ import { IGroup } from '@/types/group';
 import groupService from '@/services/groupService';
 import { EditGroupModal } from '@/components/modals/EditGroupModal';
 import { useGroupContext } from '@/contexts/GroupContext';
-import Link from 'next/link';
 
 interface CellActionProps {
   data: IGroup;
@@ -19,7 +17,7 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const router = useRouter();
+
   const { groups, setGroups } = useGroupContext();
   const handleRemove = async () => {
     try {
