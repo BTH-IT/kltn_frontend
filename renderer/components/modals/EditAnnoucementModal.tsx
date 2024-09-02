@@ -85,13 +85,13 @@ const EditAnnoucementModal = ({
           apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY!,
         })
         .then(async () => {
-          const res = await userService.getCurrentUserToken();
-          const { token } = res.data;
+          const tokenInfo = gapi.auth.getToken();
+
           const pickerConfig: any = {
             clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
             developerKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY!,
             viewId: 'DOCS',
-            token: token ?? null,
+            token: tokenInfo ? tokenInfo.access_token : null,
             showUploadView: true,
             showUploadFolders: true,
             supportDrives: true,
@@ -104,13 +104,9 @@ const EditAnnoucementModal = ({
                 elements[i].style.zIndex = '2000';
               }
               if (data.action === 'picked') {
-                if (!token) {
-                  const res = await userService.getCurrentUserToken();
-                  const { token } = res.data;
-                }
                 const fetchOptions = {
                   headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${tokenInfo.access_token}`,
                   },
                 };
                 const driveFileUrl = 'https://www.googleapis.com/drive/v3/files';
@@ -237,147 +233,155 @@ const EditAnnoucementModal = ({
   });
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent2 className="max-w-[750px] min-h-[450px] p-0 font-sans text-gray-700">
-        <DialogHeader className="flex flex-row items-center justify-between px-6 py-3 border-b-2 h-fit">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100/60">
-              <MessageSquare className="w-6 h-6 text-teal-600" />
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent2 className="max-w-[750px] min-h-[450px] p-0 font-sans text-gray-700">
+          <DialogHeader className="flex flex-row items-center justify-between px-6 py-3 border-b-2 h-fit">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100/60">
+                <MessageSquare className="w-6 h-6 text-teal-600" />
+              </div>
+              <DialogTitle>Thông báo</DialogTitle>
             </div>
-            <DialogTitle>Thông báo</DialogTitle>
-          </div>
-          <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-            <X className="w-6 h-6" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <div className="flex flex-col gap-4 px-3">
-            <div className="font-medium">Dành cho</div>
-            <MultiSelectPeople
-              options={options}
-              onChange={handleChange}
-              value={optionSelected}
-              isSelectAll={true}
-              menuPlacement={'bottom'}
-              className="w-[300px] "
-            />
-          </div>
-          <div className="px-3 pt-3">
-            <Controller
-              name="content"
-              control={control}
-              defaultValue={announcement.content}
-              render={({ field }) => (
-                <ReactQuill
-                  theme="snow"
-                  placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
-                  className="flex-1 rounded-md h-[180px]"
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </div>
-          <div className="overflow-auto max-h-[240px]">
-            <AnnouncementAttachList
-              links={fileString}
-              files={linkString}
-              setFiles={setFileString}
-              setLinks={setLinkString}
-              isEdit
-            />
-            <AnnouncementFileList files={files} setFiles={setFiles} />
-            <AnnouncementLinkList links={links} setLinks={setLinks} />
-          </div>
-          <DialogFooter className="px-6 pb-6 sm:items-end">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex gap-5">
-                <TooltipBottom content="Thêm tệp Google Drive">
-                  <Button
-                    className="w-12 h-12 rounded-full p-0 border-[1px]"
-                    variant="secondary3"
-                    type="button"
-                    onClick={() => handleOpenPicker()}
-                  >
-                    <FontAwesomeIcon size="xl" icon={faGoogleDrive} />
-                  </Button>
-                </TooltipBottom>
-                <TooltipBottom content="Thêm video trên Youtube">
-                  <Button
-                    onClick={() => {
-                      setIsOpenSelectYoutubeModal(true);
-                    }}
-                    className="w-12 h-12 rounded-full p-0 border-[1px]"
-                    variant="secondary3"
-                    type="button"
-                  >
-                    <FontAwesomeIcon size="xl" icon={faYoutube} />
-                  </Button>
-                </TooltipBottom>
-                <TooltipBottom content="Tải tệp lên">
-                  <Button
-                    className="w-12 h-12 rounded-full p-0 border-[1px]"
-                    variant="secondary3"
-                    type="button"
-                    onClick={() => {
-                      if (fileRef?.current) {
-                        fileRef.current.click();
-                      }
-                    }}
-                  >
-                    <Upload width={20} height={20} />
-                  </Button>
-                  <input
-                    id="fileInput"
-                    ref={fileRef}
-                    type="file"
-                    multiple
-                    style={{ display: 'none' }}
-                    onChange={handleFileChange}
+            <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+              <X className="w-6 h-6" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+          </DialogHeader>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4 px-3">
+              <div className="font-medium">Dành cho</div>
+              <MultiSelectPeople
+                options={options}
+                onChange={handleChange}
+                value={optionSelected}
+                isSelectAll={true}
+                menuPlacement={'bottom'}
+                className="w-[300px] "
+              />
+            </div>
+            <div className="px-3 pt-3">
+              <Controller
+                name="content"
+                control={control}
+                defaultValue={announcement.content}
+                render={({ field }) => (
+                  <ReactQuill
+                    theme="snow"
+                    placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
+                    className="flex-1 rounded-md h-[180px]"
+                    value={field.value}
+                    onChange={field.onChange}
                   />
-                </TooltipBottom>
-                <TooltipBottom content="Thêm đường liên kết">
+                )}
+              />
+            </div>
+            <div className="overflow-auto max-h-[240px]">
+              <AnnouncementAttachList
+                links={fileString}
+                files={linkString}
+                setFiles={setFileString}
+                setLinks={setLinkString}
+                isEdit
+              />
+              <AnnouncementFileList files={files} setFiles={setFiles} />
+              <AnnouncementLinkList links={links} setLinks={setLinks} />
+            </div>
+            <DialogFooter className="px-6 pb-6 sm:items-end">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex gap-5">
+                  <TooltipBottom content="Thêm tệp Google Drive">
+                    <Button
+                      className="w-12 h-12 rounded-full p-0 border-[1px]"
+                      variant="secondary3"
+                      type="button"
+                      onClick={() => handleOpenPicker()}
+                    >
+                      <FontAwesomeIcon size="xl" icon={faGoogleDrive} />
+                    </Button>
+                  </TooltipBottom>
+                  <TooltipBottom content="Thêm video trên Youtube">
+                    <Button
+                      onClick={() => {
+                        setIsOpenSelectYoutubeModal(true);
+                      }}
+                      className="w-12 h-12 rounded-full p-0 border-[1px]"
+                      variant="secondary3"
+                      type="button"
+                    >
+                      <FontAwesomeIcon size="xl" icon={faYoutube} />
+                    </Button>
+                  </TooltipBottom>
+                  <TooltipBottom content="Tải tệp lên">
+                    <Button
+                      className="w-12 h-12 rounded-full p-0 border-[1px]"
+                      variant="secondary3"
+                      type="button"
+                      onClick={() => {
+                        if (fileRef?.current) {
+                          fileRef.current.click();
+                        }
+                      }}
+                    >
+                      <Upload width={20} height={20} />
+                    </Button>
+                    <input
+                      id="fileInput"
+                      ref={fileRef}
+                      type="file"
+                      multiple
+                      style={{ display: 'none' }}
+                      onChange={handleFileChange}
+                    />
+                  </TooltipBottom>
+                  <TooltipBottom content="Thêm đường liên kết">
+                    <Button
+                      onClick={() => setIsOpenSelectLinkModal(true)}
+                      className="w-12 h-12 rounded-full p-0 border-[1px]"
+                      variant="secondary3"
+                      type="button"
+                    >
+                      <Link2 width={20} height={20} />
+                    </Button>
+                  </TooltipBottom>
+                </div>
+                <div className="flex gap-4">
                   <Button
-                    onClick={() => setIsOpenSelectLinkModal(true)}
-                    className="w-12 h-12 rounded-full p-0 border-[1px]"
+                    onClick={() => {
+                      setIsOpen(false);
+                      reset();
+                    }}
+                    disabled={formState.isSubmitting}
+                    className="w-20"
                     variant="secondary3"
                     type="button"
                   >
-                    <Link2 width={20} height={20} />
+                    Hủy
                   </Button>
-                </TooltipBottom>
+                  <Button
+                    type="submit"
+                    disabled={formState.isSubmitting || !(optionSelected !== null && optionSelected?.length > 0)}
+                    className="w-20"
+                    variant="primaryReverge"
+                  >
+                    {formState.isSubmitting && (
+                      <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
+                    )}
+                    Lưu
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-4">
-                <Button
-                  onClick={() => {
-                    setIsOpen(false);
-                    reset();
-                  }}
-                  disabled={formState.isSubmitting}
-                  className="w-20"
-                  variant="secondary3"
-                  type="button"
-                >
-                  Hủy
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={formState.isSubmitting || !(optionSelected !== null && optionSelected?.length > 0)}
-                  className="w-20"
-                  variant="primaryReverge"
-                >
-                  {formState.isSubmitting && (
-                    <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
-                  )}
-                  Lưu
-                </Button>
-              </div>
-            </div>
-          </DialogFooter>
-        </form>
-      </DialogContent2>
-    </Dialog>
+            </DialogFooter>
+          </form>
+        </DialogContent2>
+      </Dialog>
+      <AddLinkModal isOpen={isOpenSelectLinkModal} setIsOpen={setIsOpenSelectLinkModal} setLinks={setLinks} />
+      <AddYoutubeLinkModal
+        isOpen={isOpenSelectYoutubeModal}
+        setIsOpen={setIsOpenSelectYoutubeModal}
+        handleAddYoutubeLink={handleAddYoutubeLink}
+      />
+    </>
   );
 };
 

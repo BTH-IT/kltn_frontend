@@ -40,20 +40,14 @@ const courseService = {
     return configService.delete(`${API_URL.COURSES}/${courseId}`);
   },
 
-  addStudentToCourse(courseId: string, userId: string): Promise<ApiResponse<boolean>> {
-    return configService.post(`${API_URL.COURSES}/${courseId}/student`, {
-      userId,
-    });
-  },
-
   deleteStudentOfCourse(courseId: string, userId: string): Promise<ApiResponse<boolean>> {
-    return configService.delete(`${API_URL.COURSES}/${courseId}/student`, {
+    return configService.delete(`${API_URL.COURSES}/${courseId}/students`, {
       data: { studentId: userId },
     });
   },
 
   deleteStudentsOfCourse(courseId: string, userIds: string[]): Promise<ApiResponse<boolean>> {
-    return configService.delete(`${API_URL.COURSES}/${courseId}/student`, {
+    return configService.delete(`${API_URL.COURSES}/${courseId}/students/multiple`, {
       data: userIds,
     });
   },
