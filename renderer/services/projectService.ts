@@ -19,6 +19,10 @@ const projectService = {
     return configService.post(`${API_URL.PROJECTS}`, projectData);
   },
 
+  getProjectByCourseId(courseId: string): Promise<ApiResponse<IProject[]>> {
+    return configService.get(`${API_URL.COURSES}/${courseId}${API_URL.PROJECTS}`);
+  },
+
   updateProject(projectId: string, projectData: Partial<IProject>): Promise<ApiResponse<IProject>> {
     return configService.patch(`${API_URL.PROJECTS}/${projectId}`, projectData);
   },

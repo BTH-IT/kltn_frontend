@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useContext, useState } from 'react';
+
 import { IGroup } from '@/types/group';
 
 interface IGroupContext {
