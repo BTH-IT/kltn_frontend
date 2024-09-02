@@ -1,20 +1,25 @@
 'use client';
-import groupService from '@/services/groupService';
-import { IGroup } from '@/types/group';
-import { zodResolver } from '@hookform/resolvers/zod';
+
+import React, { useContext, useEffect } from 'react';
+import { z } from 'zod';
 import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Select as ReactSelect } from 'react-select-virtualized';
+
+import groupService from '@/services/groupService';
+import { IGroup } from '@/types/group';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
-import { useContext, useEffect } from 'react';
-import { GroupContext, useGroupContext } from '@/contexts/GroupContext';
+import { useGroupContext } from '@/contexts/GroupContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CreateProjectContext } from '@/contexts/CreateProjectContext';
+
 export const EditGroupModal = ({
   isOpen,
   setIsOpen,
@@ -26,10 +31,12 @@ export const EditGroupModal = ({
 }) => {
   const { groups, setGroups } = useGroupContext();
   const params = useParams();
+  const { projects } = useContext(CreateProjectContext);
 
   const FormSchema = z.object({
     groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
     numberOfMembers: z.coerce.number(),
+    projectId: z.string().min(1, { message: 'Đề tài là trường bắt buộc.' }),
   });
 
   const form = useForm({
@@ -37,6 +44,7 @@ export const EditGroupModal = ({
     defaultValues: {
       groupName: '',
       numberOfMembers: 2,
+      projectId: '',
     },
   });
 
@@ -44,6 +52,7 @@ export const EditGroupModal = ({
     if (group) {
       form.setValue('groupName', String(group.groupName));
       form.setValue('numberOfMembers', group.numberOfMembers);
+      form.setValue('projectId', group.projectId || '');
     }
   }, [group, form, isOpen]);
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
@@ -51,7 +60,6 @@ export const EditGroupModal = ({
       const res = await groupService.updateGroup(group.groupId, {
         ...values,
         courseId: params.courseId as string,
-        //isApproved: true,
       });
       if (res.data) {
         var updatedGroups = groups.map((item) => (item.groupId == group.groupId ? res.data : item));
@@ -76,7 +84,7 @@ export const EditGroupModal = ({
         <DialogContent className="sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle className="mx-auto">
-              {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Tạo đề tài mới'}
+              {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Chỉnh sửa đề tài'}
             </DialogTitle>
           </DialogHeader>
           <Form {...form}>
@@ -128,6 +136,27 @@ export const EditGroupModal = ({
                           </Select>
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                         </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="projectId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Đề tài</FormLabel>
+                      <FormControl>
+                        <ReactSelect
+                          {...field}
+                          options={projects?.map((p) => {
+                            return {
+                              label: p.title,
+                              value: p.projectId,
+                            };
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

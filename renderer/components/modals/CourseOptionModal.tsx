@@ -14,14 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Select as ShadSelect,
-} from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { CoursesContext } from '@/contexts/CoursesContext';
@@ -45,7 +37,6 @@ const CourseOptionModal = ({
 
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState(false);
   const { createdCourses, setCreatedCourses } = useContext(CoursesContext);
   const { subjects } = useContext(CreateSubjectContext);
 
@@ -130,7 +121,6 @@ const CourseOptionModal = ({
         variant: 'destructive',
         duration: 2000,
       });
-      setSubmitError(true);
       setHasSubmitted(false);
     }
   };

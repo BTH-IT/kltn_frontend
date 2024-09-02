@@ -1,5 +1,6 @@
-import { IBaseModel } from '.';
 import { IGroupMember } from './group-member';
+
+import { IBaseModel } from '.';
 
 export interface IGroup extends IBaseModel {
   groupId: string;

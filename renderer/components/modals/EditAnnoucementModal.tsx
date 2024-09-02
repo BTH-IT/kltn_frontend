@@ -190,8 +190,8 @@ const EditAnnoucementModal = ({
 
       const announcementData = {
         content: values.content,
-        attachments: JSON.stringify(resAttachments),
-        attachedLinks: JSON.stringify(links),
+        attachments: resAttachments,
+        attachedLinks: links,
         isPinned: announcement.isPinned,
         courseId: course.courseId,
         userId: user.id,

@@ -11,8 +11,8 @@ const CreateProjectContext = React.createContext({
   setProjects: (_projects: IProject[]) => {},
 });
 
-const CreateProjectProvider = ({ children }: { children: React.ReactNode }) => {
-  const [data, setData] = useState<IProject[]>([]);
+const CreateProjectProvider = ({ children, projects }: { children: React.ReactNode; projects: IProject[] }) => {
+  const [data, setData] = useState<IProject[]>(projects);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,8 +20,10 @@ const CreateProjectProvider = ({ children }: { children: React.ReactNode }) => {
       setData(res.data);
     };
 
-    fetchData();
-  }, []);
+    if (!projects || projects.length === 0) {
+      fetchData();
+    }
+  }, [projects]);
 
   return (
     <CreateProjectContext.Provider

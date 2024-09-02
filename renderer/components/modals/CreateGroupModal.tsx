@@ -1,11 +1,15 @@
 'use client';
-import groupService from '@/services/groupService';
-import { IGroup } from '@/types/group';
+
+import { z } from 'zod';
+import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import { z } from 'zod';
+import React, { useContext } from 'react';
+import { Select as ReactSelect } from 'react-select-virtualized';
+
+import groupService from '@/services/groupService';
+import { IGroup } from '@/types/group';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -13,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CreateProjectContext } from '@/contexts/CreateProjectContext';
 export const CreateGroupModal = ({
   isOpen,
   setIsOpen,
@@ -23,16 +28,20 @@ export const CreateGroupModal = ({
   setGroupCreated: React.Dispatch<React.SetStateAction<IGroup | null>>;
 }) => {
   const params = useParams();
+  const { projects } = useContext(CreateProjectContext);
 
   const FormSchema = z.object({
     groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
     numberOfMembers: z.coerce.number(),
+    projectId: z.string().min(1, { message: 'Đề tài là trường bắt buộc.' }),
   });
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       groupName: '',
       numberOfMembers: 2,
+      projectId: '',
     },
   });
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
@@ -40,10 +49,8 @@ export const CreateGroupModal = ({
       const res = await groupService.createGroup({
         ...values,
         courseId: params.courseId as string,
-        //isApproved: true,
       });
       if (res.data) {
-        //setProjects([...projects, res.data]);
         setGroupCreated(res.data);
       }
       form.reset();
@@ -116,6 +123,27 @@ export const CreateGroupModal = ({
                           </Select>
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                         </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="projectId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Đề tài</FormLabel>
+                      <FormControl>
+                        <ReactSelect
+                          {...field}
+                          options={projects?.map((p) => {
+                            return {
+                              label: p.title,
+                              value: p.projectId,
+                            };
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
