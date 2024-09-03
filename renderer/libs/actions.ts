@@ -144,4 +144,12 @@ const request = async <Response>(
   return data;
 };
 
+export const getUserFromCookie = () => {
+  const cookieStore = cookies();
+  const userCookie = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_USER)?.value;
+  const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
+
+  return user;
+};
+
 export default request;

@@ -33,7 +33,16 @@ export const CreateGroupModal = ({
   const FormSchema = z.object({
     groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
     numberOfMembers: z.coerce.number(),
-    projectId: z.string().min(1, { message: 'Đề tài là trường bắt buộc.' }),
+    projectId: z
+      .object({
+        label: z.string(),
+        value: z.string().min(1, {
+          message: 'Đề tài là trường bắt buộc.',
+        }),
+      })
+      .refine((projectId) => projects.find((project) => project.projectId === projectId.value), {
+        message: 'Đề tài không hợp lệ.',
+      }),
   });
 
   const form = useForm({
@@ -41,13 +50,14 @@ export const CreateGroupModal = ({
     defaultValues: {
       groupName: '',
       numberOfMembers: 2,
-      projectId: '',
+      projectId: { label: '', value: '' },
     },
   });
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       const res = await groupService.createGroup({
         ...values,
+        projectId: values.projectId.value,
         courseId: params.courseId as string,
       });
       if (res.data) {

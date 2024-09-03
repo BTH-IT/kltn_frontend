@@ -10,10 +10,12 @@ import { IGroup } from '@/types/group';
 import { Separator } from '@/components/ui/separator';
 import { CreateGroupModal } from '@/components/modals/CreateGroupModal';
 import { useGroupContext } from '@/contexts/GroupContext';
+import { ICourse, IUser } from '@/types';
 
 import { columns } from './columns';
+import { userColumns } from './user-columns';
 
-const GroupClient = () => {
+const GroupClient = ({ user, course }: { user: IUser | null; course: ICourse | null }) => {
   const { groups, setGroups } = useGroupContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [groupCreated, setGroupCreated] = useState<IGroup | null>(null);
@@ -22,7 +24,9 @@ const GroupClient = () => {
     if (groupCreated) {
       setGroups((prev) => [...prev, groupCreated]);
     }
-  }, [groupCreated]);
+  }, [groupCreated, setGroups]);
+
+  console.log('groups', groups);
 
   return (
     <>
@@ -33,7 +37,7 @@ const GroupClient = () => {
         </Button>
       </div>
       <Separator />
-      <DataTable columns={columns} data={groups} />
+      <DataTable columns={user?.id === course?.lecturerId ? columns : userColumns} data={groups} />
       <CreateGroupModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} setGroupCreated={setGroupCreated} />
     </>
   );

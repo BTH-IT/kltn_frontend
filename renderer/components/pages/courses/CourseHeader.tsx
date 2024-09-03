@@ -55,16 +55,18 @@ const CourseHeader = ({ data }: { data: any }) => {
           >
             Mọi người
           </Link>
-          <Link
-            href={`/courses/${data.courseId}/projects`}
-            className={`${
-              newPath === '/projects'
-                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                : ''
-            } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
-          >
-            Đề tài
-          </Link>
+          {user?.id === data.lecturerId && (
+            <Link
+              href={`/courses/${data.courseId}/projects`}
+              className={`${
+                newPath === '/projects'
+                  ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
+                  : ''
+              } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+            >
+              Đề tài
+            </Link>
+          )}
           <Link
             href={`/courses/${data.courseId}/groups`}
             className={`${

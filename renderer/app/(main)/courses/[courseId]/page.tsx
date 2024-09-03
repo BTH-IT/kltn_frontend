@@ -10,6 +10,7 @@ import { ICourse } from '@/types';
 import http from '@/libs/http';
 import { Button } from '@/components/ui/button';
 import CoursePersonalizeModal from '@/components/modals/CoursePersonalizeModal';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 export default async function CoursePage({ params }: { params: { courseId: string } }) {
   const {
@@ -23,7 +24,7 @@ export default async function CoursePage({ params }: { params: { courseId: strin
   };
 
   const cookieStore = cookies();
-  const userCookie = cookieStore.get('user')?.value;
+  const userCookie = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_USER)?.value;
   const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
 
   return (
