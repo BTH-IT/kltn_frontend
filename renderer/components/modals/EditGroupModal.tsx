@@ -61,7 +61,10 @@ export const EditGroupModal = ({
     if (group) {
       form.setValue('groupName', String(group.groupName));
       form.setValue('numberOfMembers', group.numberOfMembers);
-      form.setValue('projectId', { label: '', value: group.projectId || '' });
+      form.setValue('projectId', {
+        label: group.project?.title || '',
+        value: group.projectId || '',
+      });
     }
   }, [group, form, isOpen]);
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
@@ -178,7 +181,7 @@ export const EditGroupModal = ({
                   {form.formState.isSubmitting && (
                     <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
-                  Tạo nhóm
+                  Chỉnh sửa nhóm
                 </Button>
               </DialogFooter>
             </form>

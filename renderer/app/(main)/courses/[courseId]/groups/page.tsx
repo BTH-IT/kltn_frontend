@@ -22,7 +22,7 @@ const GroupsPage = async ({ params }: { params: { courseId: string } }) => {
     return redirect('/');
   }
 
-  const user = getUserFromCookie();
+  const user = await getUserFromCookie();
 
   return (
     <div className="flex-1 p-4 pt-6 space-y-4 md:p-8">

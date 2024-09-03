@@ -1,6 +1,6 @@
 import { IGroupMember } from './group-member';
 
-import { IBaseModel } from '.';
+import { IBaseModel, IProject } from '.';
 
 export interface IGroup extends IBaseModel {
   groupId: string;
@@ -8,7 +8,7 @@ export interface IGroup extends IBaseModel {
   groupName: string;
   projectId?: string;
   numberOfMembers: number;
-  project?: any;
+  project?: IProject;
   isApproved: boolean;
   groupMembers?: IGroupMember[];
 }

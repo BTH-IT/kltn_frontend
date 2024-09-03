@@ -26,8 +26,6 @@ const GroupClient = ({ user, course }: { user: IUser | null; course: ICourse | n
     }
   }, [groupCreated, setGroups]);
 
-  console.log('groups', groups);
-
   return (
     <>
       <div className="flex items-start justify-between">

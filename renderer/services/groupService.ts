@@ -1,7 +1,8 @@
 import { ApiResponse } from '@/types';
-import configService from './configService';
 import { API_URL } from '@/constants/endpoints';
 import { IGroup } from '@/types/group';
+
+import configService from './configService';
 
 const groupService = {
   getGroupById(groupId: string): Promise<ApiResponse<IGroup[]>> {
@@ -14,6 +15,7 @@ const groupService = {
   updateGroup(groupId: string, groupData: Partial<IGroup>): Promise<ApiResponse<IGroup>> {
     return configService.patch(`${API_URL.GROUPS}/${groupId}`, groupData);
   },
+
   deleteGroup(groupId: string): Promise<ApiResponse<boolean>> {
     return configService.delete(`${API_URL.GROUPS}/${groupId}`);
   },

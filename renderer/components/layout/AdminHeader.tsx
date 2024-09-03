@@ -7,9 +7,9 @@ import { MenuIcon } from 'lucide-react';
 import { cn } from '@/libs/utils';
 
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { Button } from '../ui/button';
 
 import { NavigationDashboard } from './NavigationDashboard';
-import { Button } from '../ui/button';
 
 const AdminHeader = () => {
   const [open, setOpen] = useState(false);
@@ -22,8 +22,8 @@ const AdminHeader = () => {
   return (
     <>
       {isMounted && (
-        <div className="fixed top-0 right-0 left-0 z-20 border-b backdrop-blur supports-backdrop-blur:bg-background/60 bg-background/95">
-          <nav className="flex justify-between items-center px-4 h-14">
+        <div className="fixed top-0 left-0 right-0 z-20 border-b backdrop-blur supports-backdrop-blur:bg-background/60 bg-background/95">
+          <nav className="flex items-center justify-between px-4 h-14">
             <div className="hidden lg:block">
               <Link href={'/'} target="_blank">
                 <svg
@@ -34,7 +34,7 @@ const AdminHeader = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="mr-2 w-6 h-6"
+                  className="w-6 h-6 mr-2"
                 >
                   <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
                 </svg>
@@ -58,7 +58,7 @@ const AdminHeader = () => {
               </Sheet>
             </div>
 
-            <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2">
               <Button></Button>
             </div>
           </nav>

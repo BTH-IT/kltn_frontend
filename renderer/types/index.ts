@@ -9,8 +9,9 @@ export * from './project';
 export * from './role';
 export * from './comment';
 export * from './announcement';
-export * from './assignment';
 export * from './attachment';
+export * from './group';
+export * from './group-member';
 export * from './score-structure';
 
 export interface ApiResponse<T> {
