@@ -1,5 +1,6 @@
-import { IAssignment, ApiResponse } from '@/types';
 import { API_URL } from '@/constants/endpoints';
+import { IAssignment } from '@/types/assignment';
+import { ApiResponse } from '@/types';
 
 import configService from './configService';
 
