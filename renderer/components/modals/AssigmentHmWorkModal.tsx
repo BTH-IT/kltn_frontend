@@ -6,24 +6,28 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { NotebookText, X } from 'lucide-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import CreatableSelect from 'react-select/creatable';
 import * as z from 'zod';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import { useToast } from '@/components/ui/use-toast';
-import { CourseContext } from '@/contexts/CourseContext';
 import { CoursesContext } from '@/contexts/CoursesContext';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
-import { IAssignment, ICourse, MetaLinkData } from '@/types';
+import { ICourse, MetaLinkData } from '@/types';
 import { cn } from '@/libs/utils';
+import { IAssignment } from '@/types/assignment';
+import { formatDuration } from '@/utils';
 
 import { DateTimePicker } from '../common/DatetimePicker';
 import MultiSelectClassroom from '../common/MultiSelectClassroom';
 import MultiSelectPeople, { Option } from '../common/MultiSelectPeople';
 import AssignmentForm from '../forms/AssignmentForm';
+import { YoutubeCardProps } from '../common/YoutubeCard';
+
+import AddLinkModal from './AddLinkModal';
+import AddYoutubeLinkModal from './AddYoutubeLinkModal';
 
 const AssignmentHmWorkModal = ({
   course,
@@ -36,40 +40,49 @@ const AssignmentHmWorkModal = ({
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignments: React.Dispatch<React.SetStateAction<IAssignment[]>>;
 }) => {
-  const { toast } = useToast();
-
+  console.log(course);
   const { createdCourses } = useContext(CoursesContext);
 
-  const [canSubmit, setCanSubmit] = useState(false);
+  const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
+  const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const [studentSelected, setStudentSelected] = useState<Option[] | null>(null);
   const [classOptionSelected, setClassOptionSelected] = useState<Option[] | null>();
   const [scoreCols, setScoreCols] = useState<any[]>([]);
   const [scoreSelectedOption, setScoreSelectedOption] = useState<any>([]);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [files, setFiles] = useState<File[]>([]);
-
-  // useEffect(() => {
-  //   if (course) {
-  //     const scoreCols = JSON.parse(course?.scoreStructure)
-  //       .filter(
-  //         (item: any) =>
-  //           !(item.divideColumnFirst && item.divideColumnFirst.length > 0)
-  //       )
-  //       .sort((a: any, b: any) => a.columnName.localeCompare(b.columnName));
-
-  //     setScoreCols(scoreCols);
-
-  //     setClassOptionSelected([
-  //       {
-  //         label: course?.name ?? '',
-  //         value: course?.courseId ?? '',
-  //         default: true,
-  //       },
-  //     ]);
-  //   }
-  // }, [course]);
-
   const [links, setLinks] = useState<MetaLinkData[]>([]);
+
+  useEffect(() => {
+    if (course) {
+      // const scoreCols = JSON.parse(course?.scoreStructure)
+      //   .filter(
+      //     (item: any) =>
+      //       !(item.divideColumnFirst && item.divideColumnFirst.length > 0)
+      //   )
+      //   .sort((a: any, b: any) => a.columnName.localeCompare(b.columnName));
+
+      // setScoreCols(scoreCols);
+
+      setClassOptionSelected([
+        {
+          label: course?.courseGroup ?? '',
+          value: course?.courseId ?? '',
+          default: true,
+        },
+      ]);
+    }
+  }, [course]);
+
+  const generateStudentOptions = useCallback(() => {
+    return course?.students.map((student) => {
+      return {
+        image: student.avatar,
+        value: student.id,
+        label: student.userName,
+      };
+    });
+  }, [course]);
 
   const studentHandleChange = useCallback((selected: Option[]) => {
     setStudentSelected(selected);
@@ -93,16 +106,6 @@ const AssignmentHmWorkModal = ({
     },
     [course],
   );
-
-  // const generateStudentOptions = useCallback(() => {
-  //   return course?.students.map((student) => {
-  //     return {
-  //       image: student.avatarUrl,
-  //       value: student.userId,
-  //       label: student.name,
-  //     };
-  //   });
-  // }, [course]);
 
   const generateClassOptions = useCallback(() => {
     return createdCourses
@@ -137,7 +140,6 @@ const AssignmentHmWorkModal = ({
 
   const resetForm = () => {
     form.reset();
-    setCanSubmit(false);
     setStudentSelected([]);
     setScoreSelectedOption(false);
     setDueDate(undefined);
@@ -145,27 +147,42 @@ const AssignmentHmWorkModal = ({
     setLinks([]);
   };
 
+  const handleAddYoutubeLink = (selectedVideo: YoutubeCardProps | null) => {
+    if (selectedVideo) {
+      setLinks((prev) => [
+        ...prev,
+        {
+          title: selectedVideo.title,
+          description: `Video trên Youtube • ${formatDuration(selectedVideo.duration)}`,
+          image: selectedVideo.thumbnail,
+          url: `https://www.youtube.com/watch?v=${selectedVideo.videoId}`,
+        },
+      ]);
+      setIsOpenSelectYoutubeModal(false);
+    }
+  };
+
   const submitForm = async (values: z.infer<typeof FormSchema>, courseId: string) => {
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
     const formattedDueDate = dueDate?.toISOString() ?? null;
 
-    const studentAssigned = studentSelected?.map((student) => {
-      return student.value.toString();
-    }) ?? ['all'];
+    const studentAssigned =
+      studentSelected?.map((student) => {
+        return student.value.toString();
+      }) ?? [];
 
     const data = {
       courseId,
       title: values.title,
       content: values.content,
       dueDate: formattedDueDate,
-      scoreStructureId: scoreSelectedOption.value,
-      attachedLinks: JSON.stringify(links),
-      attachments: JSON.stringify(resAttachments),
+      attachedLinks: links,
+      attachments: resAttachments,
       studentAssigned,
     };
 
-    return await assignmentService.createAssignment(data as any);
+    return await assignmentService.createAssignment(data);
   };
 
   const createAssignment = async (values: z.infer<typeof FormSchema>, courseId: string) => {
@@ -204,22 +221,13 @@ const AssignmentHmWorkModal = ({
 
       await createAssignmentsForcourse();
 
-      toast({
-        title: `Đã đăng (${assignmentCount}) bài tập thành công`,
-        variant: 'done',
-        duration: 2000,
-      });
+      toast.success(`Đã đăng (${assignmentCount}) bài tập thành công`);
 
       resetForm();
       setOnOpenModal(false);
-      setCanSubmit(false);
     } catch (error) {
       console.error('Error creating assignments:', error);
-      toast({
-        title: 'Có lỗi khi đăng bài tập',
-        variant: 'destructive',
-        duration: 2000,
-      });
+      toast.error('Có lỗi khi đăng bài tập');
     }
   };
 
@@ -227,17 +235,6 @@ const AssignmentHmWorkModal = ({
     resetForm();
     setOnOpenModal(false);
   };
-
-  const isTitleEmpty = form.getValues('title').length === 0;
-  const isClassOptionInvalid = !(
-    classOptionSelected &&
-    (classOptionSelected.length > 1 || (studentSelected && studentSelected.length > 1))
-  );
-  const isScoreOptionInvalid = !scoreSelectedOption || scoreSelectedOption.length === 0;
-
-  const isFormSubmitting = form.formState.isSubmitting;
-
-  const isDisabled = isTitleEmpty || isClassOptionInvalid || isScoreOptionInvalid || isFormSubmitting;
 
   return (
     <>
@@ -253,7 +250,7 @@ const AssignmentHmWorkModal = ({
                     Bài tập
                   </div>
                   <div className="flex items-center gap-7">
-                    <Button type="submit" disabled={isDisabled} className="w-20" variant="primary">
+                    <Button type="submit" className="w-20" variant="primary">
                       {form.formState.isSubmitting && (
                         <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                       )}
@@ -268,7 +265,15 @@ const AssignmentHmWorkModal = ({
                 <div className="!my-0 overflow-auto w-full h-[92vh]">
                   <div className="grid h-full grid-cols-12">
                     <div className="col-span-9 bg-[#F8F9FA]">
-                      <AssignmentForm form={form} files={files} setFiles={setFiles} links={links} setLinks={setLinks} />
+                      <AssignmentForm
+                        form={form}
+                        files={files}
+                        setFiles={setFiles}
+                        links={links}
+                        setLinks={setLinks}
+                        setIsOpenSelectLinkModal={setIsOpenSelectLinkModal}
+                        setIsOpenSelectYoutubeModal={setIsOpenSelectYoutubeModal}
+                      />
                     </div>
                     <div className="flex flex-col col-span-3 gap-5 p-5 border-l">
                       <div className="flex flex-col gap-4 px-3">
@@ -301,8 +306,10 @@ const AssignmentHmWorkModal = ({
                         <div className="font-medium">Hạn nộp</div>
                         <DateTimePicker date={dueDate} setDate={setDueDate} />
                       </div>
-                      <div className="flex flex-col gap-4 px-3">
-                        <div className="font-medium">Bài tập ứng với cột điểm</div>
+                      {/* <div className='flex flex-col gap-4 px-3'>
+                        <div className='font-medium'>
+                          Bài tập ứng với cột điểm
+                        </div>
                         <CreatableSelect
                           isClearable
                           options={scoreCols.map((item) => {
@@ -315,12 +322,18 @@ const AssignmentHmWorkModal = ({
                             setScoreSelectedOption(selectedOption);
                           }}
                         />
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
               </form>
             </Form>
+            <AddLinkModal isOpen={isOpenSelectLinkModal} setIsOpen={setIsOpenSelectLinkModal} setLinks={setLinks} />
+            <AddYoutubeLinkModal
+              isOpen={isOpenSelectYoutubeModal}
+              setIsOpen={setIsOpenSelectYoutubeModal}
+              handleAddYoutubeLink={handleAddYoutubeLink}
+            />
           </div>
         </DialogContent2>
       </Dialog>

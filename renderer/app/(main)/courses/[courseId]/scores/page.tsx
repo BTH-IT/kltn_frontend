@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 'use client';
 
 import React, { useContext } from 'react';
@@ -22,13 +23,7 @@ const ScorePage = () => {
 
   return (
     <div>
-      <ScoreStructureProvider
-        scoreStructures={JSON.parse(
-          course?.scoreStructure && course?.scoreStructure !== '[]'
-            ? course?.scoreStructure
-            : JSON.stringify(defaultScoreStructures),
-        )}
-      >
+      <ScoreStructureProvider scoreStructures={JSON.parse(JSON.stringify(defaultScoreStructures))}>
         <ScoreStructureTable />
         <ScoreStructureForm />
         {/* {course?.scoreStructure && course?.scoreStructure !== '[]' ? <ScoreStructureTable /> : <ScoreStructureForm />} */}

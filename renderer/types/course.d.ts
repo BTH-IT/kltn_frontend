@@ -1,9 +1,10 @@
 import { IAnnouncement } from './announcement';
+import { IAssignment } from './assignment';
 import { ISubject } from './subject';
 import { IUser } from './user';
 
 export interface ICourse {
-  name: any;
+  name: string;
   courseId: string;
   subjectId: string;
   semesterId: string;
@@ -20,4 +21,5 @@ export interface ICourse {
   semester?: any;
   students: IUser[];
   announcements: IAnnouncement[];
+  assignments: IAssignment[];
 }

@@ -125,7 +125,7 @@ const MultiSelectClassroom = (props: any) => {
   };
 
   if (props.isSelectAll && props.options.length !== 0) {
-    isAllSelected.current = filteredSelectedOptions.length === filteredOptions.length;
+    isAllSelected.current = filteredSelectedOptions?.length === filteredOptions?.length;
 
     return (
       <ReactSelect

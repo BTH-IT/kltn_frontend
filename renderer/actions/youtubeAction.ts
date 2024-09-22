@@ -42,12 +42,12 @@ export async function getYoutubeDatabySearch(query: string, pageToken?: string) 
     id: channelIds.join(','),
   });
 
-  const channelAvatars = channelRes.items.reduce((acc: any, item: any) => {
+  const channelAvatars = channelRes.items?.reduce((acc: any, item: any) => {
     acc[item.id] = item.snippet.thumbnails.default.url;
     return acc;
   }, {});
 
-  const videoIds = searchRes.items.map((item: any) => item.id.videoId);
+  const videoIds = searchRes.items?.map((item: any) => item.id.videoId);
   const videoRes = await fetchFromYoutube('videos', {
     part: 'snippet,contentDetails,statistics',
     id: videoIds.join(','),

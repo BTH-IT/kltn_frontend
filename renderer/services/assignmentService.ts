@@ -14,25 +14,24 @@ const assignmentService = {
   },
 
   createAssignment(
-    assignmentData: Omit<IAssignment, 'assignmentId' | 'classes' | 'createdAt' | 'updatedAt'>,
+    assignmentData: Omit<IAssignment, 'assignmentId' | 'course' | 'createdAt' | 'updatedAt'>,
   ): Promise<ApiResponse<IAssignment>> {
     return configService.post(`${API_URL.ASSIGNMENTS}`, assignmentData);
   },
 
   updateAssignment(
-    classId: string,
     assignmentId: string,
-    assignmentData: Omit<IAssignment, 'assignmentId' | 'classes' | 'createdAt' | 'updatedAt'>,
+    assignmentData: Omit<IAssignment, 'assignmentId' | 'course' | 'createdAt' | 'updatedAt'>,
   ): Promise<ApiResponse<IAssignment>> {
-    return configService.patch(`${API_URL.ASSIGNMENTS}/${classId}/${assignmentId}`, assignmentData);
+    return configService.patch(`${API_URL.ASSIGNMENTS}/${assignmentId}`, assignmentData);
   },
 
-  deleteAssignment(classId: string, assignmentId: string): Promise<ApiResponse<boolean>> {
-    return configService.delete(`${API_URL.ASSIGNMENTS}/${classId}/${assignmentId}`);
+  deleteAssignment(assignmentId: string): Promise<ApiResponse<boolean>> {
+    return configService.delete(`${API_URL.ASSIGNMENTS}/${assignmentId}`);
   },
 
-  getAssignmentsByUserId(classId: string, userId: string): Promise<ApiResponse<IAssignment[] | null>> {
-    return configService.get(`${API_URL.ASSIGNMENTS}/${classId}/user/${userId}`);
+  getAssignmentsByUserId(courseId: string, userId: string): Promise<ApiResponse<IAssignment[] | null>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/${courseId}/user/${userId}`);
   },
 };
 

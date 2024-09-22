@@ -2,39 +2,36 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { BookText, NotebookText, NotepadText, Plus, RefreshCcw } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import AssignmentHmWorkModal from '@/components/modals/AssigmentHmWorkModal';
-import AssignmentDocsModal from '@/components/modals/AssignmentDocsModal';
 import assignmentService from '@/services/assignmentService';
-import { cn } from '@/libs/utils';
 import { IAssignment } from '@/types/assignment';
 import { CourseContext } from '@/contexts/CourseContext';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import { IUser } from '@/types';
 import AssignmentList from '@/components/pages/courses/assignment/AssignmentList';
-import AssignmentTestModal from '@/components/modals/AssigmentTestModal';
 
 const AssignmentPage = () => {
   const { course } = useContext(CourseContext);
 
   const [onOpenAssignModal, setOnOpenAssignModal] = useState(false);
-  const [onOpenTestModal, setOnOpenTestModal] = useState(false);
-  const [onOpenDocsModal, setOnOpenDocsModal] = useState(false);
   const [assignments, setAssignments] = useState<IAssignment[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  const [user, setUser] = useState<IUser | null>(null);
 
-  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, []);
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -59,58 +56,16 @@ const AssignmentPage = () => {
     fetchAssignments();
   }, [course, user]);
 
-  console.log(assignments);
-
-  if (!user) {
-    return router.push('/login');
-  }
-
   return (
     <>
       {isMounted && (
-        <div>
-          <div className={cn('pb-10', assignments?.length === 0 && 'border-b border-b-[#e0e0e0]')}>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="cursor-pointer">
-                <div className="inline-flex gap-2 w-[100px] items-center px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-3xl">
-                  <Plus />
-                  <span>Tạo</span>
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-auto" align="start">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    className="flex items-center gap-3 p-2 text-md"
-                    onClick={() => setOnOpenAssignModal(true)}
-                  >
-                    <NotebookText />
-                    Bài tập
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="flex items-center gap-3 p-2 text-md"
-                    onClick={() => setOnOpenTestModal(true)}
-                  >
-                    <NotepadText />
-                    Bài kiểm tra
-                  </DropdownMenuItem>
-                  {/* <DropdownMenuItem className="flex items-center gap-3 p-2 text-md">
-              <FileQuestion />
-              Câu hỏi
-            </DropdownMenuItem> */}
-                  <DropdownMenuItem
-                    className="flex items-center gap-3 p-2 text-md"
-                    onClick={() => setOnOpenDocsModal(true)}
-                  >
-                    <BookText />
-                    Tài liệu
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex items-center gap-3 p-2 text-md">
-                    <RefreshCcw />
-                    Sử dụng lại bài đăng
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+        <>
+          <div
+            onClick={() => setOnOpenAssignModal(true)}
+            className="inline-flex gap-2 w-[100px] items-center cursor-pointer px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-3xl"
+          >
+            <Plus />
+            <span>Tạo</span>
           </div>
           {assignments?.length > 0 ? (
             <AssignmentList
@@ -139,19 +94,7 @@ const AssignmentPage = () => {
             setOnOpenModal={setOnOpenAssignModal}
             setAssignments={setAssignments}
           />
-          <AssignmentTestModal
-            course={course}
-            onOpenModal={onOpenTestModal}
-            setOnOpenModal={setOnOpenTestModal}
-            setAssignments={setAssignments}
-          />
-          <AssignmentDocsModal
-            course={course}
-            onOpenModal={onOpenDocsModal}
-            setOnOpenModal={setOnOpenDocsModal}
-            setAssignments={setAssignments}
-          />
-        </div>
+        </>
       )}
     </>
   );
