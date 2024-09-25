@@ -50,8 +50,8 @@ const AnnouncementAttachList = ({
                   alt={link.title}
                 />
               </div>
-              <div className="flex flex-1 gap-3 justify-between items-center pr-2">
-                <div className="flex flex-col flex-1 justify-around">
+              <div className="flex items-center justify-between flex-1 gap-3 pr-2">
+                <div className="flex flex-col justify-around flex-1">
                   <Link
                     href={link.url}
                     target="_blank"
@@ -83,8 +83,8 @@ const AnnouncementAttachList = ({
                 {f.type.includes('video/') && <Clapperboard width={36} height={36} />}
                 {f.type === 'unknown' && <CloudUpload width={36} height={36} />}
               </div>
-              <div className="flex flex-1 gap-3 justify-between items-center pr-2">
-                <div className="flex flex-col flex-1 justify-around">
+              <div className="flex items-center justify-between flex-1 gap-3 pr-2">
+                <div className="flex flex-col justify-around flex-1">
                   <Link
                     href={f.url}
                     target="_blank"
@@ -115,8 +115,8 @@ const AnnouncementAttachList = ({
                   alt={link.title}
                 />
               </div>
-              <div className="flex flex-1 gap-3 justify-between items-center pr-2">
-                <div className="flex flex-col flex-1 justify-around">
+              <div className="flex items-center justify-between flex-1 gap-3 pr-2">
+                <div className="flex flex-col justify-around flex-1">
                   <Link
                     href={link.url}
                     target="_blank"
@@ -156,8 +156,8 @@ const AnnouncementAttachList = ({
                 {f.type.includes('video/') && <Clapperboard width={36} height={36} />}
                 {f.type === 'unknown' && <CloudUpload width={36} height={36} />}
               </div>
-              <div className="flex flex-1 gap-3 justify-between items-center pr-2">
-                <div className="flex flex-col flex-1 justify-around">
+              <div className="flex items-center justify-between flex-1 gap-3 pr-2">
+                <div className="flex flex-col justify-around flex-1">
                   <Link
                     href={f.url}
                     target="_blank"

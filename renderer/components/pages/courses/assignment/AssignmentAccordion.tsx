@@ -18,6 +18,7 @@ import { cn } from '@/libs/utils';
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 import { useToast } from '@/components/ui/use-toast';
 import { IAssignment } from '@/types/assignment';
+import assignmentService from '@/services/assignmentService';
 
 const AssignmentAccordion = ({
   assignment,
@@ -52,6 +53,19 @@ const AssignmentAccordion = ({
       );
       toast({
         title: 'Đã sao chép link bài tập',
+        variant: 'done',
+        duration: 2000,
+      });
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const handleRemoveAssignment = async () => {
+    try {
+      await assignmentService.deleteAssignment(assignment.assignmentId);
+      toast({
+        title: 'Đã xóa bài tập',
         variant: 'done',
         duration: 2000,
       });
@@ -104,8 +118,12 @@ const AssignmentAccordion = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-auto" align="start">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem className="flex items-center gap-3 p-2 text-md">Chỉnh sửa</DropdownMenuItem>
-                  <DropdownMenuItem className="flex items-center gap-3 p-2 text-md">Xóa</DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-3 p-2 text-md" onClick={handleRemoveAssignment}>
+                    Chỉnh sửa
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-3 p-2 text-md" onClick={handleRemoveAssignment}>
+                    Xóa
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     className="flex items-center gap-3 p-2 text-md"
                     onClick={(e) => {
@@ -127,7 +145,9 @@ const AssignmentAccordion = ({
             <div className="flex items-center justify-between text-sm">
               <div className="text-gray-500">
                 {`Đã đăng vào ${formatVNDate(assignment.createdAt, false)} ${
-                  assignment.updatedAt != assignment.createdAt ? `(Đã chỉnh sửa ${assignment.updatedAt})` : ''
+                  assignment.updatedAt != assignment.createdAt && assignment.updatedAt
+                    ? `(Đã chỉnh sửa ${assignment.updatedAt})`
+                    : ''
                 }`}
               </div>
               <div className="text-green-600">Đã giao</div>

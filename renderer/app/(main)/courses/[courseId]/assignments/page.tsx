@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import AssignmentHmWorkModal from '@/components/modals/AssigmentHmWorkModal';
-import assignmentService from '@/services/assignmentService';
 import { IAssignment } from '@/types/assignment';
 import { CourseContext } from '@/contexts/CourseContext';
 import { KEY_LOCALSTORAGE } from '@/utils';
@@ -34,26 +33,10 @@ const AssignmentPage = () => {
   }, []);
 
   useEffect(() => {
-    const fetchAssignments = async () => {
-      try {
-        if (course && user) {
-          if (user?.id === course.lecturerId) {
-            setAssignments([]);
-          } else {
-            const res = await assignmentService.getAssignmentsByUserId(course.courseId, user?.id);
-            if (res.data) {
-              setAssignments(res.data);
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching assignments: ', error);
-      } finally {
-        setIsMounted(true);
-      }
-    };
-
-    fetchAssignments();
+    setIsMounted(true);
+    if (course) {
+      setAssignments(course.assignments);
+    }
   }, [course, user]);
 
   return (

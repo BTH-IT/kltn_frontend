@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-
-import { columns } from './columns';
 import { ISemester } from '@/types/semester';
 import { CreateSemesterProvider } from '@/contexts/CreateSemesterContext';
 import CreateSemesterModal from '@/components/modals/CreateSemesterModal';
+
+import { columns } from './columns';
 
 export const SemesterClient = ({ data }: { data: ISemester[] }) => {
   const [semesters, setSemesters] = useState<ISemester[]>([]);
@@ -28,10 +28,10 @@ export const SemesterClient = ({ data }: { data: ISemester[] }) => {
   return (
     <>
       <CreateSemesterProvider>
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <Heading title={`Semesters (${semesters.length})`} description="Manage semesters" />
           <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)}>
-            <Plus className="mr-2 w-4 h-4" /> Add New
+            <Plus className="w-4 h-4 mr-2" /> Add New
           </Button>
         </div>
         <Separator />

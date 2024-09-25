@@ -19,7 +19,7 @@ const AssignmentList = ({
   );
 
   return (
-    <div className="flex justify-center w-full">
+    <div className="flex justify-center w-full mt-10">
       <Accordion type="single" collapsible className="flex flex-col w-full max-w-[760px] gap-4">
         {sortedAssignments.map((assignment) => (
           <AssignmentAccordion

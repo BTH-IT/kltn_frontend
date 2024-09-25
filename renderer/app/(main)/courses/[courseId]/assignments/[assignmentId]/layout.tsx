@@ -1,35 +1,36 @@
 import React from 'react';
 
 import { AssignmentProvider } from '@/contexts/AssignmentContext';
-// import http from '@/libs/http';
+import { IAssignment } from '@/types';
+import { API_URL } from '@/constants/endpoints';
+import http from '@/libs/http';
 
-// export async function generateMetadata({ params }: { params: { classId: string; assignmentId: string } }) {
-//   const { data } = await http.get(params.classId, params.assignmentId);
+export async function generateMetadata({ params }: { params: { courseId: string; assignmentId: string } }) {
+  const {
+    payload: { data },
+  } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`);
 
-//   return {
-//     title: data.title,
-//     description: 'Assignment detail',
-//   };
-// }
+  return {
+    title: `Assignment: ${data?.title}`,
+    description: 'Assignment detail',
+  };
+}
 
 const Layout = async ({
   children,
-}: // params,
-{
+  params,
+}: {
   children: React.ReactNode;
   params: { classId: string; assignmentId: string };
 }) => {
-  // const { data } = await cacheAssignmentFetcher(
-  //   params.classId,
-  //   params.assignmentId
-  // );
+  const {
+    payload: { data: assignement },
+  } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`);
 
   return (
-    <>
-      <AssignmentProvider assignment={null}>
-        <div className="w-full max-w-full px-4 py-6">{children}</div>
-      </AssignmentProvider>
-    </>
+    <AssignmentProvider assignment={assignement}>
+      <div className="w-full max-w-full px-4 py-6">{children}</div>
+    </AssignmentProvider>
   );
 };
 

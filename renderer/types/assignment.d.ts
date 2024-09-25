@@ -1,4 +1,7 @@
+import { IComment } from './comment';
 import { ICourse } from './course';
+import { IUser } from './user';
+
 export interface IAssignment {
   assignmentId: string;
   courseId: string;
@@ -11,4 +14,6 @@ export interface IAssignment {
   updatedAt: string;
   course: ICourse;
   studentAssigned: any;
+  user: IUser | null;
+  comments: IComment[];
 }
