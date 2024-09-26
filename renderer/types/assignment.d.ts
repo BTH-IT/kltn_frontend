@@ -14,6 +14,6 @@ export interface IAssignment {
   updatedAt: string;
   course: ICourse;
   studentAssigned: any;
-  user: IUser | null;
+  createUser: IUser | null;
   comments: IComment[];
 }

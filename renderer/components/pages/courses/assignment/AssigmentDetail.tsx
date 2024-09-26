@@ -2,11 +2,12 @@
 'use client';
 
 import { useContext, useEffect, useState } from 'react';
-import { FileText, MoreVertical, Image as ImageIcon, SendHorizontal, EllipsisVertical } from 'lucide-react';
+import { FileText, SendHorizontal, EllipsisVertical } from 'lucide-react';
 import moment from 'moment';
 import { Controller, useForm } from 'react-hook-form';
 import Image from 'next/image';
-import ReactQuill from 'react-quill';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +24,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import CommonModal from '@/components/modals/CommonModal';
+import assignmentService from '@/services/assignmentService';
+import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function AssignmentDetail() {
   const { assignment } = useContext(AssignmentContext);
@@ -30,6 +35,7 @@ export default function AssignmentDetail() {
   const [comments, setComments] = useState<IComment[]>([]);
   const [currentUser, setUser] = useState<IUser | null>(null);
   const [isFocus, setIsFocus] = useState(false);
+  const router = useRouter();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -44,8 +50,10 @@ export default function AssignmentDetail() {
   }, [assignment]);
 
   useEffect(() => {
-    const user = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER);
-    setUser(user ? JSON.parse(user) : null);
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER);
+      setUser(user ? JSON.parse(user) : null);
+    }
   }, []);
 
   const onSubmit = async (data: any) => {
@@ -54,8 +62,7 @@ export default function AssignmentDetail() {
     try {
       const res = await commentService.createComment({
         content: data.content,
-        userId: currentUser.id,
-        announcementId: assignment.assignmentId,
+        commentableId: assignment.assignmentId,
       });
 
       reset();
@@ -78,12 +85,12 @@ export default function AssignmentDetail() {
     }
   };
 
-  const handleRemove = async (id: string) => {
+  const handleRemove = async () => {
     if (!assignment) return;
     try {
-      await commentService.deleteComment(assignment.assignmentId, id);
+      await assignmentService.deleteAssignment(assignment.assignmentId);
 
-      setComments(comments.filter((c) => c.commentId !== id));
+      router.push(`/courses/${assignment.courseId}`);
     } catch (error) {
       console.log(error);
     }
@@ -113,13 +120,13 @@ export default function AssignmentDetail() {
             <div>
               <CardTitle className="text-2xl font-bold text-primary">{assignment?.title}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Biện Thành Hưng • {moment(assignment?.createdAt).fromNow()}{' '}
+                {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
                 {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
               </p>
             </div>
           </div>
           <Button variant="ghost" size="icon" className="rounded-full">
-            {assignment?.user?.id === currentUser?.id ? (
+            {assignment?.createUser?.id === currentUser?.id ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="cursor-pointer">
                   <EllipsisVertical />
@@ -137,19 +144,20 @@ export default function AssignmentDetail() {
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent className="flex flex-col gap-3 pt-6">
         <div
           dangerouslySetInnerHTML={{
             __html: assignment?.content || '',
           }}
+          className="pb-4 border-b"
         />
-      </CardContent>
-      <CardFooter className="border-t rounded-b-lg bg-muted/50">
         <CommentList
           comments={comments}
           handleRemoveComment={handleRemoveComment}
           handleUpdateComment={handleUpdateComment}
         />
+      </CardContent>
+      <CardFooter className="border-t rounded-b-lg bg-muted/50">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={`flex gap-3 items-center pt-6 comment w-full ${isFocus ? 'active' : ''}`}
@@ -192,10 +200,18 @@ export default function AssignmentDetail() {
         acceptTitle="Xoá"
         acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
         ocClickAccept={async () => {
-          await handleRemove(assignment?.assignmentId || '');
+          await handleRemove();
           setIsDeleteModalOpen(false);
         }}
       />
+      {assignment && (
+        <EditAssignmentHmWorkModal
+          onOpenModal={isEdit}
+          setOnOpenModal={setIsEdit}
+          course={assignment.course}
+          assignment={assignment}
+        />
+      )}
     </Card>
   );
 }

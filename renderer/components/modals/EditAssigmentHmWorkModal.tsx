@@ -4,7 +4,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NotebookText, X } from 'lucide-react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'react-toastify';
@@ -25,16 +25,23 @@ import { YoutubeCardProps } from '../common/YoutubeCard';
 import AddLinkModal from './AddLinkModal';
 import AddYoutubeLinkModal from './AddYoutubeLinkModal';
 
-const AssignmentHmWorkModal = ({
+const FormSchema = z.object({
+  title: z.string().min(1, {
+    message: 'Tiêu đề không hợp lệ',
+  }),
+  content: z.string(),
+});
+
+const EditAssignmentHmWorkModal = ({
   course,
   onOpenModal,
   setOnOpenModal,
-  setAssignments,
+  assignment,
 }: {
   course: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setAssignments: React.Dispatch<React.SetStateAction<IAssignment[]>>;
+  assignment: IAssignment;
 }) => {
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
@@ -43,6 +50,14 @@ const AssignmentHmWorkModal = ({
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
+
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      title: '',
+      content: '',
+    },
+  });
 
   useEffect(() => {
     if (course) {
@@ -56,28 +71,20 @@ const AssignmentHmWorkModal = ({
     }
   }, [course]);
 
-  const FormSchema = z.object({
-    title: z.string().min(1, {
-      message: 'Tiêu đề không hợp lệ',
-    }),
-    content: z.string(),
-  });
+  useEffect(() => {
+    if (assignment) {
+      form.reset({
+        title: assignment?.title || '',
+        content: assignment?.content || '',
+      });
 
-  const form = useForm({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      title: '',
-      content: '',
-    },
-  });
+      setDueDate(assignment.dueDate ? new Date(assignment.dueDate) : undefined);
 
-  const resetForm = () => {
-    form.reset();
-    setScoreSelectedOption(false);
-    setDueDate(undefined);
-    setFiles([]);
-    setLinks([]);
-  };
+      setFiles(assignment.attachments || []);
+
+      setLinks(assignment.attachedLinks || []);
+    }
+  }, [assignment, course, form]);
 
   const handleAddYoutubeLink = (selectedVideo: YoutubeCardProps | null) => {
     if (selectedVideo) {
@@ -94,13 +101,12 @@ const AssignmentHmWorkModal = ({
     }
   };
 
-  const submitForm = async (values: z.infer<typeof FormSchema>, courseId: string) => {
+  const submitForm = async (values: z.infer<typeof FormSchema>) => {
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
     const formattedDueDate = dueDate?.toISOString() ?? null;
 
     const data = {
-      courseId,
       title: values.title,
       content: values.content,
       dueDate: formattedDueDate,
@@ -108,30 +114,17 @@ const AssignmentHmWorkModal = ({
       attachments: resAttachments,
     };
 
-    return await assignmentService.createAssignment(data);
-  };
-
-  const createAssignment = async (values: z.infer<typeof FormSchema>, courseId: string) => {
-    try {
-      const response = await submitForm(values, courseId);
-      return response.data;
-    } catch (error) {
-      console.error(`Error creating assignment for class ${courseId}:`, error);
-      throw error;
-    }
+    return await assignmentService.updateAssignment(assignment.assignmentId, data);
   };
 
   const onSubmit = async (values: z.infer<typeof FormSchema>): Promise<void> => {
     if (!course) return;
 
     try {
-      const data = await createAssignment(values, course.courseId);
+      await submitForm(values);
 
-      setAssignments((prev) => [...prev, data]);
+      toast.success('Đã chỉnh sửa bài tập thành công');
 
-      toast.success('Đã đăng bài tập thành công');
-
-      resetForm();
       setOnOpenModal(false);
     } catch (error) {
       console.error('Error creating assignments:', error);
@@ -140,7 +133,6 @@ const AssignmentHmWorkModal = ({
   };
 
   const onCloseModal = () => {
-    resetForm();
     setOnOpenModal(false);
   };
 
@@ -223,4 +215,4 @@ const AssignmentHmWorkModal = ({
   );
 };
 
-export default AssignmentHmWorkModal;
+export default EditAssignmentHmWorkModal;

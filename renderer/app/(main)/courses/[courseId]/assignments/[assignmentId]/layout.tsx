@@ -21,7 +21,7 @@ const Layout = async ({
   params,
 }: {
   children: React.ReactNode;
-  params: { classId: string; assignmentId: string };
+  params: { courseId: string; assignmentId: string };
 }) => {
   const {
     payload: { data: assignement },

@@ -4,30 +4,28 @@ import { API_URL } from '@/constants/endpoints';
 import configService from './configService';
 
 const commentService = {
-  getComments(announcementId: string): Promise<ApiResponse<IComment[]>> {
-    return configService.get(`/comment/${announcementId}${API_URL.COMMENTS}/${announcementId}`);
+  getComments(commentableId: string): Promise<ApiResponse<IComment[]>> {
+    return configService.get(`/comment/${commentableId}${API_URL.COMMENTS}/${commentableId}`);
   },
 
-  getCommentById(announcementId: string, commentId: string): Promise<ApiResponse<IComment>> {
-    return configService.get(`/comment/${announcementId}${API_URL.COMMENTS}/${commentId}`);
+  getCommentById(commentableId: string, commentId: string): Promise<ApiResponse<IComment>> {
+    return configService.get(`/comment/${commentableId}${API_URL.COMMENTS}/${commentId}`);
   },
 
-  createComment(
-    commentData: Omit<IComment, 'commentId' | 'user' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
-  ): Promise<ApiResponse<IComment>> {
-    return configService.post(`/comment/${commentData.announcementId}${API_URL.COMMENTS}`, commentData);
+  createComment(commentData: Partial<IComment>): Promise<ApiResponse<IComment>> {
+    return configService.post(`/comment/${commentData.commentableId}${API_URL.COMMENTS}`, commentData);
   },
 
   updateComment(
-    announcementId: string,
+    commentableId: string,
     commentId: string,
-    commentData: Omit<IComment, 'commentId' | 'user' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+    commentData: Partial<IComment>,
   ): Promise<ApiResponse<IComment>> {
-    return configService.patch(`/comment/${announcementId}${API_URL.COMMENTS}/${commentId}`, commentData);
+    return configService.patch(`/comment/${commentableId}${API_URL.COMMENTS}/${commentId}`, commentData);
   },
 
-  deleteComment(announcementId: string, commentId: string): Promise<ApiResponse<boolean>> {
-    return configService.delete(`/comment/${announcementId}${API_URL.COMMENTS}/${commentId}`);
+  deleteComment(commentableId: string, commentId: string): Promise<ApiResponse<boolean>> {
+    return configService.delete(`/comment/${commentableId}${API_URL.COMMENTS}/${commentId}`);
   },
 };
 

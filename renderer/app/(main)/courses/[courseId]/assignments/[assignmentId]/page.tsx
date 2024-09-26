@@ -1,3 +1,4 @@
+'use client';
 import AssignmentDetail from '@/components/pages/courses/assignment/AssigmentDetail';
 
 const AssignmentDetailPage = () => {

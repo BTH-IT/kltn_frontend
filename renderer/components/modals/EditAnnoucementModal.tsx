@@ -7,7 +7,6 @@ import { faGoogleDrive, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link2, MessageSquare, Upload, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import GooglePicker from 'react-google-picker';
 import React, { useEffect, useRef, useState } from 'react';
 import useDrivePicker from 'react-google-drive-picker';
 import { Controller, useForm } from 'react-hook-form';
@@ -23,7 +22,6 @@ import { Attachment, IAnnouncement, ICourse, IUser, MetaLinkData } from '@/types
 import { YoutubeCardProps } from '@/components/common/YoutubeCard';
 import { formatDuration, getFileType, KEY_LOCALSTORAGE } from '@/utils';
 import uploadService from '@/services/uploadService';
-import userService from '@/services/userService';
 import AnnouncementFileList from '@/components/pages/courses/AnnoucementFileList';
 import AnnouncementLinkList from '@/components/pages/courses/AnnouncementLinkList';
 
@@ -44,8 +42,6 @@ const EditAnnoucementModal = ({
   announcement: IAnnouncement;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
-
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -56,6 +52,14 @@ const EditAnnoucementModal = ({
   const [links, setLinks] = useState<MetaLinkData[]>([]);
   const { control, handleSubmit, reset, formState } = useForm();
   const [optionSelected, setSelected] = useState<Option[] | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER);
+      setUser(user ? JSON.parse(user) : null);
+    }
+  }, []);
 
   useEffect(() => {
     if (announcement.mentions.length <= 0) {

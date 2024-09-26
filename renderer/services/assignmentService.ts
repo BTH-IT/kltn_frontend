@@ -13,16 +13,11 @@ const assignmentService = {
     return configService.get(`${API_URL.ASSIGNMENTS}/${classId}/${assignmentId}`);
   },
 
-  createAssignment(
-    assignmentData: Omit<IAssignment, 'assignmentId' | 'course' | 'createdAt' | 'updatedAt'>,
-  ): Promise<ApiResponse<IAssignment>> {
+  createAssignment(assignmentData: Partial<IAssignment>): Promise<ApiResponse<IAssignment>> {
     return configService.post(`${API_URL.ASSIGNMENTS}`, assignmentData);
   },
 
-  updateAssignment(
-    assignmentId: string,
-    assignmentData: Omit<IAssignment, 'assignmentId' | 'course' | 'createdAt' | 'updatedAt'>,
-  ): Promise<ApiResponse<IAssignment>> {
+  updateAssignment(assignmentId: string, assignmentData: Partial<IAssignment>): Promise<ApiResponse<IAssignment>> {
     return configService.patch(`${API_URL.ASSIGNMENTS}/${assignmentId}`, assignmentData);
   },
 
