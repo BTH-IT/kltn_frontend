@@ -47,7 +47,7 @@ const students = [
   },
 ];
 
-export default function EnhancedAssignmentGrading() {
+export default function AssigmentSubmited() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedStudent, setSelectedStudent] = useState<(typeof students)[0] | null>(null);
@@ -159,10 +159,7 @@ export default function EnhancedAssignmentGrading() {
               <TableCell>
                 <div className="flex items-center">
                   <Avatar className="w-8 h-8 mr-2">
-                    <Image
-                      src={`/placeholder.svg?height=32&width=32&text=${student.name.charAt(0)}`}
-                      alt={student.name}
-                    />
+                    <Image src={'/images/avt.png'} alt={student.name} width={1000} height={1000} />
                   </Avatar>
                   {student.name}
                 </div>
