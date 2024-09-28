@@ -1,4 +1,4 @@
-import { ApiResponse } from '@/types';
+import { ApiResponse, IGroupMember } from '@/types';
 import { API_URL } from '@/constants/endpoints';
 import { IGroup } from '@/types/group';
 
@@ -19,5 +19,22 @@ const groupService = {
   deleteGroup(groupId: string): Promise<ApiResponse<boolean>> {
     return configService.delete(`${API_URL.GROUPS}/${groupId}`);
   },
+
+  addMember(groupId: string, memberData: any): Promise<ApiResponse<any>> {
+    return configService.post(`${API_URL.GROUPS}/${groupId}/members`, memberData);
+  },
+
+  deleteMember(groupId: string, memberId: any): Promise<ApiResponse<any>> {
+    return configService.delete(`${API_URL.GROUPS}/${groupId}/members`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: JSON.stringify(memberId),
+    });
+  },
+  toggleLeader(groupId: string, memberId: string): Promise<ApiResponse<any>> {
+    return configService.post(`${API_URL.GROUPS}/${groupId}/leader`, memberId);
+  },
 };
+
 export default groupService;

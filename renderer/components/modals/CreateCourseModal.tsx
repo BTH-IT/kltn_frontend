@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,22 +17,54 @@ import { cn } from '@/libs/utils';
 import courseService from '@/services/courseService';
 import { API_URL } from '@/constants/endpoints';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
+import { IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const { subjects } = useContext(CreateSubjectContext);
+  const [user, setUser] = useState<IUser | null>(null);
+
   const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, []);
 
   const FormSchema = z.object({
     name: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
     }),
-    subjectId: z.object({
-      label: z.string(),
-      value: z.string().min(1, {
-        message: 'Mã học phần là trường bắt buộc.',
+    subjectId: z
+      .object({
+        label: z.string().min(1, {
+          message: 'Mã học phần là trường bắt buộc.',
+        }),
+        value: z.string().min(1, {
+          message: 'Mã học phần là trường bắt buộc.',
+        }),
+      })
+      .refine((data) => data !== undefined, {
+        message: 'Mã học phần không được để trống.',
       }),
+    courseGroup: z
+      .string()
+      .min(1, { message: 'Nhóm môn học là trường bắt buộc.' })
+      .refine(
+        (value) => {
+          return !isNaN(Number(value));
+        },
+        { message: 'Nhóm môn học phải là số.' },
+      ),
+    semester: z.string().min(1, {
+      message: 'Học kỳ là trường bắt buộc.',
     }),
   });
 
@@ -41,6 +73,8 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
     defaultValues: {
       name: '',
       subjectId: { label: '', value: '' },
+      courseGroup: '',
+      semester: '',
     },
   });
 
@@ -51,6 +85,8 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
       const data = {
         name: values.name,
         subjectId: values.subjectId.value,
+        lecturerId: user?.id,
+        courseGroup: values.courseGroup,
       };
       setHasSubmitted(true);
       const res = await courseService.createCourse(data as any);
@@ -119,6 +155,30 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
                           })}
                         />
 
+                        <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
+                      </>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="courseGroup"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-bold uppercase">Nhóm môn học</FormLabel>
+                    <FormControl>
+                      <>
+                        <Input
+                          disabled={isLoading}
+                          className={cn(
+                            'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                            isLoading && 'hidden',
+                          )}
+                          placeholder="Nhập nhóm môn học ..."
+                          {...field}
+                        />
                         <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
                       </>
                     </FormControl>

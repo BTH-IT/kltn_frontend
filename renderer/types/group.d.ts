@@ -1,10 +1,11 @@
 import { IGroupMember } from './group-member';
 
-import { IBaseModel, IProject } from '.';
+import { IBaseModel, ICourse, IProject } from '.';
 
 export interface IGroup extends IBaseModel {
   groupId: string;
   courseId: string;
+  course?: ICourse;
   groupName: string;
   projectId?: string;
   numberOfMembers: number;

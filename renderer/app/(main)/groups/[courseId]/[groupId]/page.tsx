@@ -36,7 +36,7 @@ const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId
 
       <UpcomingPlanning />
 
-      <TeamMembers />
+      <TeamMembers group={group} />
     </div>
   );
 };

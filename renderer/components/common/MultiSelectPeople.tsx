@@ -15,8 +15,10 @@ const MultiSelectPeople = (props: any) => {
   const selectAllLabel = useRef<string>('Chọn tất cả');
   const allOption = { value: '*', label: selectAllLabel.current };
 
-  const filterOptions = (options: Option[], input: string) =>
-    options?.filter(({ label }: Option) => label.toLowerCase().includes(input.toLowerCase()));
+  const filterOptions = (options: Option[], input: string) => {
+    console.log(options);
+    return options?.filter(({ label }: Option) => label.toLowerCase().includes(input.toLowerCase()));
+  };
 
   const comparator = (v1: Option, v2: Option) => (v1.value as number) - (v2.value as number);
 
