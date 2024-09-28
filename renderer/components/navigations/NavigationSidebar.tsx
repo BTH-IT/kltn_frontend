@@ -51,7 +51,7 @@ const NavigationSidebar = () => {
                       {createdCourses.map((item) => (
                         <SidebarItemClass
                           key={item.courseId}
-                          label={item.courseGroup}
+                          label={item.name}
                           subLabel={item.subject?.subjectCode}
                           href={`${API_URL.COURSES}/${item.courseId}`}
                           isActive={`/${path}`.includes(`${API_URL.COURSES}/${item.courseId}`)}
@@ -67,7 +67,7 @@ const NavigationSidebar = () => {
                   {enrolledCourses.map((item) => (
                     <SidebarItemClass
                       key={item.courseId}
-                      label={item.courseGroup}
+                      label={item.name}
                       subLabel={item.subject?.subjectCode}
                       href={`${API_URL.COURSES}/${item.courseId}`}
                       isActive={`/${path}`.includes(`${API_URL.COURSES}/${item.courseId}`)}

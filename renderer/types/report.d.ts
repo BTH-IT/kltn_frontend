@@ -1,15 +1,14 @@
 import { IBaseModel, IComment, ICourse, IUser } from '.';
 
-export interface IAnnouncement extends IBaseModel {
-  announcementId: string;
-  courseId: string;
+export interface IReport extends IBaseModel {
+  reportId: string;
   userId: string;
+  groupId: string;
+  title: string;
   content: string;
   attachedLinks?: any;
   createUser?: IUser;
-  course?: ICourse;
-  isPinned?: boolean;
   attachments?: any;
-  mentions?: any;
+  course?: ICourse;
   comments: IComment[];
 }

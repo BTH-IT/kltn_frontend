@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: { courseId: string 
   const { payload } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
 
   return {
-    title: payload.data.courseGroup,
+    title: payload.data.name,
     description: 'Class detail',
   };
 }

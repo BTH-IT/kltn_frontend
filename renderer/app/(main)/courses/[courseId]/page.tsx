@@ -33,7 +33,7 @@ export default async function CoursePage({ params }: { params: { courseId: strin
         <div className={'overflow-hidden relative w-full rounded-lg h-[240px]'} style={bgImageStyles}>
           <div className="absolute w-full h-full bg-custom-radial-gradient"></div>
           <div className="absolute flex flex-col w-full gap-2 text-white bottom-4 left-4">
-            <h2 className="text-3xl font-bold">{course.courseGroup}</h2>
+            <h2 className="text-3xl font-bold">{course.name}</h2>
             <p className="text-xl font-medium">
               {course.subject?.subjectCode} - {course.subject?.name}
             </p>
@@ -57,7 +57,7 @@ export default async function CoursePage({ params }: { params: { courseId: strin
         </div>
         <div className="grid grid-cols-12 gap-6 mt-10">
           <div className="flex flex-col col-span-3 gap-4">
-            <InviteCode course={course} teacherId={course.lecturerId} name={course.courseGroup} />
+            <InviteCode course={course} teacherId={course.lecturerId} name={course.name} />
             <div className="p-4 border rounded-md">
               <div className="flex items-center justify-between gap-3 mb-3">
                 <h2>Sắp đến hạn</h2>
