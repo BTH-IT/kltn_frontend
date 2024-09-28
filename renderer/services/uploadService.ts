@@ -26,7 +26,7 @@ const uploadService = {
 
     // Append each file to the form data
     files.forEach((file) => {
-      formData.append('file', file);
+      formData.append('files', file);
     });
 
     try {

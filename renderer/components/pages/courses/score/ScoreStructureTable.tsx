@@ -21,7 +21,7 @@ const TableHeaderCell: React.FC<TableCellProps> = ({ data, item, leafColumns }) 
         {item.columnName} ({item.percent}%)
       </div>
       {children.length > 0 && (
-        <table className="mt-2 w-full">
+        <table className="w-full mt-2">
           <tbody>
             <tr>
               {children.map((child) => (
@@ -43,7 +43,7 @@ const ScoreStructureTable = () => {
   const leafColumns = tree.flatMap(getLeafColumns);
 
   return (
-    <table className="min-w-full border border-gray-300 border-collapse">
+    <table className="min-w-full border border-collapse border-gray-300">
       <thead>
         <tr>
           <th rowSpan={2} className="px-4 py-2 text-left bg-gray-200 border">
@@ -69,10 +69,10 @@ const ScoreStructureTable = () => {
       <tbody>
         {course &&
           course.students?.map((student, index) => (
-            <tr key={student.userId}>
-              <td className="px-4 py-2 border">{student.name}</td>
+            <tr key={student.id}>
+              <td className="px-4 py-2 border">{student.userName}</td>
               {leafColumns.map((col) => (
-                <EditableCell key={col.id} value={'1' || 'N/A'} onSave={(newValue) => {}} />
+                <EditableCell key={col.id} value={1 || 'N/A'} onSave={(newValue) => {}} />
               ))}
             </tr>
           ))}

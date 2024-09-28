@@ -22,7 +22,7 @@ export const ProjectClient = () => {
     if (projectCreated) {
       setProjects([...projects, projectCreated]);
     }
-  }, [projectCreated, projects, setProjects]);
+  }, [projectCreated]);
 
   return (
     <>
