@@ -12,4 +12,5 @@ export const API_URL = {
   PROJECTS: '/projects',
   GROUPS: '/groups',
   REPORTS: '/reports',
+  SCORE_STRUCTURES: '/scorestructures',
 };

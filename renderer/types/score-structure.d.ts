@@ -2,11 +2,9 @@ export interface IScoreStructure {
   id: string;
   columnName: string;
   percent: number;
-  divideColumnFirst?: string | null;
-  divideColumnSecond?: string | null;
   parentId?: string | null;
   maxPercent?: number | null;
-  children?: IScoreStructure[];
+  children: IScoreStructure[];
 }
 
 export interface TableCellProps {

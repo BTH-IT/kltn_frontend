@@ -1,5 +1,6 @@
 import { IAnnouncement } from './announcement';
 import { IAssignment } from './assignment';
+import { IScoreStructure } from './score-structure';
 import { ISubject } from './subject';
 import { IUser } from './user';
 
@@ -22,4 +23,5 @@ export interface ICourse {
   students: IUser[];
   announcements: IAnnouncement[];
   assignments: IAssignment[];
+  scoreStructure: IScoreStructure;
 }

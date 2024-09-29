@@ -26,6 +26,7 @@ import {
 import CommonModal from '@/components/modals/CommonModal';
 import assignmentService from '@/services/assignmentService';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
+import { API_URL } from '@/constants/endpoints';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -133,6 +134,15 @@ export default function AssignmentDetail() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-auto" align="end">
                   <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        router.push(
+                          `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
+                        )
+                      }
+                    >
+                      Danh sách nộp bài
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setIsEdit(true)}>Chỉnh sửa</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)}>Xóa</DropdownMenuItem>
                   </DropdownMenuGroup>

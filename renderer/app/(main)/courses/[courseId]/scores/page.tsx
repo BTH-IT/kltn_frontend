@@ -8,6 +8,7 @@ import { ScoreStructureProvider } from '@/contexts/ScoreStructureContext';
 import { CourseContext } from '@/contexts/CourseContext';
 import ScoreStructureTable from '@/components/pages/courses/score/ScoreStructureTable';
 import ScoreStructureForm from '@/components/pages/courses/score/ScoreStructureForm';
+import TwoColumnGradeTable from '@/components/pages/courses/score/Test';
 
 const defaultScoreStructures = [
   {
@@ -24,9 +25,7 @@ const ScorePage = () => {
   return (
     <div>
       <ScoreStructureProvider scoreStructures={JSON.parse(JSON.stringify(defaultScoreStructures))}>
-        <ScoreStructureTable />
-        <ScoreStructureForm />
-        {/* {course?.scoreStructure && course?.scoreStructure !== '[]' ? <ScoreStructureTable /> : <ScoreStructureForm />} */}
+        <TwoColumnGradeTable />
       </ScoreStructureProvider>
     </div>
   );

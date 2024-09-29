@@ -12,7 +12,7 @@ import ScoreStructureAccordion from './ScoreStructureAccordion';
 
 const ScoreStructureForm = () => {
   const { scoreStructures } = useContext(ScoreStructureContext);
-  const { course, setcourse } = useContext(CourseContext);
+  const { course, setCourse } = useContext(CourseContext);
   const [error, setError] = useState<string | null>(null);
 
   const validatePercentages = () => {
@@ -44,10 +44,10 @@ const ScoreStructureForm = () => {
     if (!course) return;
 
     try {
-      const res = await courseService.updateCourse(course.classId, {
-        scoreStructure: JSON.stringify(scoreStructures),
+      const res = await courseService.updateCourse(course.courseId, {
+        scoreStructures: scoreStructures,
       });
-      setcourse(res.data);
+      setCourse(res.data);
     } catch (error) {
       setError('Cập nhật lớp học thất bại. Vui lòng thử lại.');
     }
@@ -63,7 +63,7 @@ const ScoreStructureForm = () => {
         ))}
       {error && <p className="text-center text-red-500">{error}</p>}
 
-      <div className="flex justify-center items-center my-5">
+      <div className="flex items-center justify-center my-5">
         <Button variant="primary">Lưu cấu trúc điểm</Button>
       </div>
     </form>
