@@ -6,6 +6,7 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -23,7 +24,6 @@ import { cn } from '@/libs/utils';
 import subjectService from '@/services/subjectService';
 import { ApiResponse, ISubject } from '@/types';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
-import { AxiosError } from 'axios';
 
 const EditSubjectModal = ({
   isOpen,

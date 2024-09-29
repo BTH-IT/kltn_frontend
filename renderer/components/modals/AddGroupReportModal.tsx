@@ -11,7 +11,6 @@ import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { Link2, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
 import uploadService from '@/services/uploadService';
 import {
@@ -23,7 +22,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { IGroup, IReport, IUser, MetaLinkData } from '@/types';
 import { formatDuration, KEY_LOCALSTORAGE } from '@/utils';
@@ -247,7 +245,7 @@ const AddGroupReportModal = ({
                       </div>
                     </div>
                   </div>
-                  <div className="max-h-[230px] overflow-y-scroll">
+                  <div className="max-w-[420px] max-h-[230px] overflow-y-scroll">
                     <AnnouncementFileList files={files} setFiles={setFiles} />
                     <AnnouncementLinkList links={links} setLinks={setLinks} />
                   </div>

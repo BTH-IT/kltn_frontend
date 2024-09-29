@@ -1,5 +1,5 @@
 'use client';
-import React, { Dispatch, SetStateAction, useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,6 +9,7 @@ import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { Link2, Upload } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
@@ -23,8 +24,8 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { MetaLinkData } from '@/types';
-import { formatDuration } from '@/utils';
+import { Attachment, IReport, IUser, MetaLinkData } from '@/types';
+import { formatDuration, KEY_LOCALSTORAGE } from '@/utils';
 
 import AnnouncementFileList from '../pages/courses/AnnoucementFileList';
 import AnnouncementLinkList from '../pages/courses/AnnouncementLinkList';
@@ -32,19 +33,68 @@ import { YoutubeCardProps } from '../common/YoutubeCard';
 
 import AddYoutubeLinkModal from './AddYoutubeLinkModal';
 import AddLinkModal from './AddLinkModal';
+import uploadService from '@/services/uploadService';
+import reportService from '@/services/reportService';
 
 const EditGroupReportModal = ({
   isOpen,
   setIsOpen,
+  reports,
+  setReports,
+  report,
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  reports: IReport[];
+  setReports: Dispatch<SetStateAction<IReport[]>>;
+  report: IReport | null;
 }) => {
+  const router = useRouter();
+
   const fileRef = useRef<HTMLInputElement>(null);
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
+  const [user, setUser] = useState<IUser | null>(null);
+
+  const FormSchema = z.object({
+    title: z.string().min(1, 'Tiêu đề không được để trống'),
+    content: z.string().min(1, 'Nội dung không được để trống'),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      title: '',
+      content: '',
+    },
+  });
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+
+    if (report) {
+      form.reset({
+        title: report?.title || '',
+        content: report?.content || '',
+      });
+
+      setFiles(report.attachments || []);
+
+      setLinks(report.attachedLinks || []);
+    }
+  }, [form, report, isOpen]);
+
+  if (!report) {
+    return null;
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
@@ -59,19 +109,6 @@ const EditGroupReportModal = ({
 
     setFiles(updatedFiles);
   };
-
-  const FormSchema = z.object({
-    title: z.string().min(1, 'Tiêu đề không được để trống'),
-    content: z.string().min(1, 'Nội dung không được để trống'),
-  });
-
-  const form = useForm({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      title: 'current title',
-      content: 'current content',
-    },
-  });
 
   const handleAddYoutubeLink = (selectedVideo: YoutubeCardProps | null) => {
     if (selectedVideo) {
@@ -90,17 +127,25 @@ const EditGroupReportModal = ({
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      // const data = {
-      // };
-      // const res = await groupService.addMember(group.groupId, data);
-      // if (res.data) {
-      //   toast.success('Thêm thành viên thành công');
-      //   const sortedGroupMembers = [...res.data].sort((a) => (a.isLeader ? -1 : 1));
-      //   setMembers(sortedGroupMembers);
-      //   onClose();
-      // } else {
-      //   toast.error(res.message);
-      // }
+      const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
+
+      const data = {
+        userId: user?.id,
+        groupId: report.groupId,
+        title: values.title,
+        content: values.content,
+        attachedLinks: links,
+        attachments: resAttachments,
+      };
+      const res = await reportService.updateReport(report.groupId, report.reportId, data);
+      if (res.data) {
+        toast.success('Sửa báo cáo thành công');
+        const updatedReports = reports.map((r) => (r.reportId === report.reportId ? res.data : r));
+        setReports(updatedReports);
+        onClose();
+      } else {
+        toast.error(res.message);
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error?.response?.data?.message || error.message);
@@ -137,8 +182,8 @@ const EditGroupReportModal = ({
                           {...field}
                           className="w-full h-10 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-primary-500"
                           placeholder="Nhập tiêu đề"
+                          disabled={form.formState.isSubmitting}
                         />
-                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                       </>
                     </FormControl>
                     <FormMessage />
@@ -159,6 +204,7 @@ const EditGroupReportModal = ({
                         className="flex-1 rounded-md h-[150px]"
                         value={field.value}
                         onChange={field.onChange}
+                        disabled={form.formState.isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -219,7 +265,7 @@ const EditGroupReportModal = ({
                       </div>
                     </div>
                   </div>
-                  <div className="max-h-[230px] overflow-y-scroll">
+                  <div className="max-w-[420px] max-h-[230px] overflow-y-scroll">
                     <AnnouncementFileList files={files} setFiles={setFiles} />
                     <AnnouncementLinkList links={links} setLinks={setLinks} />
                   </div>
