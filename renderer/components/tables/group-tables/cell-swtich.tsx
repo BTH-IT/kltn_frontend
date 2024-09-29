@@ -2,7 +2,7 @@
 'use client';
 import { Edit, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Switch } from '@/components/ui/switch';
@@ -14,7 +14,12 @@ interface CellSwitchProps {
 }
 
 export const CellSwitch: React.FC<CellSwitchProps> = ({ data }) => {
-  const [checkedState, setIsCheckedState] = useState<boolean>(data.isApproved);
+  const [checkedState, setIsCheckedState] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsCheckedState(data.isApproved);
+  }, [data.isApproved]);
+
   const handleChange = async (checked: boolean) => {
     try {
       await groupService.updateGroup(data.groupId, {

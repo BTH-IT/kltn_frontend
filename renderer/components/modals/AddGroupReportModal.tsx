@@ -146,7 +146,7 @@ const AddGroupReportModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] h-[95vh]">
+      <DialogContent className="sm:max-w-[800px] h-[95vh] overflow-y-auto overflow-x-hidden">
         <DialogHeader className="h-fit">
           <DialogTitle>Thêm mục mới</DialogTitle>
           <DialogDescription>Điền thông tin mục mới ở đây.</DialogDescription>
@@ -195,7 +195,7 @@ const AddGroupReportModal = ({
                 <div className="flex justify-between h-full">
                   <div className="flex flex-col gap-4">
                     <h2 className="text-sm font-semibold">Đính kèm</h2>
-                    <div className="flex h-full items-center gap-5">
+                    <div className="flex items-center h-full gap-5">
                       <div className="flex flex-col items-center justify-center gap-3">
                         <Button
                           onClick={() => {

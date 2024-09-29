@@ -206,7 +206,7 @@ export default function AssignmentDetail() {
         setIsOpen={setIsDeleteModalOpen}
         width={400}
         height={150}
-        title="Bạn có muốn xoá thông báo này không?"
+        title="Bạn có chắc muốn xoá bài tập này không?"
         acceptTitle="Xoá"
         acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
         ocClickAccept={async () => {

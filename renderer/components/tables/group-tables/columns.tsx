@@ -7,31 +7,25 @@ import { IGroup } from '@/types/group';
 
 import { CellAction } from './cell-action';
 import { CellSwitch } from './cell-swtich';
-import { CellGoto } from './cell-goto';
 
 export const columns: ColumnDef<IGroup>[] = createColumns([
   {
     accessorKey: 'groupName',
-    header: 'GROUP NAME',
+    header: 'Tên nhóm',
   },
   {
     accessorKey: 'numberOfMembers',
-    header: 'TOTAL MEMBERS',
+    header: 'Tổng số thành viên',
     sortable: true,
   },
   {
     id: 'APPROVED',
-    header: 'APPROVED',
+    header: 'Trạng thái',
     cell: ({ row }: any) => <CellSwitch data={row.original} />,
   },
   {
     id: 'ACTION',
-    header: 'ACTION',
+    header: 'Hành động',
     cell: ({ row }: any) => <CellAction data={row.original} />,
-  },
-  {
-    id: 'VIEW',
-    header: 'VIEW',
-    cell: ({ row }: any) => <CellGoto data={row.original} />,
   },
 ]);

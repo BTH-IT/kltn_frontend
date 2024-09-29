@@ -7,6 +7,7 @@ import GroupClient from '@/components/tables/group-tables/client';
 import { GroupContextProvider } from '@/contexts/GroupContext';
 import { getUserFromCookie } from '@/libs/actions';
 import { ICourse } from '@/types';
+import { CreateProjectProvider } from '@/contexts/CreateProjectContext';
 
 const GroupsPage = async ({ params }: { params: { courseId: string } }) => {
   const {
@@ -25,9 +26,11 @@ const GroupsPage = async ({ params }: { params: { courseId: string } }) => {
 
   return (
     <div className="flex-1 p-4 pt-6 space-y-4 md:p-8">
-      <GroupContextProvider initialGroups={groups}>
-        <GroupClient user={user} course={course} />
-      </GroupContextProvider>
+      <CreateProjectProvider projects={[]}>
+        <GroupContextProvider groups={groups}>
+          <GroupClient user={user} course={course} />
+        </GroupContextProvider>
+      </CreateProjectProvider>
     </div>
   );
 };

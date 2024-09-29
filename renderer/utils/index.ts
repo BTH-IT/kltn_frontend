@@ -2,7 +2,6 @@
 import moment from 'moment';
 
 import 'moment-duration-format';
-import { IScoreStructure } from '@/types';
 
 export function generateInviteCode(length: number) {
   let result = '';
@@ -268,29 +267,6 @@ export function display12HourValue(hours: number) {
   if (hours % 12 > 9) return `${hours}`;
   return `0${hours % 12}`;
 }
-
-export const buildTree = (data: IScoreStructure[]): IScoreStructure[] => {
-  const itemsById: { [key: string]: IScoreStructure } = {};
-  data.forEach((item) => {
-    itemsById[item.id] = { ...item, children: [] as IScoreStructure[] };
-  });
-
-  const tree: IScoreStructure[] = [];
-
-  data.forEach((item) => {
-    if (item.parentId) {
-      const parent = itemsById[item.parentId];
-      if (parent) {
-        parent.children = parent.children || [];
-        parent.children.push(itemsById[item.id]);
-      }
-    } else {
-      tree.push(itemsById[item.id]);
-    }
-  });
-
-  return tree;
-};
 
 export const getLeafColumns = (node: any) => {
   if (!node.children || node.children.length === 0) {

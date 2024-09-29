@@ -217,7 +217,7 @@ const CourseOptionModal = ({
                                   {...field}
                                   options={subjects?.map((s) => {
                                     return {
-                                      label: `${s.subjectId} - ${s.name}`,
+                                      label: `${s.subjectCode} - ${s.name}`,
                                       value: s.subjectId,
                                     };
                                   })}

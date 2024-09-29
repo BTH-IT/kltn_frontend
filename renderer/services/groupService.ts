@@ -1,4 +1,4 @@
-import { ApiResponse, IGroupMember } from '@/types';
+import { ApiResponse } from '@/types';
 import { API_URL } from '@/constants/endpoints';
 import { IGroup } from '@/types/group';
 
@@ -7,6 +7,9 @@ import configService from './configService';
 const groupService = {
   getGroupById(groupId: string): Promise<ApiResponse<IGroup[]>> {
     return configService.get(`${API_URL.GROUPS}/${groupId}`);
+  },
+  getGroupsByCourseId(courseId: string): Promise<ApiResponse<IGroup[]>> {
+    return configService.get(`${API_URL.COURSES}/${courseId}${API_URL.GROUPS}`);
   },
   createGroup(groupData: Partial<IGroup>): Promise<ApiResponse<IGroup>> {
     return configService.post(`${API_URL.GROUPS}`, groupData);

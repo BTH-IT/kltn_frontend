@@ -29,7 +29,7 @@ const GroupClient = ({ user, course }: { user: IUser | null; course: ICourse | n
   return (
     <>
       <div className="flex items-start justify-between">
-        <Heading title={`Groups (${groups.length})`} description="Manage groups" />
+        <Heading title="Nhóm" description="Quản lý các nhóm" />
         <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" /> Thêm mới
         </Button>

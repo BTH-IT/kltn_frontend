@@ -3,29 +3,31 @@
 import React, { useContext } from 'react';
 
 import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
-import { TableCellProps } from '@/types';
-import { buildTree, getLeafColumns } from '@/utils';
 import { CourseContext } from '@/contexts/CourseContext';
+import { ICourse, IScoreStructure } from '@/types';
 
-import EditableCell from './EditTableCell';
+interface TableHeaderCellProps {
+  item: IScoreStructure;
+}
 
-const TableHeaderCell: React.FC<TableCellProps> = ({ data, item, leafColumns }) => {
-  const children = data.filter((child) => child.parentId === item.id);
+const TableHeaderCell: React.FC<TableHeaderCellProps> = ({ item }) => {
+  const hasChildren = item.children.length > 0;
 
   return (
     <th
-      className="p-[1px] text-center border-t border-r last:border-r-0 last:border-l-0"
-      colSpan={children.length === 0 ? 1 : 100}
+      className="p-2 text-center bg-gray-100 border border-gray-300"
+      colSpan={hasChildren ? item.children.length : 1}
+      rowSpan={hasChildren ? 1 : 2}
     >
-      <div className="pt-2 m-auto font-semibold">
+      <div className="font-semibold">
         {item.columnName} ({item.percent}%)
       </div>
-      {children.length > 0 && (
+      {hasChildren && (
         <table className="w-full mt-2">
           <tbody>
             <tr>
-              {children.map((child) => (
-                <TableHeaderCell key={child.id} data={data} item={child} leafColumns={leafColumns} />
+              {item.children.map((child) => (
+                <TableHeaderCell key={child.id} item={child} />
               ))}
             </tr>
           </tbody>
@@ -35,49 +37,63 @@ const TableHeaderCell: React.FC<TableCellProps> = ({ data, item, leafColumns }) 
   );
 };
 
-const ScoreStructureTable = () => {
-  const { scoreStructures } = useContext(ScoreStructureContext);
-  const { course } = useContext(CourseContext);
-  const tree = buildTree(scoreStructures);
+const getLeafColumns = (node: IScoreStructure): IScoreStructure[] => {
+  const leaves: IScoreStructure[] = [];
+  const traverse = (node: IScoreStructure) => {
+    if (node.children.length === 0) {
+      leaves.push(node);
+    } else {
+      node.children.forEach(traverse);
+    }
+  };
+  traverse(node);
+  return leaves;
+};
 
-  const leafColumns = tree.flatMap(getLeafColumns);
+const ScoreStructureTable: React.FC = () => {
+  const { scoreStructure } = useContext(ScoreStructureContext) as {
+    scoreStructure: IScoreStructure | null;
+  };
+  const { course } = useContext(CourseContext) as { course: ICourse };
+
+  if (!scoreStructure) {
+    // Return a loading or fallback UI if scoreStructure is null
+    return <div>Loading...</div>;
+  }
+
+  const leafColumns = getLeafColumns(scoreStructure);
 
   return (
-    <table className="min-w-full border border-collapse border-gray-300">
-      <thead>
-        <tr>
-          <th rowSpan={2} className="px-4 py-2 text-left bg-gray-200 border">
-            Tên sinh viên
-          </th>
-          {/* {tree.map((rootItem) => (
-            <TableHeaderCell
-              key={rootItem.id}
-              data={scoreStructures}
-              item={rootItem}
-              leafColumns={leafColumns.length}
-            />
-          ))} */}
-        </tr>
-        <tr>
-          {leafColumns.map((leaf) => (
-            <th key={leaf.id} className="p-2 text-center bg-gray-200 border">
-              {leaf.columnName} ({leaf.percent}%)
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {course &&
-          course.students?.map((student, index) => (
-            <tr key={student.id}>
-              <td className="px-4 py-2 border">{student.userName}</td>
-              {leafColumns.map((col) => (
-                <EditableCell key={col.id} value={1 || 'N/A'} onSave={(newValue) => {}} />
-              ))}
+    <div className="p-6 text-white rounded-md bg-gradient-to-r from-blue-500 to-purple-500">
+      <h2 className="mb-4 text-xl font-bold">Student Grades</h2>
+      <div className="p-4 bg-white rounded-md shadow-md">
+        <table className="min-w-full border border-collapse border-gray-300">
+          <thead>
+            <tr>
+              <th rowSpan={2} className="px-4 py-2 text-left bg-gray-200 border border-gray-300">
+                Student Name
+              </th>
+              <TableHeaderCell item={scoreStructure} />
             </tr>
-          ))}
-      </tbody>
-    </table>
+            <tr></tr>
+          </thead>
+          <tbody>
+            {course &&
+              course.students?.map((student) => (
+                <tr key={student.id}>
+                  <td className="px-4 py-2 border">{student.userName}</td>
+                  {leafColumns.map((leaf) => (
+                    <td key={`${student.id}-${leaf.id}`} className="px-4 py-2 text-center border">
+                      {/* Placeholder for the score; you can replace it with actual data */}
+                      {Math.floor(Math.random() * 20) + 80}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 

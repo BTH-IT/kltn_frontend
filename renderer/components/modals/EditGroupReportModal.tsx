@@ -4,14 +4,13 @@ import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
+import dynamic from 'next/dynamic';
 import { AxiosError } from 'axios';
-import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { Link2, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,10 +21,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { Attachment, IReport, IUser, MetaLinkData } from '@/types';
+import { IReport, IUser, MetaLinkData } from '@/types';
 import { formatDuration, KEY_LOCALSTORAGE } from '@/utils';
+import uploadService from '@/services/uploadService';
+import reportService from '@/services/reportService';
 
 import AnnouncementFileList from '../pages/courses/AnnoucementFileList';
 import AnnouncementLinkList from '../pages/courses/AnnouncementLinkList';
@@ -33,8 +33,8 @@ import { YoutubeCardProps } from '../common/YoutubeCard';
 
 import AddYoutubeLinkModal from './AddYoutubeLinkModal';
 import AddLinkModal from './AddLinkModal';
-import uploadService from '@/services/uploadService';
-import reportService from '@/services/reportService';
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const EditGroupReportModal = ({
   isOpen,
@@ -162,7 +162,7 @@ const EditGroupReportModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] h-[95vh]">
+      <DialogContent className="sm:max-w-[800px] h-[95vh] overflow-y-auto overflow-x-hidden">
         <DialogHeader className="h-fit">
           <DialogTitle>Chỉnh sửa mục mới</DialogTitle>
           <DialogDescription>Chỉnh sửa thông tin ở đây.</DialogDescription>
@@ -194,6 +194,7 @@ const EditGroupReportModal = ({
                 name="content"
                 control={form.control}
                 defaultValue=""
+                disabled={form.formState.isSubmitting}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-bold uppercase">Nội dung</FormLabel>
@@ -204,7 +205,6 @@ const EditGroupReportModal = ({
                         className="flex-1 rounded-md h-[150px]"
                         value={field.value}
                         onChange={field.onChange}
-                        disabled={form.formState.isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -215,7 +215,7 @@ const EditGroupReportModal = ({
                 <div className="flex justify-between h-full">
                   <div className="flex flex-col gap-4">
                     <h2 className="text-sm font-semibold">Đính kèm</h2>
-                    <div className="flex h-full items-center gap-5">
+                    <div className="flex items-center h-full gap-5">
                       <div className="flex flex-col items-center justify-center gap-3">
                         <Button
                           onClick={() => {

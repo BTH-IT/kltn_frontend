@@ -6,28 +6,28 @@ import React, { useEffect, useState } from 'react';
 import { IScoreStructure } from '@/types';
 
 const ScoreStructureContext = React.createContext({
-  scoreStructures: [] as IScoreStructure[],
-  setScoreStructures: (_scoreStructures: IScoreStructure[]) => {},
+  scoreStructure: null as IScoreStructure | null,
+  setScoreStructure: (_scoreStructure: IScoreStructure) => {},
 });
 
 const ScoreStructureProvider = ({
   children,
-  scoreStructures,
+  scoreStructure,
 }: {
   children: React.ReactNode;
-  scoreStructures: IScoreStructure[];
+  scoreStructure: IScoreStructure | null;
 }) => {
-  const [data, setData] = useState<IScoreStructure[]>([]);
+  const [data, setData] = useState<IScoreStructure | null>(null);
 
   useEffect(() => {
-    setData(scoreStructures);
-  }, [scoreStructures]);
+    setData(scoreStructure);
+  }, [scoreStructure]);
 
   return (
     <ScoreStructureContext.Provider
       value={{
-        scoreStructures: data,
-        setScoreStructures: setData,
+        scoreStructure: data,
+        setScoreStructure: setData,
       }}
     >
       {children}
