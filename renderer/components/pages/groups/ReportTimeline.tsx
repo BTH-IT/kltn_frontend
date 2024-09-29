@@ -13,12 +13,10 @@ const AddGroupReportModal = dynamic(() => import('@/components/modals/AddGroupRe
 const EditGroupReportModal = dynamic(() => import('@/components/modals/EditGroupReportModal'), { ssr: false });
 import CommonModal from '@/components/modals/CommonModal';
 import reportService from '@/services/reportService';
-import { IComment, IGroup, IReport, IUser } from '@/types';
+import { IGroup, IReport, IUser } from '@/types';
 import { formatVNDate, KEY_LOCALSTORAGE } from '@/utils';
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
-import CommentList from '@/components/common/CommentList';
-import commentService from '@/services/commentService';
-import CommentInput from '@/components/common/CommentInput';
+import ReportCommentList from '@/components/common/ReportCommentList';
 
 const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -27,7 +25,6 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [editingReport, setEditingReport] = useState(false);
   const [deletingReport, setDeletingReport] = useState(false);
   const [currentReport, setCurrentReport] = useState<IReport | null>(null);
-  const [comments, setComments] = useState<IComment[]>([]);
   const [currentUser, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
@@ -60,30 +57,6 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
       if (error instanceof AxiosError) {
         toast.error(error?.response?.data?.message || error.message);
       }
-    }
-  };
-
-  const handleRemoveComment = async (id: string) => {
-    if (!currentReport) return;
-    try {
-      await commentService.deleteComment(currentReport.reportId, id);
-
-      setComments(comments.filter((c) => c.commentId !== id));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleUpdateComment = async (id: string, data: any) => {
-    if (!currentReport) return;
-    try {
-      const res = await commentService.updateComment(currentReport.reportId, id, data);
-
-      const updatedComments = comments.map((a) => (a.commentId === res.data.commentId ? { ...a, ...res.data } : a));
-
-      setComments(updatedComments);
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -155,18 +128,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
                             dangerouslySetInnerHTML={{ __html: report.content }}
                           />
                           <AnnouncementAttachList links={report.attachedLinks || []} files={report.attachments || []} />
-                          <CommentList
-                            title="báo cáo"
-                            comments={comments}
-                            handleRemoveComment={handleRemoveComment}
-                            handleUpdateComment={handleUpdateComment}
-                          />
-                          <CommentInput
-                            currentUser={currentUser}
-                            comments={comments}
-                            setComments={setComments}
-                            commentableId={report.reportId}
-                          />
+                          <ReportCommentList report={report} currentUser={currentUser} />
                         </div>
                       </div>
                     </AccordionContent>
