@@ -27,7 +27,7 @@ const CourseCard = ({ item }: { item: ICourse }) => {
           className="z-0 brightness-90"
         />
         <div className="z-10 p-4">
-          <div className="font-semibold text-2xl max-w-[252px] truncate shadow-inner">{item.courseGroup}</div>
+          <div className="font-semibold text-2xl max-w-[252px] truncate shadow-inner">{item.name}</div>
           <div className="max-w-[185px] text-sm truncate font-normal shadow-inner">{item.subjectName}</div>
         </div>
         <Image

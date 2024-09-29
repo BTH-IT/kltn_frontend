@@ -42,8 +42,8 @@ const EditUserModal = ({
   const FormSchema = z.object({
     name: z.string().min(1, { message: 'Tên người dùng là trường bắt buộc.' }),
 
-    roleId: z.string().min(1, { message: 'Vui lòng chọn quyền cho người dùng.' }),
-    studentId: z.string(),
+    // roleId: z.string().min(1, { message: 'Vui lòng chọn quyền cho người dùng.' }),
+    // studentId: z.string(),
   });
 
   const form = useForm({
@@ -57,46 +57,44 @@ const EditUserModal = ({
 
   useEffect(() => {
     if (user) {
-      form.setValue('name', user.name);
-      form.setValue('roleId', String(user.roleId));
-      form.setValue('studentId', user.studentId);
+      form.setValue('name', user.fullName);
+      // form.setValue('roleId', String(user.roleId));
+      // form.setValue('studentId', user.studentId);
     }
   }, [user, form, isOpen]);
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    try {
-      if (values.roleId === '3' && !values.studentId) {
-        form.setError('studentId', {
-          message: 'Mã sinh viên là trường bắt buộc.',
-        });
-        return;
-      }
-      const { name, roleId, studentId, ...rest } = user;
-
-      const data = {
-        name: values.name,
-        roleId: Number(values.roleId),
-        studentId: values.studentId,
-        ...rest,
-      };
-
-      const res = await userService.updateUser(user.userId, data);
-      if (res.data) {
-        toast({
-          title: 'Chỉnh sửa người dùng thành công',
-          variant: 'done',
-          duration: 5000,
-        });
-        form.reset();
-        router.refresh();
-        setIsOpen(false);
-      } else {
-        setSubmitError(true);
-      }
-    } catch (error) {
-      console.log(error);
-      setSubmitError(true);
-    }
+    // try {
+    //   if (values.roleId === '3' && !values.studentId) {
+    //     form.setError('studentId', {
+    //       message: 'Mã sinh viên là trường bắt buộc.',
+    //     });
+    //     return;
+    //   }
+    //   const { name, roleId, studentId, ...rest } = user;
+    //   const data = {
+    //     name: values.name,
+    //     roleId: Number(values.roleId),
+    //     studentId: values.studentId,
+    //     ...rest,
+    //   };
+    //   const res = await userService.updateUser(user.userId, data);
+    //   if (res.data) {
+    //     toast({
+    //       title: 'Chỉnh sửa người dùng thành công',
+    //       variant: 'done',
+    //       duration: 5000,
+    //     });
+    //     form.reset();
+    //     router.refresh();
+    //     setIsOpen(false);
+    //   } else {
+    //     setSubmitError(true);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   setSubmitError(true);
+    // }
   };
 
   const onClose = () => {
@@ -140,7 +138,7 @@ const EditUserModal = ({
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="roleId"
                   render={({ field }) => (
@@ -190,7 +188,7 @@ const EditUserModal = ({
                       </FormItem>
                     )}
                   />
-                )}
+                )} */}
               </div>
               <DialogFooter>
                 <Button disabled={form.formState.isSubmitting} className="px-3 py-2" variant="primary" type="submit">

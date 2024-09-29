@@ -52,7 +52,7 @@ const BulletForm = ({
   const [mentionOptionSelected, setMentionOptionSelected] = useState<Option[] | null>(null);
   const [courseOptionSelected, setCourseOptionSelected] = useState<Option[] | null>([
     {
-      label: course?.courseGroup ?? '',
+      label: course?.name ?? '',
       value: course?.courseId ?? '',
       default: true,
     },
@@ -149,7 +149,7 @@ const BulletForm = ({
       if (!selected.some((opt) => opt.default === true)) {
         setCourseOptionSelected([
           {
-            label: course?.courseGroup ?? '',
+            label: course?.name ?? '',
             value: course?.courseId ?? '',
             default: true,
           },
@@ -242,7 +242,7 @@ const BulletForm = ({
     return createdCourses
       ?.map((c) => {
         return {
-          label: c.courseGroup,
+          label: c.name,
           value: c.courseId,
           default: c.courseId === course?.courseId,
         };

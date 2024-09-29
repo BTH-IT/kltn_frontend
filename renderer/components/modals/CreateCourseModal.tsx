@@ -6,7 +6,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { Select } from 'react-select-virtualized';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
+import { KEY_LOCALSTORAGE } from '@/utils';
 import '@/styles/components/modals/create-class-modal.scss';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -17,11 +20,9 @@ import { cn } from '@/libs/utils';
 import courseService from '@/services/courseService';
 import { API_URL } from '@/constants/endpoints';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
-import { IUser } from '@/types';
-import { KEY_LOCALSTORAGE } from '@/utils';
+import { ApiResponse, IUser } from '@/types';
 
 const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
-  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const { subjects } = useContext(CreateSubjectContext);
   const [user, setUser] = useState<IUser | null>(null);
@@ -64,7 +65,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
         { message: 'Nhóm môn học phải là số.' },
       ),
     semester: z.string().min(1, {
-      message: 'Học kỳ là trường bắt buộc.',
+      message: 'Niên khóa là trường bắt buộc.',
     }),
   });
 
@@ -78,24 +79,24 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  const isLoading = hasSubmitted;
-
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    console.log('a');
+
     try {
       const data = {
         name: values.name,
         subjectId: values.subjectId.value,
         lecturerId: user?.id,
         courseGroup: values.courseGroup,
+        semester: values.semester,
       };
-      setHasSubmitted(true);
       const res = await courseService.createCourse(data as any);
       router.push(`${API_URL.COURSES}/${res.data.courseId}`);
-      setHasSubmitted(false);
       setOpenModal(false);
       form.reset();
     } catch (error) {
-      console.log(error);
+      const axiousError = error as AxiosError;
+      toast.error((axiousError.response?.data as ApiResponse<string>).message as string);
     }
   };
 
@@ -105,7 +106,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle className="mx-auto text-xl">
-            {hasSubmitted ? 'Đang tạo lớp học ...' : 'Tạo lớp học mới'}
+            {form.formState.isSubmitting ? 'Đang tạo lớp học ...' : 'Tạo lớp học mới'}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -120,16 +121,16 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
                     <FormControl>
                       <>
                         <Input
-                          disabled={isLoading}
+                          disabled={form.formState.isSubmitting}
                           className={cn(
                             'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
-                            isLoading && 'hidden',
+                            form.formState.isSubmitting && 'hidden',
                           )}
                           id="className"
                           placeholder="Nhập tên lớp học ..."
                           {...field}
                         />
-                        <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
+                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                       </>
                     </FormControl>
                     <FormMessage />
@@ -146,7 +147,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
                       <>
                         <Select
                           {...field}
-                          className={cn(isLoading && 'hidden')}
+                          className={cn(form.formState.isSubmitting && 'hidden')}
                           options={subjects?.map((s) => {
                             return {
                               label: `${s.name}`,
@@ -155,7 +156,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
                           })}
                         />
 
-                        <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
+                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                       </>
                     </FormControl>
                     <FormMessage />
@@ -171,15 +172,39 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
                     <FormControl>
                       <>
                         <Input
-                          disabled={isLoading}
+                          disabled={form.formState.isSubmitting}
                           className={cn(
                             'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
-                            isLoading && 'hidden',
+                            form.formState.isSubmitting && 'hidden',
                           )}
                           placeholder="Nhập nhóm môn học ..."
                           {...field}
                         />
-                        <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
+                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
+                      </>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="semester"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-bold uppercase">Niên khóa</FormLabel>
+                    <FormControl>
+                      <>
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          className={cn(
+                            'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                            form.formState.isSubmitting && 'hidden',
+                          )}
+                          placeholder="Nhập niên khóa ..."
+                          {...field}
+                        />
+                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                       </>
                     </FormControl>
                     <FormMessage />
