@@ -1,7 +1,7 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';

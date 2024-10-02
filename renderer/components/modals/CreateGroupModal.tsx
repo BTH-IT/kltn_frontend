@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Select as ReactSelect } from 'react-select-virtualized';
 
 import groupService from '@/services/groupService';
@@ -18,6 +18,10 @@ import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreateProjectContext } from '@/contexts/CreateProjectContext';
+import { IProject } from '@/types';
+
+import CreateProjectModal from './CreateProjectModal';
+
 export const CreateGroupModal = ({
   isOpen,
   setIsOpen,
@@ -28,7 +32,15 @@ export const CreateGroupModal = ({
   setGroupCreated: React.Dispatch<React.SetStateAction<IGroup | null>>;
 }) => {
   const params = useParams();
-  const { projects } = useContext(CreateProjectContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [projectCreated, setProjectCreated] = useState<IProject | null>(null);
+  const { projects, setProjects } = useContext(CreateProjectContext);
+
+  useEffect(() => {
+    if (projectCreated) {
+      setProjects([...projects, projectCreated]);
+    }
+  }, [projectCreated]);
 
   const FormSchema = z.object({
     groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
@@ -81,7 +93,7 @@ export const CreateGroupModal = ({
         <DialogContent className="sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle className="mx-auto">
-              {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Tạo đề tài mới'}
+              {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Tạo nhóm mới'}
             </DialogTitle>
           </DialogHeader>
           <Form {...form}>
@@ -143,7 +155,17 @@ export const CreateGroupModal = ({
                   name="projectId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-bold uppercase">Đề tài</FormLabel>
+                      <FormLabel className="flex items-center justify-between gap-2 text-xs font-bold uppercase">
+                        Đề tài
+                        <Button
+                          className="px-2 py-1"
+                          variant="primary"
+                          type="button"
+                          onClick={() => setIsModalOpen(true)}
+                        >
+                          Đăng ký đề tài
+                        </Button>
+                      </FormLabel>
                       <FormControl>
                         <ReactSelect
                           {...field}
@@ -172,6 +194,7 @@ export const CreateGroupModal = ({
           </Form>
         </DialogContent>
       </Dialog>
+      <CreateProjectModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} setProjectCreated={setProjectCreated} />
     </>
   );
 };

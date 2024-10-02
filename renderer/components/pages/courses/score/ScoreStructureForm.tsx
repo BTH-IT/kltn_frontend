@@ -36,11 +36,9 @@ export default function ScoreStructureForm() {
       children: [],
     };
 
-    // Cập nhật cấu trúc điểm với cột mới
     const updatedScoreStructure = updateColumnTree(scoreStructure, parentId, (col) => {
       const updatedChildren = col.children || [];
 
-      // Nếu không có cột con, thêm hai cột mặc định
       if (updatedChildren.length === 0) {
         const defaultChild1 = {
           ...newColumn,
@@ -224,7 +222,8 @@ export default function ScoreStructureForm() {
   };
 
   return (
-    <div className="w-full max-w-4xl p-4 mx-auto">
+    <div className="w-full p-4">
+      <h2 className="mb-4 text-2xl font-bold">Cấu trúc điểm</h2>
       <Table>
         <TableHeader>
           <TableRow>

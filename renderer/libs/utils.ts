@@ -4,7 +4,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { IUser } from '@/types';
+import { IScoreStructure, IUser } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -39,4 +39,17 @@ export const createColumns = <T>(columnConfigs: SimpleColumnConfig[]): ColumnDef
     header: config.header,
     cell: config.cell,
   }));
+};
+
+export const getLeafColumns = (node: IScoreStructure): IScoreStructure[] => {
+  const leaves: IScoreStructure[] = [];
+  const traverse = (node: IScoreStructure) => {
+    if (node.children.length === 0) {
+      leaves.push(node);
+    } else {
+      node.children.forEach(traverse);
+    }
+  };
+  traverse(node);
+  return leaves;
 };

@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
-import { FileText, SendHorizontal, EllipsisVertical } from 'lucide-react';
+import React, { useContext, useEffect, useState } from 'react';
+import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon } from 'lucide-react';
 import moment from 'moment';
 import { Controller, useForm } from 'react-hook-form';
 import Image from 'next/image';
@@ -27,6 +27,7 @@ import CommonModal from '@/components/modals/CommonModal';
 import assignmentService from '@/services/assignmentService';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import { API_URL } from '@/constants/endpoints';
+import SubmitAssignmentModal from '@/components/modals/SubmitAssignmentModal';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -41,6 +42,7 @@ export default function AssignmentDetail() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [isEdit, setIsEdit] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const { control, handleSubmit, reset, formState } = useForm();
 
@@ -111,96 +113,132 @@ export default function AssignmentDetail() {
   };
 
   return (
-    <Card className="border-none shadow-lg">
-      <CardHeader className="rounded-t-lg bg-primary/10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
-              <FileText className="w-6 h-6 text-primary" />
+    <>
+      <div className="grid grid-cols-12 gap-8">
+        <Card className="col-span-9 border-none shadow-lg">
+          <CardHeader className="rounded-t-lg bg-primary/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
+                  <FileText className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl font-bold text-primary">{assignment?.title}</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
+                    {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
+                  </p>
+                </div>
+              </div>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                {assignment?.createUser?.id === currentUser?.id ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild className="cursor-pointer">
+                      <EllipsisVertical />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-auto" align="end">
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            router.push(
+                              `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
+                            )
+                          }
+                        >
+                          Xem danh sách nộp bài
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setIsEdit(true)}>Chỉnh sửa</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)}>Xóa</DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <></>
+                )}
+              </Button>
             </div>
-            <div>
-              <CardTitle className="text-2xl font-bold text-primary">{assignment?.title}</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
-                {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
-              </p>
-            </div>
-          </div>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            {assignment?.createUser?.id === currentUser?.id ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild className="cursor-pointer">
-                  <EllipsisVertical />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-auto" align="end">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        router.push(
-                          `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
-                        )
-                      }
-                    >
-                      Danh sách nộp bài
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setIsEdit(true)}>Chỉnh sửa</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)}>Xóa</DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <></>
-            )}
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3 pt-6">
-        <div
-          dangerouslySetInnerHTML={{
-            __html: assignment?.content || '',
-          }}
-          className="pb-4 border-b"
-        />
-        <CommentList
-          comments={comments}
-          handleRemoveComment={handleRemoveComment}
-          handleUpdateComment={handleUpdateComment}
-        />
-      </CardContent>
-      <CardFooter className="border-t rounded-b-lg bg-muted/50">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className={`flex gap-3 items-center pt-6 comment w-full ${isFocus ? 'active' : ''}`}
-        >
-          <Image
-            src={currentUser?.avatar || '/images/avt.png'}
-            height={3000}
-            width={3000}
-            alt="avatar"
-            className="w-[35px] h-[35px] rounded-full flex-shrink-0"
-          />
-
-          <Controller
-            name="content"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <ReactQuill
-                theme="snow"
-                placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
-                className="flex-1 !rounded-full w-full"
-                value={field.value}
-                onChange={field.onChange}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 pt-6">
+            <div
+              dangerouslySetInnerHTML={{
+                __html: assignment?.content || '',
+              }}
+              className="pb-4 border-b"
+            />
+            <CommentList
+              comments={comments}
+              handleRemoveComment={handleRemoveComment}
+              handleUpdateComment={handleUpdateComment}
+            />
+          </CardContent>
+          <CardFooter className="border-t rounded-b-lg bg-muted/50">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className={`flex gap-3 items-center pt-6 comment w-full ${isFocus ? 'active' : ''}`}
+            >
+              <Image
+                src={currentUser?.avatar || '/images/avt.png'}
+                height={3000}
+                width={3000}
+                alt="avatar"
+                className="w-[35px] h-[35px] rounded-full flex-shrink-0"
               />
-            )}
-          />
-          <button disabled={formState.isSubmitting}>
-            <SendHorizontal />
-          </button>
-        </form>
-      </CardFooter>
+
+              <Controller
+                name="content"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <ReactQuill
+                    theme="snow"
+                    placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
+                    className="flex-1 !rounded-full w-full"
+                    value={field.value}
+                    onChange={field.onChange}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                  />
+                )}
+              />
+              <button disabled={formState.isSubmitting}>
+                <SendHorizontal />
+              </button>
+            </form>
+          </CardFooter>
+        </Card>
+        <div className="col-span-3">
+          {currentUser?.id === assignment?.createUser?.id && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>
+                <span className="text-sm text-green-600">Đã giao</span>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button variant="outline" className="justify-start w-full" onClick={() => setIsSubmit(true)}>
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                  Thêm bài tập vào đây
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+      {assignment && (
+        <EditAssignmentHmWorkModal
+          onOpenModal={isEdit}
+          setOnOpenModal={setIsEdit}
+          course={assignment.course}
+          assignment={assignment}
+        />
+      )}
+      {assignment && (
+        <SubmitAssignmentModal
+          onOpenModal={isSubmit}
+          setOnOpenModal={setIsSubmit}
+          course={assignment.course}
+          assignment={assignment}
+        />
+      )}
       <CommonModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
@@ -214,14 +252,6 @@ export default function AssignmentDetail() {
           setIsDeleteModalOpen(false);
         }}
       />
-      {assignment && (
-        <EditAssignmentHmWorkModal
-          onOpenModal={isEdit}
-          setOnOpenModal={setIsEdit}
-          course={assignment.course}
-          assignment={assignment}
-        />
-      )}
-    </Card>
+    </>
   );
 }

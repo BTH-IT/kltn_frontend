@@ -43,13 +43,15 @@ const AssignmentPage = () => {
     <>
       {isMounted && (
         <>
-          <div
-            onClick={() => setOnOpenAssignModal(true)}
-            className="inline-flex gap-2 w-[100px] items-center cursor-pointer px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-3xl"
-          >
-            <Plus />
-            <span>Tạo</span>
-          </div>
+          {user?.id === course?.lecturerId && (
+            <div
+              onClick={() => setOnOpenAssignModal(true)}
+              className="inline-flex gap-2 w-[100px] items-center cursor-pointer px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-3xl"
+            >
+              <Plus />
+              <span>Tạo</span>
+            </div>
+          )}
           {assignments?.length > 0 ? (
             <AssignmentList
               assignments={assignments}

@@ -58,17 +58,6 @@ export default async function CoursePage({ params }: { params: { courseId: strin
         <div className="grid grid-cols-12 gap-6 mt-10">
           <div className="flex flex-col col-span-3 gap-4">
             <InviteCode course={course} teacherId={course.lecturerId} name={course.name} />
-            <div className="p-4 border rounded-md">
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <h2>Sắp đến hạn</h2>
-              </div>
-              <div className="flex items-center gap-3 mb-3">
-                <p className="text-xs text-gray-400">Không có bài tập nào sắp đến hạn</p>
-              </div>
-              <div className="flex justify-end">
-                <button className="p-2 text-sm rounded-md hover:bg-slate-100">Xem tất cả</button>
-              </div>
-            </div>
           </div>
           <div className="col-span-9">
             <AnnouncementInput course={course} />
