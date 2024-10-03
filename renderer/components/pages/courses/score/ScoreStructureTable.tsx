@@ -11,7 +11,7 @@ const ScoreStructureTable: React.FC = () => {
   const { course } = useContext(CourseContext) as { course: ICourse };
 
   if (!scoreStructure) {
-    return <div>Loading...</div>;
+    return <div>Đang tải bảng điểm...</div>;
   }
 
   const leafColumns = getLeafColumns(scoreStructure);

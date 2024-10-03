@@ -10,17 +10,18 @@ import { Button } from '@/components/ui/button';
 import { IScoreStructure } from '@/types';
 import scoreStructureService from '@/services/scoreStructureService';
 import { CourseContext } from '@/contexts/CourseContext';
+import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
 
 export default function ScoreStructureForm() {
   const { course } = useContext(CourseContext);
+  const { scoreStructure, setScoreStructure } = useContext(ScoreStructureContext);
   const [expandedColumns, setExpandedColumns] = useState<string[]>([]);
-  const [scoreStructure, setScoreStructure] = useState<IScoreStructure | null>(null);
 
   useEffect(() => {
     if (course) {
       setScoreStructure(course.scoreStructure || null);
     }
-  }, [course]);
+  }, [course, setScoreStructure]);
 
   if (!scoreStructure) {
     return <p>Đang tải cấu trúc điểm...</p>;
