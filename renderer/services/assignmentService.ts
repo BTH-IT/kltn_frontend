@@ -5,12 +5,16 @@ import { ApiResponse } from '@/types';
 import configService from './configService';
 
 const assignmentService = {
-  getAssignments(classId: string): Promise<ApiResponse<IAssignment[]>> {
-    return configService.get(`${API_URL.ASSIGNMENTS}/${classId}`);
+  getAssignments(courseId: string): Promise<ApiResponse<IAssignment[]>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/${courseId}`);
   },
 
-  getAssignmentById(classId: string, assignmentId: string): Promise<ApiResponse<IAssignment>> {
-    return configService.get(`${API_URL.ASSIGNMENTS}/${classId}/${assignmentId}`);
+  getAssignmentById(courseId: string, assignmentId: string): Promise<ApiResponse<IAssignment>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/${courseId}/${assignmentId}`);
+  },
+
+  getSubmissionsById(assignmentId: string): Promise<ApiResponse<IAssignment>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/${assignmentId}${API_URL.SUBMISSIONS}`);
   },
 
   createAssignment(assignmentData: Partial<IAssignment>): Promise<ApiResponse<IAssignment>> {

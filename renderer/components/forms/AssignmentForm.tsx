@@ -87,19 +87,16 @@ const AssignmentForm = ({
               control={form.control}
               defaultValue=""
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-xs font-bold uppercase">Hướng dẫn (không bắt buộc)</FormLabel>
-                  <FormControl>
-                    <ReactQuill
-                      theme="snow"
-                      placeholder="Mô tả"
-                      className="flex-1 rounded-md h-[230px]"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <>
+                  <h2 className="text-xs font-bold uppercase">Hướng dẫn (không bắt buộc)</h2>
+                  <ReactQuill
+                    theme="snow"
+                    placeholder="Mô tả"
+                    className="flex-1 rounded-md h-[230px]"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </>
               )}
             />
           </div>

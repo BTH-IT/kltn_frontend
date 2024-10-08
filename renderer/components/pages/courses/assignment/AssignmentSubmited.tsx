@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Settings2, Mail, Search, Calendar as CalendarIcon, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import assignmentService from '@/services/assignmentService';
 
 const students = [
   {
@@ -48,9 +50,22 @@ const students = [
 ];
 
 export default function AssigmentSubmited() {
+  const params = useParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedStudent, setSelectedStudent] = useState<(typeof students)[0] | null>(null);
+
+  useEffect(() => {
+    const handleData = async () => {
+      try {
+        const res = await assignmentService.getSubmissionsById(params.assignmentId as string);
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleData();
+  }, [params.assignmentId]);
 
   const filteredStudents = students.filter(
     (student) =>
@@ -89,7 +104,6 @@ export default function AssigmentSubmited() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.submitted}</div>
-            <p className="text-xs text-muted-foreground">+0% từ tháng trước</p>
           </CardContent>
         </Card>
         <Card>
@@ -99,7 +113,6 @@ export default function AssigmentSubmited() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.graded}</div>
-            <p className="text-xs text-muted-foreground">+0% từ tháng trước</p>
           </CardContent>
         </Card>
         <Card>
@@ -109,7 +122,6 @@ export default function AssigmentSubmited() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.pending}</div>
-            <p className="text-xs text-muted-foreground">+0% từ tháng trước</p>
           </CardContent>
         </Card>
       </div>
@@ -143,7 +155,7 @@ export default function AssigmentSubmited() {
             <TableHead className="w-[40px]">
               <Checkbox />
             </TableHead>
-            <TableHead>Học viên</TableHead>
+            <TableHead>Sinh viên</TableHead>
             <TableHead>Trạng thái</TableHead>
             <TableHead>Ngày nộp</TableHead>
             <TableHead>Điểm</TableHead>

@@ -33,6 +33,7 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function AssignmentDetail() {
   const { assignment } = useContext(AssignmentContext);
+  console.log(assignment);
 
   const [comments, setComments] = useState<IComment[]>([]);
   const [currentUser, setUser] = useState<IUser | null>(null);
@@ -115,7 +116,11 @@ export default function AssignmentDetail() {
   return (
     <>
       <div className="grid grid-cols-12 gap-8">
-        <Card className="col-span-9 border-none shadow-lg">
+        <Card
+          className={`col-span-9 border-none shadow-lg ${
+            currentUser?.id === assignment?.createUser?.id && 'col-span-12'
+          }`}
+        >
           <CardHeader className="rounded-t-lg bg-primary/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -127,6 +132,10 @@ export default function AssignmentDetail() {
                   <p className="text-sm text-muted-foreground">
                     {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
                     {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Bài tập cho cột điểm: {assignment?.scoreStructure.columnName} - {assignment?.scoreStructure.percent}
+                    {'%'}
                   </p>
                 </div>
               </div>
@@ -206,8 +215,8 @@ export default function AssignmentDetail() {
             </form>
           </CardFooter>
         </Card>
-        <div className="col-span-3">
-          {currentUser?.id === assignment?.createUser?.id && (
+        <div className={`col-span-3 ${currentUser?.id === assignment?.createUser?.id && 'col-span-12'}`}>
+          {currentUser?.id !== assignment?.createUser?.id && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>

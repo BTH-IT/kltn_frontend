@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import assignmentService from '@/services/assignmentService';
+import submissionService from '@/services/submissionService';
 import uploadService from '@/services/uploadService';
 import { ICourse, MetaLinkData } from '@/types';
 import { IAssignment } from '@/types/assignment';
@@ -25,10 +25,7 @@ import AddLinkModal from './AddLinkModal';
 import AddYoutubeLinkModal from './AddYoutubeLinkModal';
 
 const FormSchema = z.object({
-  title: z.string().min(1, {
-    message: 'Tiêu đề không hợp lệ',
-  }),
-  content: z.string(),
+  description: z.string(),
 });
 
 const SubmitAssignmentModal = ({
@@ -50,16 +47,14 @@ const SubmitAssignmentModal = ({
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      title: '',
-      content: '',
+      description: '',
     },
   });
 
   useEffect(() => {
     if (assignment) {
       form.reset({
-        title: assignment?.title || '',
-        content: assignment?.content || '',
+        description: '',
       });
 
       setFiles(assignment.attachments || []);
@@ -84,23 +79,29 @@ const SubmitAssignmentModal = ({
   };
 
   const submitForm = async (values: z.infer<typeof FormSchema>) => {
+    if (files.length <= 0 && links.length <= 0) {
+      toast.error('Bắt buộc ít nhất 1 tệp tin hoặc 1 liên kết');
+      return;
+    }
+
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
     const data = {
-      title: values.title,
-      content: values.content,
+      description: values.description,
       attachedLinks: links,
       attachments: resAttachments,
     };
 
-    return await assignmentService.updateAssignment(assignment.assignmentId, data);
+    return await submissionService.createSubmission(assignment.assignmentId, data);
   };
 
   const onSubmit = async (values: z.infer<typeof FormSchema>): Promise<void> => {
     if (!course) return;
 
     try {
-      await submitForm(values);
+      const data = await submitForm(values);
+
+      if (!data) return;
 
       toast.success('Đã nộp bài tập thành công');
 

@@ -13,7 +13,9 @@ export interface IAssignment {
   createdAt: string;
   updatedAt: string;
   course: ICourse;
-  studentAssigned: any;
   createUser: IUser | null;
+  isGroupAssigned: boolean;
+  scoreStructureId: string;
+  scoreStructure: any;
   comments: IComment[];
 }

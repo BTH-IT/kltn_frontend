@@ -4,10 +4,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NotebookText, X } from 'lucide-react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'react-toastify';
+import CreatableSelect from 'react-select/creatable';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
@@ -17,10 +18,12 @@ import uploadService from '@/services/uploadService';
 import { ICourse, MetaLinkData } from '@/types';
 import { IAssignment } from '@/types/assignment';
 import { formatDuration } from '@/utils';
+import { getLeafColumns } from '@/libs/utils';
 
 import { DateTimePicker } from '../common/DatetimePicker';
 import AssignmentForm from '../forms/AssignmentForm';
 import { YoutubeCardProps } from '../common/YoutubeCard';
+import { Switch } from '../ui/switch';
 
 import AddLinkModal from './AddLinkModal';
 import AddYoutubeLinkModal from './AddYoutubeLinkModal';
@@ -39,20 +42,16 @@ const AssignmentHmWorkModal = ({
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const [scoreCols, setScoreCols] = useState<any[]>([]);
-  const [scoreSelectedOption, setScoreSelectedOption] = useState<any>([]);
+  const [scoreSelectedOption, setScoreSelectedOption] = useState<any>(null);
+  const [isChooseGroup, setIsChooseGroup] = useState<boolean>(false);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
 
   useEffect(() => {
     if (course) {
-      // const scoreCols = JSON.parse(course?.scoreStructure)
-      //   .filter(
-      //     (item: any) =>
-      //       !(item.divideColumnFirst && item.divideColumnFirst.length > 0)
-      //   )
-      //   .sort((a: any, b: any) => a.columnName.localeCompare(b.columnName));
-      // setScoreCols(scoreCols);
+      const scoreCols = getLeafColumns(course.scoreStructure);
+      setScoreCols(scoreCols);
     }
   }, [course]);
 
@@ -95,6 +94,12 @@ const AssignmentHmWorkModal = ({
   };
 
   const submitForm = async (values: z.infer<typeof FormSchema>, courseId: string) => {
+    if (!scoreSelectedOption) {
+      toast.error('Chọn cột điểm cho bài tập là bắt buộc!');
+
+      return;
+    }
+
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
     const formattedDueDate = dueDate?.toISOString() ?? null;
@@ -106,6 +111,8 @@ const AssignmentHmWorkModal = ({
       dueDate: formattedDueDate,
       attachedLinks: links,
       attachments: resAttachments,
+      scoreStructureId: scoreSelectedOption.value,
+      isGroupAssigned: isChooseGroup,
     };
 
     return await assignmentService.createAssignment(data);
@@ -114,7 +121,7 @@ const AssignmentHmWorkModal = ({
   const createAssignment = async (values: z.infer<typeof FormSchema>, courseId: string) => {
     try {
       const response = await submitForm(values, courseId);
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(`Error creating assignment for class ${courseId}:`, error);
       throw error;
@@ -126,6 +133,8 @@ const AssignmentHmWorkModal = ({
 
     try {
       const data = await createAssignment(values, course.courseId);
+
+      if (!data) return;
 
       setAssignments((prev) => [...prev, data]);
 
@@ -188,10 +197,8 @@ const AssignmentHmWorkModal = ({
                         <div className="font-medium">Hạn nộp</div>
                         <DateTimePicker date={dueDate} setDate={setDueDate} />
                       </div>
-                      {/* <div className='flex flex-col gap-4 px-3'>
-                        <div className='font-medium'>
-                          Bài tập ứng với cột điểm
-                        </div>
+                      <div className="flex flex-col gap-4 px-3">
+                        <div className="font-medium">Ứng với cột điểm</div>
                         <CreatableSelect
                           isClearable
                           options={scoreCols.map((item) => {
@@ -204,7 +211,11 @@ const AssignmentHmWorkModal = ({
                             setScoreSelectedOption(selectedOption);
                           }}
                         />
-                      </div> */}
+                      </div>
+                      <div className="flex flex-col gap-4 px-3">
+                        <div className="font-medium">Áp dụng cho nhóm?</div>
+                        <Switch checked={isChooseGroup} onCheckedChange={(value) => setIsChooseGroup(value)} />
+                      </div>
                     </div>
                   </div>
                 </div>
