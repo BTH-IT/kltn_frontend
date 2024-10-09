@@ -11,3 +11,9 @@ export interface ISubmission {
   updatedAt: string;
   createUser: IUser | null;
 }
+
+export interface ISubmissionList {
+  score: number | null;
+  submission: ISubmission | null;
+  user: IUser;
+}

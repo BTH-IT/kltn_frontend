@@ -1,5 +1,5 @@
 'use client';
-import AssignmentDetail from '@/components/pages/courses/assignment/AssigmentDetail';
+import AssignmentDetail from '@/components/pages/courses/assignment/AssignmentDetail';
 
 const AssignmentDetailPage = () => {
   return <AssignmentDetail />;

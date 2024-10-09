@@ -16,6 +16,7 @@ export * from './score-structure';
 export * from './assignment';
 export * from './report';
 export * from './submission';
+export * from './score';
 
 export interface ApiResponse<T> {
   message?: string;

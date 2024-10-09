@@ -67,15 +67,26 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
           <Card className="w-full bg-white shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between border-b bg-gray-50">
               <CardTitle className="text-2xl font-bold text-gray-800">Báo cáo dự án</CardTitle>
-              <Button
-                onClick={() => {
-                  setAddingReport(true);
-                }}
-                className="text-white bg-blue-500 hover:bg-blue-600"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Thêm mục mới
-              </Button>
+              <div className="flex items-center justify-center gap-2">
+                <Button
+                  onClick={() => {
+                    setAddingReport(true);
+                  }}
+                  className="text-white bg-blue-500 hover:bg-blue-600"
+                >
+                  Tóm tắt báo cáo
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    setAddingReport(true);
+                  }}
+                  className="text-white bg-blue-500 hover:bg-blue-600"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Thêm mục mới
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="p-0">
               <Accordion

@@ -1,6 +1,6 @@
 import { API_URL } from '@/constants/endpoints';
 import { IAssignment } from '@/types/assignment';
-import { ApiResponse } from '@/types';
+import { ApiResponse, ISubmissionList } from '@/types';
 
 import configService from './configService';
 
@@ -13,7 +13,7 @@ const assignmentService = {
     return configService.get(`${API_URL.ASSIGNMENTS}/${courseId}/${assignmentId}`);
   },
 
-  getSubmissionsById(assignmentId: string): Promise<ApiResponse<IAssignment>> {
+  getSubmissionsById(assignmentId: string): Promise<ApiResponse<ISubmissionList[]>> {
     return configService.get(`${API_URL.ASSIGNMENTS}/${assignmentId}${API_URL.SUBMISSIONS}`);
   },
 

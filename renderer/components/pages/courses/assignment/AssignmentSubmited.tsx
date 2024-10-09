@@ -1,65 +1,37 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Settings2, Mail, Search, Calendar as CalendarIcon, FileText } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
+import { Settings2, Search, Calendar as CalendarIcon, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import assignmentService from '@/services/assignmentService';
-
-const students = [
-  {
-    id: 1,
-    name: 'Phúc Huy Nguyễn',
-    status: 'Đã giao',
-    submittedDate: '2023-07-10',
-    grade: null,
-  },
-  {
-    id: 2,
-    name: 'Biện Thành Hưng',
-    status: 'Đã trả lại',
-    submittedDate: '2023-07-09',
-    grade: 4.5,
-  },
-  {
-    id: 3,
-    name: 'Nguyễn Văn A',
-    status: 'Chưa nộp',
-    submittedDate: null,
-    grade: null,
-  },
-  {
-    id: 4,
-    name: 'Trần Thị B',
-    status: 'Đã nộp',
-    submittedDate: '2023-07-11',
-    grade: null,
-  },
-];
+import { ISubmissionList } from '@/types';
+import { AssignmentContext } from '@/contexts/AssignmentContext';
+import SubmissionDetailModal from '@/components/modals/SubmissionDetailModal';
 
 export default function AssigmentSubmited() {
   const params = useParams();
+  const { assignment } = useContext(AssignmentContext);
   const [searchTerm, setSearchTerm] = useState('');
+  const [students, setStudents] = useState<ISubmissionList[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [selectedStudent, setSelectedStudent] = useState<(typeof students)[0] | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<ISubmissionList | null>(null);
 
   useEffect(() => {
     const handleData = async () => {
       try {
         const res = await assignmentService.getSubmissionsById(params.assignmentId as string);
-        console.log(res.data);
+        setStudents(res.data);
       } catch (error) {
         console.log(error);
       }
@@ -67,29 +39,44 @@ export default function AssigmentSubmited() {
     handleData();
   }, [params.assignmentId]);
 
-  const filteredStudents = students.filter(
-    (student) =>
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (!selectedDate || student.submittedDate === format(selectedDate, 'yyyy-MM-dd')),
-  );
+  const now = new Date();
+
+  const categorizeStudentStatus = (student: ISubmissionList) => {
+    const dueDate = new Date(assignment?.dueDate || '');
+
+    if (!student?.submission) {
+      if (assignment?.dueDate === null) return 'Đã giao';
+
+      if (now <= dueDate) return 'Chưa nộp bài';
+
+      return 'Trễ hạn';
+    } else {
+      if (student?.score === null) {
+        return 'Đã nộp';
+      } else {
+        return 'Đã chấm bài';
+      }
+    }
+  };
 
   const stats = {
-    submitted: students.filter((s) => s.status === 'Đã nộp' || s.status === 'Đã giao' || s.status === 'Đã trả lại')
-      .length,
-    graded: students.filter((s) => s.grade !== null).length,
-    pending: students.filter((s) => s.status === 'Đã nộp' && s.grade === null).length,
+    submitted: students.filter((student) => categorizeStudentStatus(student) === 'Đã nộp').length,
+    graded: students.filter((student) => categorizeStudentStatus(student) === 'Đã chấm bài').length,
+    notSubmit: students.filter((student) => categorizeStudentStatus(student) === 'Chưa nộp bài').length,
   };
+
+  const filteredStudents = students.filter(
+    (student) =>
+      student.user.userName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (!selectedDate ||
+        format(student.submission?.createdAt ?? '', 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')),
+  );
 
   return (
     <div className="container p-4 mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Học tập và làm theo 5 điều bác hồ dạy</h1>
+        <h1 className="text-3xl font-bold">{assignment?.title || ''}</h1>
         <div className="flex space-x-2">
-          <Button variant="outline">Trả bài</Button>
-          <Button variant="outline">
-            <Mail className="w-4 h-4 mr-2" />
-            Chấm điểm
-          </Button>
           <Button variant="ghost" size="icon">
             <Settings2 className="w-5 h-5" />
           </Button>
@@ -117,11 +104,11 @@ export default function AssigmentSubmited() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Chờ chấm điểm</CardTitle>
+            <CardTitle className="text-sm font-medium">Chưa nộp bài</CardTitle>
             <FileText className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.pending}</div>
+            <div className="text-2xl font-bold">{stats.notSubmit}</div>
           </CardContent>
         </Card>
       </div>
@@ -152,9 +139,6 @@ export default function AssigmentSubmited() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[40px]">
-              <Checkbox />
-            </TableHead>
             <TableHead>Sinh viên</TableHead>
             <TableHead>Trạng thái</TableHead>
             <TableHead>Ngày nộp</TableHead>
@@ -164,45 +148,32 @@ export default function AssigmentSubmited() {
         </TableHeader>
         <TableBody>
           {filteredStudents.map((student) => (
-            <TableRow key={student.id}>
-              <TableCell>
-                <Checkbox />
-              </TableCell>
+            <TableRow key={student.user.id}>
               <TableCell>
                 <div className="flex items-center">
                   <Avatar className="w-8 h-8 mr-2">
-                    <Image src={'/images/avt.png'} alt={student.name} width={1000} height={1000} />
+                    <Image src={'/images/avt.png'} alt={student.user.userName} width={1000} height={1000} />
                   </Avatar>
-                  {student.name}
+                  {student.user.userName}
                 </div>
               </TableCell>
               <TableCell>
-                <Badge variant={student.status === 'Đã trả lại' ? 'destructive' : 'default'}>{student.status}</Badge>
+                <Badge variant={categorizeStudentStatus(student) === 'Đã chấm bài' ? 'destructive' : 'default'}>
+                  {categorizeStudentStatus(student)}
+                </Badge>
               </TableCell>
-              <TableCell>{student.submittedDate || 'N/A'}</TableCell>
-              <TableCell>{student.grade !== null ? student.grade : 'Chưa chấm'}</TableCell>
               <TableCell>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" onClick={() => setSelectedStudent(student)}>
-                      Xem bài
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Bài nộp của {selectedStudent?.name}</DialogTitle>
-                    </DialogHeader>
-                    <div className="mt-4">
-                      <p>Trạng thái: {selectedStudent?.status}</p>
-                      <p>Ngày nộp: {selectedStudent?.submittedDate || 'Chưa nộp'}</p>
-                      <p>Điểm: {selectedStudent ? selectedStudent.grade : 'Chưa chấm'}</p>
-                      <div className="mt-4">
-                        <h4 className="mb-2 font-semibold">Nội dung bài nộp:</h4>
-                        <p className="text-sm text-muted-foreground">(Nội dung bài nộp sẽ được hiển thị ở đây)</p>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                {student.submission ? format(new Date(student.submission.createdAt), 'yyyy-MM-dd') : 'N/A'}
+              </TableCell>
+              <TableCell>{student.score !== null ? student.score : 'Chưa chấm bài'}</TableCell>
+              <TableCell>
+                {student.submission && (
+                  <SubmissionDetailModal
+                    currentStudent={student}
+                    student={selectedStudent}
+                    setStudent={setSelectedStudent}
+                  />
+                )}
               </TableCell>
             </TableRow>
           ))}

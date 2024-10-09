@@ -1,5 +1,6 @@
 import { IComment } from './comment';
 import { ICourse } from './course';
+import { ISubmission } from './submission';
 import { IUser } from './user';
 
 export interface IAssignment {
@@ -18,4 +19,5 @@ export interface IAssignment {
   scoreStructureId: string;
   scoreStructure: any;
   comments: IComment[];
+  submission: ISubmission | null;
 }

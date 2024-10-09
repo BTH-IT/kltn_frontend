@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { AssignmentContext } from '@/contexts/AssignmentContext';
 import CommentList from '@/components/common/CommentList';
-import { IComment, IUser } from '@/types';
+import { IComment, ISubmission, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import commentService from '@/services/commentService';
 import {
@@ -111,6 +111,22 @@ export default function AssignmentDetail() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const categorizeStatus = (submission: ISubmission | null) => {
+    const now = new Date();
+
+    const dueDate = new Date(assignment?.dueDate || '');
+
+    if (!submission) {
+      if (assignment?.dueDate === null) return 'Đã giao';
+
+      if (now <= dueDate) return 'Chưa nộp bài';
+
+      return 'Trễ hạn';
+    }
+
+    return 'Đã nộp bài';
   };
 
   return (
@@ -220,13 +236,23 @@ export default function AssignmentDetail() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>
-                <span className="text-sm text-green-600">Đã giao</span>
+                <span className="text-sm text-green-600">{categorizeStatus(assignment?.submission || null)}</span>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button variant="outline" className="justify-start w-full" onClick={() => setIsSubmit(true)}>
-                  <PlusIcon className="w-4 h-4 mr-2" />
-                  Thêm bài tập vào đây
-                </Button>
+                {assignment?.submission ? (
+                  <>
+                    <Button variant="outline" className="justify-center w-full">
+                      Xem bài đã nộp
+                    </Button>
+                    <Button variant="destructive" className="justify-center w-full">
+                      Hủy nộp bài
+                    </Button>
+                  </>
+                ) : (
+                  <Button variant="outline" className="justify-start w-full" onClick={() => setIsSubmit(true)}>
+                    {categorizeStatus(assignment?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           )}

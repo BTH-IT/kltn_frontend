@@ -24,12 +24,10 @@ const AnnouncementAttachList = ({
   const handleRemoveLink = (link: any) => {
     const newLinks = links.filter((l) => l !== link);
     setLinks(newLinks);
-    console.log(links);
   };
   const handleRemoveFile = (f: any) => {
     const newFiles = files.filter((file) => file !== f);
     setFiles(newFiles);
-    console.log(links);
   };
 
   return (
@@ -39,7 +37,7 @@ const AnnouncementAttachList = ({
           {links.map((link: any, index: any) => (
             <div
               key={index}
-              className="flex items-center border rounded-lg transition-all hover:bg-[#f0f0f0] col-span-6"
+              className="flex items-center border rounded-lg transition-all hover:bg-[#f0f0f0] col-span-6 overflow-hidden px-2"
             >
               <div className="mr-2 max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full flex justify-center items-center border-r overflow-hidden">
                 <Image
@@ -67,7 +65,7 @@ const AnnouncementAttachList = ({
           {files.map((f: any, index: any) => (
             <div
               key={index}
-              className="flex items-center border rounded-lg transition-all hover:bg-[#f0f0f0] col-span-6"
+              className="flex items-center border rounded-lg transition-all hover:bg-[#f0f0f0] col-span-6 overflow-hidden px-2"
             >
               <div className="mr-2 max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full flex justify-center items-center border-r overflow-hidden">
                 {f.type.includes('image/') && (
