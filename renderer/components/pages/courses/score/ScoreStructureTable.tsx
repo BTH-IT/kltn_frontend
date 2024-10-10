@@ -16,6 +16,8 @@ const ScoreStructureTable: React.FC = () => {
 
   const leafColumns = getLeafColumns(scoreStructure);
 
+  console.log(course.students);
+
   return (
     <div className="p-4">
       <h2 className="mb-4 text-2xl font-bold">Bảng điểm</h2>

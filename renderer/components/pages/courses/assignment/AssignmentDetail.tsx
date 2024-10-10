@@ -8,6 +8,8 @@ import { Controller, useForm } from 'react-hook-form';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,8 +34,7 @@ import SubmitAssignmentModal from '@/components/modals/SubmitAssignmentModal';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function AssignmentDetail() {
-  const { assignment } = useContext(AssignmentContext);
-  console.log(assignment);
+  const { assignment, setAssignment } = useContext(AssignmentContext);
 
   const [comments, setComments] = useState<IComment[]>([]);
   const [currentUser, setUser] = useState<IUser | null>(null);
@@ -92,11 +93,17 @@ export default function AssignmentDetail() {
   const handleRemove = async () => {
     if (!assignment) return;
     try {
-      await assignmentService.deleteAssignment(assignment.assignmentId);
-
-      router.push(`/courses/${assignment.courseId}`);
-    } catch (error) {
-      console.log(error);
+      const res = await assignmentService.deleteAssignment(assignment.assignmentId);
+      if (res) {
+        router.refresh();
+        router.push(`/courses/${assignment.courseId}/assignments`);
+        toast.success('Đã xoá bài tập thành công');
+      }
+    } catch (err) {
+      console.error('Failed to delete assignment: ', err);
+      if (err instanceof AxiosError) {
+        toast.error(err?.response?.data?.message || err.message);
+      }
     }
   };
 
@@ -150,7 +157,8 @@ export default function AssignmentDetail() {
                     {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Bài tập cho cột điểm: {assignment?.scoreStructure.columnName} - {assignment?.scoreStructure.percent}
+                    Bài tập cho cột điểm: {assignment?.scoreStructure?.columnName} -{' '}
+                    {assignment?.scoreStructure?.percent}
                     {'%'}
                   </p>
                 </div>
@@ -172,8 +180,22 @@ export default function AssignmentDetail() {
                         >
                           Xem danh sách nộp bài
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setIsEdit(true)}>Chỉnh sửa</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)}>Xóa</DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsEdit(true);
+                          }}
+                        >
+                          Chỉnh sửa
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsDeleteModalOpen(true);
+                          }}
+                        >
+                          Xóa
+                        </DropdownMenuItem>
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -259,12 +281,7 @@ export default function AssignmentDetail() {
         </div>
       </div>
       {assignment && (
-        <EditAssignmentHmWorkModal
-          onOpenModal={isEdit}
-          setOnOpenModal={setIsEdit}
-          course={assignment.course}
-          assignment={assignment}
-        />
+        <EditAssignmentHmWorkModal onOpenModal={isEdit} setOnOpenModal={setIsEdit} assignment={assignment} />
       )}
       {assignment && (
         <SubmitAssignmentModal
@@ -277,7 +294,7 @@ export default function AssignmentDetail() {
       <CommonModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
-        width={400}
+        width={500}
         height={150}
         title="Bạn có chắc muốn xoá bài tập này không?"
         acceptTitle="Xoá"

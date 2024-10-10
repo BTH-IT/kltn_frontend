@@ -4,19 +4,24 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NotebookText, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'react-toastify';
+import CreatableSelect from 'react-select/creatable';
+import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
+import { AssignmentContext } from '@/contexts/AssignmentContext';
 import { Form } from '@/components/ui/form';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
 import { ICourse, MetaLinkData } from '@/types';
 import { IAssignment } from '@/types/assignment';
-import { formatDuration } from '@/utils';
+import { formatDuration, getLeafColumns } from '@/utils';
+import { CourseContext } from '@/contexts/CourseContext';
 
 import { DateTimePicker } from '../common/DatetimePicker';
 import AssignmentForm from '../forms/AssignmentForm';
@@ -33,23 +38,28 @@ const FormSchema = z.object({
 });
 
 const EditAssignmentHmWorkModal = ({
-  course,
   onOpenModal,
   setOnOpenModal,
   assignment,
+  setAssignments,
 }: {
-  course: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   assignment: IAssignment;
+  setAssignments?: React.Dispatch<React.SetStateAction<IAssignment[]>>;
 }) => {
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const [scoreCols, setScoreCols] = useState<any[]>([]);
   const [scoreSelectedOption, setScoreSelectedOption] = useState<any>([]);
+  const [selectedScore, setSelectedScore] = useState<any>(null);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
+  const [isChooseGroup, setIsChooseGroup] = useState<boolean>(false);
+
+  const { course } = useContext(CourseContext);
+  const { setAssignment } = useContext(AssignmentContext);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -61,30 +71,26 @@ const EditAssignmentHmWorkModal = ({
 
   useEffect(() => {
     if (course) {
-      // const scoreCols = JSON.parse(course?.scoreStructure)
-      //   .filter(
-      //     (item: any) =>
-      //       !(item.divideColumnFirst && item.divideColumnFirst.length > 0)
-      //   )
-      //   .sort((a: any, b: any) => a.columnName.localeCompare(b.columnName));
-      // setScoreCols(scoreCols);
+      const scoreCols = getLeafColumns(course.scoreStructure);
+      setScoreCols(scoreCols);
     }
   }, [course]);
 
   useEffect(() => {
     if (assignment) {
-      form.reset({
-        title: assignment?.title || '',
-        content: assignment?.content || '',
-      });
+      form.setValue('title', assignment.title);
+      form.setValue('content', assignment.content);
 
       setDueDate(assignment.dueDate ? new Date(assignment.dueDate) : undefined);
-
       setFiles(assignment.attachments || []);
-
       setLinks(assignment.attachedLinks || []);
+      setSelectedScore({
+        value: assignment.scoreStructureId,
+        label: `${assignment.scoreStructure?.columnName} - ${assignment.scoreStructure?.percent}%`,
+      });
+      setIsChooseGroup(assignment.isGroupAssigned);
     }
-  }, [assignment, course, form]);
+  }, [assignment, onOpenModal, course, form]);
 
   const handleAddYoutubeLink = (selectedVideo: YoutubeCardProps | null) => {
     if (selectedVideo) {
@@ -108,10 +114,13 @@ const EditAssignmentHmWorkModal = ({
 
     const data = {
       title: values.title,
+      courseId: course?.courseId,
       content: values.content,
       dueDate: formattedDueDate,
       attachedLinks: links,
       attachments: resAttachments,
+      scoreStructureId: scoreSelectedOption.value,
+      isGroupAssigned: isChooseGroup,
     };
 
     return await assignmentService.updateAssignment(assignment.assignmentId, data);
@@ -121,19 +130,47 @@ const EditAssignmentHmWorkModal = ({
     if (!course) return;
 
     try {
-      await submitForm(values);
+      const res = await submitForm(values);
+
+      if (!res) throw new Error('Failed to update assignment');
 
       toast.success('Đã chỉnh sửa bài tập thành công');
+
+      if (setAssignments) {
+        setAssignments((prev) => {
+          const newAssignments = prev.map((item) => {
+            if (item.assignmentId === assignment.assignmentId) {
+              return {
+                ...item,
+                ...res.data,
+              };
+            }
+            return item;
+          });
+          return newAssignments;
+        });
+      } else {
+        setAssignment(res.data);
+      }
 
       setOnOpenModal(false);
     } catch (error) {
       console.error('Error creating assignments:', error);
-      toast.error('Có lỗi khi đăng bài tập');
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
     }
   };
 
   const onCloseModal = () => {
     setOnOpenModal(false);
+    form.reset();
+    setScoreSelectedOption(false);
+    setSelectedScore(null);
+    setDueDate(undefined);
+    setFiles([]);
+    setLinks([]);
+    setIsChooseGroup(false);
   };
 
   return (
@@ -147,14 +184,14 @@ const EditAssignmentHmWorkModal = ({
                 <div className="sticky top-0 left-0 right-0 flex items-center justify-between w-full px-5 py-3 bg-white border-b-2">
                   <div className="flex items-center gap-3 font-semibold text-md">
                     <NotebookText />
-                    Bài tập
+                    Sửa bài tập
                   </div>
                   <div className="flex items-center gap-7">
                     <Button type="submit" className="w-20" variant="primary">
                       {form.formState.isSubmitting && (
                         <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                       )}
-                      Tạo
+                      Sửa
                     </Button>
                     <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                       <X className="w-4 h-4" />
@@ -180,12 +217,11 @@ const EditAssignmentHmWorkModal = ({
                         <div className="font-medium">Hạn nộp</div>
                         <DateTimePicker date={dueDate} setDate={setDueDate} />
                       </div>
-                      {/* <div className='flex flex-col gap-4 px-3'>
-                        <div className='font-medium'>
-                          Bài tập ứng với cột điểm
-                        </div>
+                      <div className="flex flex-col gap-4 px-3">
+                        <div className="font-medium">Ứng với cột điểm</div>
                         <CreatableSelect
                           isClearable
+                          defaultValue={selectedScore}
                           options={scoreCols.map((item) => {
                             return {
                               value: item.id,
@@ -196,7 +232,11 @@ const EditAssignmentHmWorkModal = ({
                             setScoreSelectedOption(selectedOption);
                           }}
                         />
-                      </div> */}
+                      </div>
+                      <div className="flex flex-col gap-4 px-3">
+                        <div className="font-medium">Áp dụng cho nhóm?</div>
+                        <Switch checked={isChooseGroup} onCheckedChange={(value) => setIsChooseGroup(value)} />
+                      </div>
                     </div>
                   </div>
                 </div>
