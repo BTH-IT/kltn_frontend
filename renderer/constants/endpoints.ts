@@ -15,4 +15,5 @@ export const API_URL = {
   SCORE_STRUCTURES: '/scorestructures',
   SUBMISSIONS: '/submissions',
   SCORES: '/scores',
+  BRIEFS: '/briefs',
 };

@@ -1,15 +1,15 @@
 import React from 'react';
 
 import http from '@/libs/http';
-import { IGroup } from '@/types/group';
-import ReportTimeline from '@/components/pages/groups/ReportTimeline';
 import { API_URL } from '@/constants/endpoints';
+import ReportHistory from '@/components/pages/groups/ReportHistory';
+import { IBrief } from '@/types';
 
 const GroupReportPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
   const {
-    payload: { data: group },
-  } = await http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`);
-  return <ReportTimeline group={group} />;
+    payload: { data: briefs },
+  } = await http.get<IBrief[]>(`${API_URL.BRIEFS}/${params.groupId}/brief`);
+  return <ReportHistory briefs={briefs} />;
 };
 
 export default GroupReportPage;
