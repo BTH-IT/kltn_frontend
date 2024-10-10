@@ -5,6 +5,7 @@ import { Plus, Edit, Trash } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,8 +70,17 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
               <CardTitle className="text-2xl font-bold text-gray-800">Báo cáo dự án</CardTitle>
               <div className="flex items-center justify-center gap-2">
                 <Button
-                  onClick={() => {
-                    setAddingReport(true);
+                  onClick={async () => {
+                    const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_KEY || '');
+                    const model = genAI.getGenerativeModel({
+                      model: 'gemini-1.5-pro-002',
+                    });
+
+                    const prompt = 'Write a story about a magic backpack.';
+
+                    const result = await model.generateContent(prompt);
+
+                    console.log(result.response.text());
                   }}
                   className="text-white bg-blue-500 hover:bg-blue-600"
                 >

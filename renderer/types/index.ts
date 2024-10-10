@@ -17,6 +17,7 @@ export * from './assignment';
 export * from './report';
 export * from './submission';
 export * from './score';
+export * from './brief';
 
 export interface ApiResponse<T> {
   message?: string;
