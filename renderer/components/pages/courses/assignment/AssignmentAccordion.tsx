@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button';
 import { formatVNDate } from '@/utils';
 import { cn } from '@/libs/utils';
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
-import { useToast } from '@/components/ui/use-toast';
 import { IAssignment } from '@/types/assignment';
 import assignmentService from '@/services/assignmentService';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
@@ -170,7 +169,7 @@ const AssignmentAccordion = ({
                 <div className="text-green-600">Đã giao</div>
               </div>
               <div dangerouslySetInnerHTML={{ __html: assignment.content }} />
-              <AnnouncementAttachList links={assignment.attachedLinks} files={assignment.attachments} />
+              <AnnouncementAttachList links={assignment.attachedLinks || []} files={assignment.attachments || []} />
             </div>
             <div className="pt-5 px-3 border-t-[1px]">
               <Link

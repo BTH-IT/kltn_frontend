@@ -1,12 +1,14 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EllipsisVertical } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Controller, useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 
-import { IComment } from '@/types';
+import { IComment, IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 import {
   DropdownMenu,
@@ -36,6 +38,18 @@ const CommentItem = ({
   const [isEdit, setIsEdit] = useState(false);
 
   const { control, handleSubmit, reset, formState } = useForm();
+  const router = useRouter();
+  const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, []);
 
   const onSubmit = async (values: any) => {
     try {
@@ -52,11 +66,11 @@ const CommentItem = ({
     <>
       <AvatarHeader
         imageUrl={comment.user?.avatar || ''}
-        fullName={comment.user?.fullName || ''}
+        fullName={comment.user?.fullName || comment.user?.userName || ''}
         timestamp={comment.createdAt}
         type="comment"
         dropdownMenu={
-          comment.user?.id === comment.userId ? (
+          user?.id === comment.userId ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="cursor-pointer">
                 <EllipsisVertical />

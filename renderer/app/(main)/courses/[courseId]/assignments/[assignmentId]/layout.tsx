@@ -26,7 +26,6 @@ const Layout = async ({
   const {
     payload: { data: assignement },
   } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`);
-  console.log('assignement', assignement);
 
   return (
     <AssignmentProvider assignment={assignement}>

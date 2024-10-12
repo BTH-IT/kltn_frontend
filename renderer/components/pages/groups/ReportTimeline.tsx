@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -18,6 +19,7 @@ import { IGroup, IReport, IUser } from '@/types';
 import { formatVNDate, KEY_LOCALSTORAGE } from '@/utils';
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 import ReportCommentList from '@/components/common/ReportCommentList';
+import { generateParagraphs } from '@/libs/utils';
 
 const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -61,6 +63,21 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
     }
   };
 
+  const handleGenerateBrief = async () => {
+    const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_KEY || '');
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-pro-002',
+    });
+
+    const prompt = 'Write a story about a magic backpack.';
+
+    console.log(generateParagraphs(reports));
+
+    // const result = await model.generateContent(prompt);
+
+    // console.log(result.response.text());
+  };
+
   return (
     <>
       {isMounted && (
@@ -69,21 +86,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
             <CardHeader className="flex flex-row items-center justify-between border-b bg-gray-50">
               <CardTitle className="text-2xl font-bold text-gray-800">Báo cáo dự án</CardTitle>
               <div className="flex items-center justify-center gap-2">
-                <Button
-                  onClick={async () => {
-                    const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_KEY || '');
-                    const model = genAI.getGenerativeModel({
-                      model: 'gemini-1.5-pro-002',
-                    });
-
-                    const prompt = 'Write a story about a magic backpack.';
-
-                    const result = await model.generateContent(prompt);
-
-                    console.log(result.response.text());
-                  }}
-                  className="text-white bg-blue-500 hover:bg-blue-600"
-                >
+                <Button onClick={handleGenerateBrief} className="text-white bg-blue-500 hover:bg-blue-600">
                   Tóm tắt báo cáo
                 </Button>
 

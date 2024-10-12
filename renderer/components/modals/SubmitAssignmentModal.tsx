@@ -7,6 +7,7 @@ import { NotebookText, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ const SubmitAssignmentModal = ({
 }) => {
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
+  const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
 
@@ -50,18 +52,6 @@ const SubmitAssignmentModal = ({
       description: '',
     },
   });
-
-  useEffect(() => {
-    if (assignment) {
-      form.reset({
-        description: '',
-      });
-
-      setFiles(assignment.attachments || []);
-
-      setLinks(assignment.attachedLinks || []);
-    }
-  }, [assignment, course, form]);
 
   const handleAddYoutubeLink = (selectedVideo: YoutubeCardProps | null) => {
     if (selectedVideo) {
@@ -106,6 +96,8 @@ const SubmitAssignmentModal = ({
       toast.success('Đã nộp bài tập thành công');
 
       setOnOpenModal(false);
+
+      router.refresh();
     } catch (error) {
       console.error('Error creating assignments:', error);
       toast.error('Có lỗi khi đăng bài tập');

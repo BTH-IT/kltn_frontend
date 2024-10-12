@@ -30,11 +30,14 @@ import assignmentService from '@/services/assignmentService';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import { API_URL } from '@/constants/endpoints';
 import SubmitAssignmentModal from '@/components/modals/SubmitAssignmentModal';
+import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function AssignmentDetail() {
-  const { assignment, setAssignment } = useContext(AssignmentContext);
+  const { assignment } = useContext(AssignmentContext);
+
+  console.log(assignment);
 
   const [comments, setComments] = useState<IComment[]>([]);
   const [currentUser, setUser] = useState<IUser | null>(null);
@@ -212,6 +215,7 @@ export default function AssignmentDetail() {
               }}
               className="pb-4 border-b"
             />
+            <AnnouncementAttachList links={assignment?.attachedLinks || []} files={assignment?.attachments || []} />
             <CommentList
               comments={comments}
               handleRemoveComment={handleRemoveComment}
