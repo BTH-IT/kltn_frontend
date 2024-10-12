@@ -20,6 +20,7 @@ import { formatVNDate, KEY_LOCALSTORAGE } from '@/utils';
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 import ReportCommentList from '@/components/common/ReportCommentList';
 import { generateParagraphs } from '@/libs/utils';
+import briefService from '@/services/briefService';
 
 const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -69,13 +70,25 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
       model: 'gemini-1.5-pro-002',
     });
 
-    const prompt = 'Write a story about a magic backpack.';
+    const prompt =
+      'Tôi muốn một bản tóm tắt chi tiết về tiến độ của phần viết báo cáo, bao gồm cả những thông tin về cấu trúc và nội dung của báo cáo sau (chỉ lấy nội dung tóm tắt): ';
 
-    console.log(generateParagraphs(reports));
+    const res = await reportService.getReports(group.groupId);
 
-    // const result = await model.generateContent(prompt);
+    if (!res.data) return;
 
-    // console.log(result.response.text());
+    const fullPrompt = prompt + generateParagraphs(res.data);
+
+    const result = await model.generateContent(fullPrompt);
+
+    const content = result.response.text();
+
+    await briefService.createBrief(group.groupId, {
+      title: 'Tóm tắt báo cáo lúc ' + formatVNDate(new Date().toString()),
+      content,
+    });
+
+    toast.success('Tạo tóm tắt báo cáo thành công');
   };
 
   return (
@@ -148,7 +161,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
                       <div className="px-6 py-4">
                         <div className="pl-6 border-l-2 border-blue-200">
                           <div
-                            className="mb-4 prose text-gray-700 max-w-none"
+                            className="mb-4 prose text-gray-700 max-w-none markdown"
                             dangerouslySetInnerHTML={{ __html: report.content }}
                           />
                           <AnnouncementAttachList links={report.attachedLinks || []} files={report.attachments || []} />

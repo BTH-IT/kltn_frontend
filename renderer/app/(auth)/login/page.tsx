@@ -27,7 +27,7 @@ export const passwordSchema = z
   .regex(/[#!@$%^&*-]/, 'Password must contain at least one special character (#?!@$%^&*-)');
 
 const signUpSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  identifier: z.string().min(1, 'Username or email is required'),
   password: passwordSchema,
 });
 
@@ -73,10 +73,10 @@ export default withPermission(() => {
 
           <div className="flex flex-col gap-5">
             <InputForm
-              name={'username'}
-              error={errors.username?.message}
+              name={'identifier'}
+              error={errors.identifier?.message}
               control={control}
-              placeholder="Username"
+              placeholder="Username or email"
               type="text"
               iconStart={<User />}
             />

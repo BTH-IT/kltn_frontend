@@ -168,7 +168,7 @@ const AssignmentAccordion = ({
                 </div>
                 <div className="text-green-600">Đã giao</div>
               </div>
-              <div dangerouslySetInnerHTML={{ __html: assignment.content }} />
+              <div className="markdown" dangerouslySetInnerHTML={{ __html: assignment.content }} />
               <AnnouncementAttachList links={assignment.attachedLinks || []} files={assignment.attachments || []} />
             </div>
             <div className="pt-5 px-3 border-t-[1px]">

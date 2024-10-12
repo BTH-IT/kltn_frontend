@@ -47,6 +47,7 @@ export default function AssigmentSubmited() {
     const handleData = async () => {
       try {
         const res = await assignmentService.getSubmissionsById(params.assignmentId as string);
+        console.log(res.data);
         setStudents(res.data);
       } catch (error) {
         console.log(error);

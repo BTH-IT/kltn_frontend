@@ -75,28 +75,30 @@ export const generateParagraphs = (reports: IReport[]) => {
 
       const linksInfo = attachedLinks
         .map((link: any) => `- Liên kết: ${link.title} (${link.description}). URL: ${link.url}`)
-        .join('');
+        .join('\n');
 
       const attachmentsInfo = attachments
         .map((attachment: any) => `- Tệp tin: ${attachment.title}. URL: ${attachment.url}`)
-        .join('');
+        .join('\n');
 
       const commentsInfo = comments
         .map((comment: any) => {
           const commenterName = comment.user?.fullName || comment.user?.userName || 'Người bình luận không rõ';
-          return `- ${commenterName}: ${comment.content.replace(/<\/?p>/g, '') || 'Không có nội dung'} (Ngày bình luận: ${formatDateTime(comment.createdAt)})`;
+          return `- ${commenterName}: ${comment.content.replace(/<\/?[^>]+(>|$)/g, ' ') || 'Không có nội dung'} (Ngày bình luận: ${formatDateTime(comment.createdAt)})`;
         })
-        .join('');
+        .join('\n');
+
+      const plainContent = content.replace(/<\/?[^>]+(>|$)/g, ' ');
 
       return `
       Báo cáo: ${title || 'Không có tiêu đề'}
-      Nội dung: ${content.replace(/<\/?p>/g, '') || 'Không có nội dung'}
+      Nội dung: ${plainContent || 'Không có nội dung'}
       Người tạo: ${userName || 'Không rõ'}
       Ngày tạo: ${formatDateTime(report.createdAt)}
-      ${linksInfo ? `Liên kết đính kèm: ${linksInfo}` : 'Không có liên kết đính kèm'}
-      ${attachmentsInfo ? `Tệp tin đính kèm: ${attachmentsInfo}` : 'Không có tệp tin đính kèm'}
-      ${commentsInfo ? `Bình luận: ${commentsInfo}` : 'Không có bình luận'}
-    `;
+      ${linksInfo ? `Liên kết đính kèm: \n${linksInfo}` : 'Không có liên kết đính kèm'}
+      ${attachmentsInfo ? `Tệp tin đính kèm: \n${attachmentsInfo}` : 'Không có tệp tin đính kèm'}
+      ${commentsInfo ? `Bình luận: \n${commentsInfo}` : 'Không có bình luận'}
+      `;
     })
-    .join('');
+    .join('\n');
 };

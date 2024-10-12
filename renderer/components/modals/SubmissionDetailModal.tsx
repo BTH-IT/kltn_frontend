@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarIcon, GraduationCapIcon, ClipboardIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -29,6 +30,7 @@ export default function SubmissionDetailModal({ currentStudent, student, setStud
   const [isOpen, setIsOpen] = useState(false);
   const [score, setScore] = useState<number | null>(student?.score || null);
   const [activeTab, setActiveTab] = useState('details');
+  const router = useRouter();
 
   const getSubmissionStatus = (student: ISubmissionList | null) => {
     if (!student) return 'Không có thông tin';
@@ -56,6 +58,8 @@ export default function SubmissionDetailModal({ currentStudent, student, setStud
       await scoreService.createScoreSubmission(student?.submission?.submissionId, {
         value: score,
       });
+
+      router.refresh();
     }
   };
 
@@ -115,6 +119,7 @@ export default function SubmissionDetailModal({ currentStudent, student, setStud
                 <ScrollArea className="h-[200px] w-full rounded-md border p-4">
                   {student?.submission?.description ? (
                     <div
+                      className="markdown"
                       dangerouslySetInnerHTML={{
                         __html: student.submission.description,
                       }}

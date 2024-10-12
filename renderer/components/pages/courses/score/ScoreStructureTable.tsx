@@ -69,7 +69,7 @@ const ScoreStructureTable: React.FC = () => {
                 <td className="px-4 py-2 border">{student.userName}</td>
                 {leafColumns.map((leaf: any) => (
                   <td key={`${student.id}-${leaf.id}`} className="px-4 py-2 text-center border">
-                    {score.find((x: any) => x.scoreStructureId === leaf.id).value ?? '-'}
+                    {score.find((x: any) => x.scoreStructureId === leaf.id)?.value ?? '-'}
                   </td>
                 ))}
               </tr>
