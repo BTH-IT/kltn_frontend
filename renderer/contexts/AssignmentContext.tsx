@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { IAssignment } from '@/types';
+import assignmentService from '@/services/assignmentService';
 
 const AssignmentContext = React.createContext({
   assignment: {} as IAssignment | null,
@@ -20,7 +21,20 @@ const AssignmentProvider = ({
   const [data, setData] = useState<IAssignment | null>(null);
 
   useEffect(() => {
-    setData(assignment);
+    const fetchData = async () => {
+      try {
+        const res = await assignmentService.getAssignment(assignment?.assignmentId || '');
+        setData(res.data);
+      } catch (error) {
+        console.log('Failed to fetch assignment:', error);
+      }
+    };
+
+    if (!assignment) {
+      fetchData();
+    } else {
+      setData(assignment);
+    }
   }, [assignment]);
 
   return (

@@ -4,7 +4,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { IScoreStructure, IUser } from '@/types';
+import { IReport, IScoreStructure, IUser } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -52,4 +52,51 @@ export const getLeafColumns = (node: IScoreStructure): IScoreStructure[] => {
   };
   traverse(node);
   return leaves;
+};
+
+const formatDateTime = (isoString: string) => {
+  const date = new Date(isoString);
+  const options: any = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  };
+  return date.toLocaleString('vi-VN', options);
+};
+
+export const generateParagraphs = (reports: IReport[]) => {
+  return reports
+    .map((report: IReport) => {
+      const { title, content, attachedLinks, attachments, createUser, comments } = report;
+      const userName = createUser?.fullName || createUser?.userName || 'Người tạo không rõ';
+
+      const linksInfo = attachedLinks
+        .map((link: any) => `- Liên kết: ${link.title} (${link.description}). URL: ${link.url}`)
+        .join('');
+
+      const attachmentsInfo = attachments
+        .map((attachment: any) => `- Tệp tin: ${attachment.title}. URL: ${attachment.url}`)
+        .join('');
+
+      const commentsInfo = comments
+        .map((comment: any) => {
+          const commenterName = comment.user?.fullName || comment.user?.userName || 'Người bình luận không rõ';
+          return `- ${commenterName}: ${comment.content.replace(/<\/?p>/g, '') || 'Không có nội dung'} (Ngày bình luận: ${formatDateTime(comment.createdAt)})`;
+        })
+        .join('');
+
+      return `
+      Báo cáo: ${title || 'Không có tiêu đề'}
+      Nội dung: ${content.replace(/<\/?p>/g, '') || 'Không có nội dung'}
+      Người tạo: ${userName || 'Không rõ'}
+      Ngày tạo: ${formatDateTime(report.createdAt)}
+      ${linksInfo ? `Liên kết đính kèm: ${linksInfo}` : 'Không có liên kết đính kèm'}
+      ${attachmentsInfo ? `Tệp tin đính kèm: ${attachmentsInfo}` : 'Không có tệp tin đính kèm'}
+      ${commentsInfo ? `Bình luận: ${commentsInfo}` : 'Không có bình luận'}
+    `;
+    })
+    .join('');
 };

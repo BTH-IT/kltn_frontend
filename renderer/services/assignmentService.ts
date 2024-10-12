@@ -13,6 +13,10 @@ const assignmentService = {
     return configService.get(`${API_URL.ASSIGNMENTS}/${courseId}/${assignmentId}`);
   },
 
+  getAssignment(assignmentId: string): Promise<ApiResponse<IAssignment>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/${assignmentId}`);
+  },
+
   getSubmissionsById(assignmentId: string): Promise<ApiResponse<ISubmissionList[]>> {
     return configService.get(`${API_URL.ASSIGNMENTS}/${assignmentId}${API_URL.SUBMISSIONS}`);
   },
