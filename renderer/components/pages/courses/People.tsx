@@ -165,7 +165,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
         <AvatarHeader
           key={idx}
           imageUrl={d?.avatar || '/images/avt.png'}
-          fullName={d?.fullName || d?.userName || 'anonymous'}
+          name={d?.fullName || d?.userName || 'anonymous'}
           type={isTeacher ? 'teacher' : 'student'}
           dropdownMenu={
             <>

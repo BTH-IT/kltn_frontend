@@ -6,7 +6,7 @@ export interface IUser extends IBaseModel {
   userName: string;
   fullName: string;
   doB: Date;
-  gender: boolean;
+  gender: string;
   customId: string;
   avatar: string;
   userType: number;

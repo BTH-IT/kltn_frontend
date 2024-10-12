@@ -100,7 +100,7 @@ const AnnouncementItem = ({
       <div className="flex flex-col gap-2 p-4">
         <AvatarHeader
           imageUrl={announcement?.createUser?.avatar || ''}
-          fullName={announcement?.createUser?.fullName || ''}
+          name={announcement?.createUser?.fullName || announcement?.createUser?.userName || 'anonymous'}
           timestamp={announcement.createdAt}
           mentions={announcement.mentions || []}
           students={course?.students}

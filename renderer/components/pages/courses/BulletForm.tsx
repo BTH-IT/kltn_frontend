@@ -258,7 +258,7 @@ const BulletForm = ({
     return course?.students.map((student) => {
       return {
         image: student.avatar,
-        label: student.fullName,
+        label: student.fullName || student.userName,
         value: student.id,
       };
     });

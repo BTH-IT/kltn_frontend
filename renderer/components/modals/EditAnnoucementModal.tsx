@@ -232,7 +232,7 @@ const EditAnnoucementModal = ({
     return {
       image: student.avatar,
       value: student.id,
-      label: student.fullName,
+      label: student.fullName || student.userName,
     };
   });
 
