@@ -38,38 +38,14 @@ export const navigationItemList: { [key: string]: string } = {
   settings: 'Cài đặt',
 };
 
-export const USER_SETTINGS = [
+export const settingList = [
   {
-    name: 'isNoticeEmail',
-    title: 'Cho phép thông báo qua email',
+    title: 'Thông tin cá nhân',
+    param: 'tab=profile',
   },
   {
-    name: 'isCommentOnPost',
-    title: 'Các nhận xét về bài đăng của bạn',
-  },
-  {
-    name: 'isNoticeMention',
-    title: 'Các nhận xét đề cập đến bạn',
-  },
-  {
-    name: 'isPrivateComment',
-    title: 'Nhận xét riêng tư về bài tập',
-  },
-  {
-    name: 'isNoticeAssignment',
-    title: 'Bài tập và các bài đăng khác của giáo viên',
-  },
-  {
-    name: 'isReturnedAssignment',
-    title: 'Giáo viên của bạn đã trả lại bài và điểm',
-  },
-  {
-    name: 'iscClassInvite',
-    title: 'Lời mời tham gia lớp học với tư cách là học viên',
-  },
-  {
-    name: 'isReminder',
-    title: 'Nhắc nhở ngày đến hạn dành cho bài tập của bạn',
+    title: 'Bảo mật',
+    param: 'tab=security',
   },
 ];
 

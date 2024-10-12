@@ -16,10 +16,7 @@ const userService = {
     return configService.post(`${API_URL.USERS}`, userData);
   },
 
-  updateUser(
-    userId: string,
-    userData: Omit<IUser, 'userId' | 'createdAt' | 'updatedAt' | 'email' | 'avatarUrl'>,
-  ): Promise<ApiResponse<IUser>> {
+  updateUser(userId: string, userData: Partial<IUser>): Promise<ApiResponse<IUser>> {
     return configService.patch(`${API_URL.USERS}/${userId}`, userData);
   },
 
@@ -29,6 +26,9 @@ const userService = {
 
   getCurrentUserToken(): Promise<ApiResponse<{ token: string }>> {
     return configService.get(`${API_URL.USERS}/token`);
+  },
+  changePassword(userId: string, data: { currentPassword: string; newPassword: string }) {
+    return configService.patch(`${API_URL.USERS}/${userId}/change-password`, data);
   },
 };
 
