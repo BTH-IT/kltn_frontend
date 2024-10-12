@@ -4,13 +4,22 @@ import { useContext, useEffect, useState } from 'react';
 import { Settings2, Search, Calendar as CalendarIcon, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Calendar } from '@/components/ui/calendar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,14 +27,21 @@ import assignmentService from '@/services/assignmentService';
 import { ISubmissionList } from '@/types';
 import { AssignmentContext } from '@/contexts/AssignmentContext';
 import SubmissionDetailModal from '@/components/modals/SubmissionDetailModal';
+import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
+import CommonModal from '@/components/modals/CommonModal';
 
 export default function AssigmentSubmited() {
   const params = useParams();
+  const router = useRouter();
+
   const { assignment } = useContext(AssignmentContext);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [students, setStudents] = useState<ISubmissionList[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedStudent, setSelectedStudent] = useState<ISubmissionList | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     const handleData = async () => {
@@ -72,14 +88,56 @@ export default function AssigmentSubmited() {
         format(student.submission?.createdAt ?? '', 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')),
   );
 
+  const handleRemove = async () => {
+    if (!assignment) return;
+    try {
+      const res = await assignmentService.deleteAssignment(assignment.assignmentId);
+      if (res) {
+        router.refresh();
+        router.push(`/courses/${assignment.courseId}/assignments`);
+        toast.success('Đã xoá bài tập thành công');
+      }
+    } catch (err) {
+      console.error('Failed to delete assignment: ', err);
+      if (err instanceof AxiosError) {
+        toast.error(err?.response?.data?.message || err.message);
+      }
+    }
+  };
+
   return (
     <div className="container p-4 mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">{assignment?.title || ''}</h1>
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon">
+          {/* <Button variant="ghost" size="icon">
             <Settings2 className="w-5 h-5" />
-          </Button>
+          </Button> */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="cursor-pointer">
+              <Settings2 className="w-5 h-5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-auto" align="end">
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsEditModalOpen(true);
+                  }}
+                >
+                  Chỉnh sửa
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsDeleteModalOpen(true);
+                  }}
+                >
+                  Xóa
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -179,6 +237,26 @@ export default function AssigmentSubmited() {
           ))}
         </TableBody>
       </Table>
+      {assignment && (
+        <EditAssignmentHmWorkModal
+          onOpenModal={isEditModalOpen}
+          setOnOpenModal={setIsEditModalOpen}
+          assignment={assignment}
+        />
+      )}
+      <CommonModal
+        isOpen={isDeleteModalOpen}
+        setIsOpen={setIsDeleteModalOpen}
+        width={500}
+        height={150}
+        title="Bạn có chắc muốn xoá bài tập này không?"
+        acceptTitle="Xoá"
+        acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
+        ocClickAccept={async () => {
+          await handleRemove();
+          setIsDeleteModalOpen(false);
+        }}
+      />
     </div>
   );
 }

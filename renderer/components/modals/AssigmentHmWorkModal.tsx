@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'react-toastify';
 import CreatableSelect from 'react-select/creatable';
+import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
@@ -144,7 +145,9 @@ const AssignmentHmWorkModal = ({
       setOnOpenModal(false);
     } catch (error) {
       console.error('Error creating assignments:', error);
-      toast.error('Có lỗi khi đăng bài tập');
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
     }
   };
 

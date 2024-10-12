@@ -11,11 +11,6 @@ const authService = {
     const url = `${PREFIX}/register`;
     return axiosClient.post(url, data);
   },
-  changePassword(data: { email: string; oldPassword: string; newPassword: string }) {
-    const url = `${PREFIX}/change-password`;
-
-    return axiosClient.post(url, data);
-  },
   getProfile() {
     const url = `${PREFIX}/profile`;
     return axiosClient.get(url);
