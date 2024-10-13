@@ -66,7 +66,7 @@ const CommentItem = ({
     <>
       <AvatarHeader
         imageUrl={comment.user?.avatar || ''}
-        fullName={comment.user?.fullName || comment.user?.userName || ''}
+        name={comment.user?.fullName || comment.user?.userName || 'anonymous'}
         timestamp={comment.createdAt}
         type="comment"
         dropdownMenu={

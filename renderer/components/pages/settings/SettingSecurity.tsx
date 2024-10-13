@@ -75,8 +75,6 @@ const SettingSecurity = () => {
       const res = await userService.changePassword(user.id, data);
       if (res) {
         toast.success('Cập nhật mật khẩu thành công.');
-        localStorage.setItem(KEY_LOCALSTORAGE.CURRENT_USER, JSON.stringify(res.data));
-        router.push('/');
       }
     } catch (error) {
       console.error(error);
@@ -94,7 +92,7 @@ const SettingSecurity = () => {
           name="currentPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mật khẩu hiện tại</FormLabel>
+              <FormLabel className="font-bold">Mật khẩu hiện tại</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
@@ -120,7 +118,7 @@ const SettingSecurity = () => {
           name="newPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mật khẩu mới</FormLabel>
+              <FormLabel className="font-bold">Mật khẩu mới</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input type={showNewPassword ? 'text' : 'password'} placeholder="Nhập mật khẩu mới" {...field} />
@@ -142,7 +140,7 @@ const SettingSecurity = () => {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Xác nhận mật khẩu mới</FormLabel>
+              <FormLabel className="font-bold">Xác nhận mật khẩu mới</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input

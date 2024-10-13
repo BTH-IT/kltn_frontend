@@ -9,7 +9,7 @@ export interface ISubmission {
   attachedLinks: any;
   createdAt: string;
   updatedAt: string;
-  createUser: IUser | null;
+  createUser: IUser;
 }
 
 export interface ISubmissionList {
