@@ -10,7 +10,7 @@ const GroupHeader = ({ data }: { data: any }) => {
   const newPath = pathname.slice(pathname.lastIndexOf('/'));
 
   return (
-    <div className="sticky top-0 right-0 z-10 flex items-center justify-between gap-3 mb-6 bg-white border-b">
+    <div className="sticky top-[1.2px] right-0 z-10 flex items-center justify-between gap-3 mb-6 bg-white border-b">
       <div className="flex items-center">
         <Link
           href={`/groups/${data.courseId}/${data.groupId}`}

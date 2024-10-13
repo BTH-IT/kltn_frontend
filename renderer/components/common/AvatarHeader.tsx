@@ -13,7 +13,7 @@ moment.locale('vi');
 
 const AvatarHeader = ({
   imageUrl,
-  fullName,
+  name,
   timestamp,
   mentions,
   students,
@@ -26,7 +26,7 @@ const AvatarHeader = ({
   onCheckedChange,
 }: {
   imageUrl: string;
-  fullName: string;
+  name: string;
   timestamp?: string;
   mentions?: string[];
   students?: IUser[];
@@ -64,7 +64,7 @@ const AvatarHeader = ({
         {type === 'comment' && (
           <div className="flex flex-col justify-around flex-1 w-full">
             <div className="flex items-center gap-3">
-              <h2 className="text-sm font-semibold">{fullName}</h2>
+              <h2 className="text-sm font-semibold">{name}</h2>
               <p className="text-xs font-light">{moment(timestamp).fromNow()}</p>
             </div>
             {children}
@@ -74,7 +74,7 @@ const AvatarHeader = ({
         {type === 'announcement' && (
           <div className="flex flex-col justify-start w-full">
             <div className="flex items-center gap-1">
-              <h2 className="text-sm font-semibold">{fullName}</h2>
+              <h2 className="text-sm font-semibold">{name}</h2>
               {mentions && mentions.length > 0 && (
                 <>
                   <Play size={10} fill="#242424" />
@@ -94,7 +94,7 @@ const AvatarHeader = ({
           </div>
         )}
 
-        {(type === 'teacher' || type === 'student') && <h2 className="flex-1 text-sm font-semibold">{fullName}</h2>}
+        {(type === 'teacher' || type === 'student') && <h2 className="flex-1 text-sm font-semibold">{name}</h2>}
 
         {dropdownMenu}
       </div>
@@ -116,7 +116,9 @@ const AvatarHeader = ({
                   alt="avatar"
                   className="w-[35px] h-[35px] rounded-full"
                 />
-                <span className="font-sans font-medium line-clamp-1">{item.fullName + ` (${item.email})`}</span>
+                <span className="font-sans font-medium line-clamp-1">
+                  {item.fullName || item.userName + ` (${item.email})`}
+                </span>
               </div>
             ))}
           </div>

@@ -55,14 +55,20 @@ export default async function CoursePage({ params }: { params: { courseId: strin
             height={36}
           />
         </div>
-        <div className="grid grid-cols-12 gap-6 mt-10">
-          <div className="flex flex-col col-span-3 gap-4">
-            <InviteCode course={course} teacherId={course.lecturerId} name={course.name} />
+        {user?.id === course.lecturerId ? (
+          <div className="grid grid-cols-12 gap-6 mt-10">
+            <div className="flex flex-col col-span-3 gap-4">
+              <InviteCode course={course} teacherId={course.lecturerId} name={course.name} user={user} />
+            </div>
+            <div className="col-span-9">
+              <AnnouncementInput course={course} />
+            </div>
           </div>
-          <div className="col-span-9">
+        ) : (
+          <div className="w-full mt-10">
             <AnnouncementInput course={course} />
           </div>
-        </div>
+        )}
       </section>
     </Suspense>
   );

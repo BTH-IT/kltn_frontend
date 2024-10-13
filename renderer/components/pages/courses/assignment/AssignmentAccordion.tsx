@@ -122,24 +122,28 @@ const AssignmentAccordion = ({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-auto" align="start">
                   <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      className="flex items-center gap-3 p-2 text-md"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsEditModalOpen(true);
-                      }}
-                    >
-                      Chỉnh sửa
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="flex items-center gap-3 p-2 text-md"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsDeleteModalOpen(true);
-                      }}
-                    >
-                      Xóa
-                    </DropdownMenuItem>
+                    {isTeacher && (
+                      <>
+                        <DropdownMenuItem
+                          className="flex items-center gap-3 p-2 text-md"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsEditModalOpen(true);
+                          }}
+                        >
+                          Chỉnh sửa
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="flex items-center gap-3 p-2 text-md"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsDeleteModalOpen(true);
+                          }}
+                        >
+                          Xóa
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuItem
                       className="flex items-center gap-3 p-2 text-md"
                       onClick={(e) => {

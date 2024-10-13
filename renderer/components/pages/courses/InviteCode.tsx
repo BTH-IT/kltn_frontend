@@ -2,7 +2,7 @@
 
 import { useQRCode } from 'next-qrcode';
 import { Copy, EllipsisVertical, Link2, QrCode, RotateCcw, Scan } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import ShowCodeModal from '@/components/modals/ShowCodeModal';
 import {
@@ -17,25 +17,25 @@ import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/libs/utils';
 import CommonModal from '@/components/modals/CommonModal';
 import courseService from '@/services/courseService';
-import { ICourse, IUser } from '@/types';
-import { KEY_LOCALSTORAGE } from '@/utils';
+import { ICourse } from '@/types';
 
-const InviteCode = ({ teacherId, course, name }: { teacherId: string; course: ICourse | null; name: string }) => {
+const InviteCode = ({
+  teacherId,
+  course,
+  name,
+  user,
+}: {
+  teacherId: string;
+  course: ICourse | null;
+  name: string;
+  user: any;
+}) => {
   const { toast } = useToast();
   const { Canvas } = useQRCode();
 
-  const [user, setUser] = useState<IUser | null>(null);
   const [code, setCode] = useState(course?.inviteCode || '');
   const [updatingInvCode, setUpdatingInvCode] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  useEffect(() => {
-    setCode(course?.inviteCode || '');
-    if (typeof window !== 'undefined') {
-      const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
-      setUser(user);
-    }
-  }, [course?.inviteCode]);
 
   const handleChangeInvCode = async () => {
     setUpdatingInvCode(true);

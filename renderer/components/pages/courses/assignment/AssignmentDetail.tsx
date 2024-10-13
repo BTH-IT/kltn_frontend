@@ -30,6 +30,8 @@ import assignmentService from '@/services/assignmentService';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import { API_URL } from '@/constants/endpoints';
 import SubmitAssignmentModal from '@/components/modals/SubmitAssignmentModal';
+import ViewSubmissionModal from '@/components/modals/ViewSubmissionModal';
+import submissionService from '@/services/submissionService';
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -45,6 +47,9 @@ export default function AssignmentDetail() {
   const router = useRouter();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewSubmissionModalOpen, setIsViewSubmissionModalOpen] = useState(false);
+  const [isDeleteSubmissionModalOpen, setIsDeleteSubmissionModalOpen] = useState(false);
+  const [isSubmissionDeletable, setIsSubmissionDeletable] = useState(false);
 
   const [isEdit, setIsEdit] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
@@ -52,17 +57,33 @@ export default function AssignmentDetail() {
   const { control, handleSubmit, reset, formState } = useForm();
 
   useEffect(() => {
-    if (assignment) {
-      setComments(assignment.comments);
-    }
-  }, [assignment]);
-
-  useEffect(() => {
     if (typeof window !== 'undefined') {
       const user = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER);
       setUser(user ? JSON.parse(user) : null);
     }
   }, []);
+
+  useEffect(() => {
+    if (assignment) {
+      console.log(assignment);
+
+      setComments(assignment.comments);
+
+      const isSubmissionDeletable = () => {
+        if (!currentUser || !assignment.submission) return false;
+
+        const isCreator = assignment.submission.createUser.id === currentUser.id;
+        const isLecturer = currentUser.id === assignment.course.lecturerId;
+        const isOverdue = assignment.dueDate ? new Date(assignment.dueDate) < new Date() : false;
+
+        return isLecturer || (isCreator && !isOverdue);
+      };
+
+      if (isSubmissionDeletable()) {
+        setIsSubmissionDeletable(true);
+      }
+    }
+  }, [assignment, currentUser]);
 
   const onSubmit = async (data: any) => {
     if (!currentUser?.id || !assignment) return;
@@ -120,6 +141,27 @@ export default function AssignmentDetail() {
       setComments(updatedComments);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleDeleteSubmission = async () => {
+    if (!assignment) return;
+
+    try {
+      const res = await submissionService.deleteSubmission(
+        assignment.assignmentId,
+        assignment.submission?.submissionId ?? '',
+      );
+
+      if (res) {
+        toast.success('Đã xóa bài tập thành công');
+        router.refresh();
+      }
+    } catch (error) {
+      console.error('Error creating assignments:', error);
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
     }
   };
 
@@ -267,10 +309,19 @@ export default function AssignmentDetail() {
               <CardContent className="space-y-4">
                 {assignment?.submission ? (
                   <>
-                    <Button variant="outline" className="justify-center w-full">
+                    <Button
+                      onClick={() => setIsViewSubmissionModalOpen(true)}
+                      variant="outline"
+                      className="justify-center w-full"
+                    >
                       Xem bài đã nộp
                     </Button>
-                    <Button variant="destructive" className="justify-center w-full">
+                    <Button
+                      onClick={() => setIsDeleteSubmissionModalOpen(true)}
+                      disabled={!isSubmissionDeletable}
+                      variant="destructive"
+                      className="justify-center w-full"
+                    >
                       Hủy nộp bài
                     </Button>
                   </>
@@ -285,15 +336,22 @@ export default function AssignmentDetail() {
         </div>
       </div>
       {assignment && (
-        <EditAssignmentHmWorkModal onOpenModal={isEdit} setOnOpenModal={setIsEdit} assignment={assignment} />
-      )}
-      {assignment && (
-        <SubmitAssignmentModal
-          onOpenModal={isSubmit}
-          setOnOpenModal={setIsSubmit}
-          course={assignment.course}
-          assignment={assignment}
-        />
+        <>
+          <EditAssignmentHmWorkModal onOpenModal={isEdit} setOnOpenModal={setIsEdit} assignment={assignment} />
+          <SubmitAssignmentModal
+            onOpenModal={isSubmit}
+            setOnOpenModal={setIsSubmit}
+            course={assignment.course}
+            assignment={assignment}
+          />
+          <ViewSubmissionModal
+            onOpenModal={isViewSubmissionModalOpen}
+            setOnOpenModal={setIsViewSubmissionModalOpen}
+            course={assignment.course}
+            assignment={assignment}
+            user={currentUser}
+          />
+        </>
       )}
       <CommonModal
         isOpen={isDeleteModalOpen}
@@ -306,6 +364,19 @@ export default function AssignmentDetail() {
         ocClickAccept={async () => {
           await handleRemove();
           setIsDeleteModalOpen(false);
+        }}
+      />
+      <CommonModal
+        isOpen={isDeleteSubmissionModalOpen}
+        setIsOpen={setIsDeleteSubmissionModalOpen}
+        width={500}
+        height={150}
+        title="Bạn có chắc muốn hủy bài đã nộp không?"
+        acceptTitle="Hủy"
+        acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
+        ocClickAccept={async () => {
+          await handleDeleteSubmission();
+          setIsDeleteSubmissionModalOpen(false);
         }}
       />
     </>
