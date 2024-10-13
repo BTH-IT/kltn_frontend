@@ -126,7 +126,7 @@ const CommentItem = ({
             </div>
           </form>
         ) : (
-          <div dangerouslySetInnerHTML={{ __html: comment.content }} />
+          <div className="markdown" dangerouslySetInnerHTML={{ __html: comment.content }} />
         )}
       </AvatarHeader>
       <CommonModal

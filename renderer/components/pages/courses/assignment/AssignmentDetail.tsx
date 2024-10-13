@@ -255,7 +255,7 @@ export default function AssignmentDetail() {
               dangerouslySetInnerHTML={{
                 __html: assignment?.content || '',
               }}
-              className="pb-4 border-b"
+              className="pb-4 border-b markdown"
             />
             <AnnouncementAttachList links={assignment?.attachedLinks || []} files={assignment?.attachments || []} />
             <CommentList

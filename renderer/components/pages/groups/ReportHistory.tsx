@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import { CalendarIcon, FileTextIcon, ChevronRightIcon, TrashIcon } from 'lucide-react';
-import moment from 'moment';
+import Markdown from 'react-markdown';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { IBrief } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { formatVNDate } from '@/utils';
 
 export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
   const [selectedBrief, setSelectedBrief] = useState<IBrief | null>(null);
@@ -45,11 +46,13 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
                   </Button>
                 </div>
               </div>
-              <p className="text-gray-600 line-clamp-1">{brief.content}</p>
+              <div className="text-gray-600 line-clamp-2 markdown">
+                <Markdown>{brief.content}</Markdown>
+              </div>
               <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                   <CalendarIcon className="w-4 h-4" />
-                  <span>{moment(brief.createdAt).format('L')}</span>
+                  <span>{formatVNDate(brief.createdAt || '')}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Button
@@ -83,12 +86,12 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
             </div>
             <DialogDescription className="flex items-center mt-2 text-sm text-gray-500">
               <CalendarIcon className="w-4 h-4 mr-2" />
-              Ngày tạo: {selectedBrief?.createdAt}
+              Ngày tạo: {formatVNDate(selectedBrief?.createdAt || '')}
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[60vh] p-6 pt-2">
             <h3 className="mb-2 text-lg font-semibold text-gray-700">Tóm tắt</h3>
-            <p className="text-gray-600">{selectedBrief?.content}</p>
+            <Markdown className="markdown">{selectedBrief?.content}</Markdown>
           </ScrollArea>
           <DialogFooter className="p-6 bg-gray-50">
             <Button variant="outline" onClick={() => setSelectedBrief(null)}>

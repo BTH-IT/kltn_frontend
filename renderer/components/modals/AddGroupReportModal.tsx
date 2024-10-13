@@ -176,19 +176,16 @@ const AddGroupReportModal = ({
                 control={form.control}
                 defaultValue=""
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase">Nội dung</FormLabel>
-                    <FormControl>
-                      <ReactQuill
-                        theme="snow"
-                        placeholder="Nội dung"
-                        className="flex-1 rounded-md h-[150px]"
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  <>
+                    <h2 className="text-xs font-bold uppercase">Nội dung</h2>
+                    <ReactQuill
+                      theme="snow"
+                      placeholder="nội dung"
+                      className="flex-1 rounded-md h-[230px]"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </>
                 )}
               />
               <div className="flex flex-col w-[750px] h-[280px] gap-5 p-4 mt-4 bg-white border rounded-xl">

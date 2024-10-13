@@ -124,7 +124,7 @@ const AnnouncementItem = ({
             </DropdownMenu>
           }
         />
-        <div dangerouslySetInnerHTML={{ __html: announcement.content }} />
+        <div className="markdown" dangerouslySetInnerHTML={{ __html: announcement.content }} />
         <AnnouncementAttachList links={announcement.attachedLinks || []} files={announcement.attachments || []} />
       </div>
       <div className="border-t">
