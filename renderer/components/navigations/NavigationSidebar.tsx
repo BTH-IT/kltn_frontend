@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import '@/styles/components/navigation/nav-sidebar.scss';
-import { House, Calendar, GraduationCap, Settings, Users } from 'lucide-react';
+import { House, GraduationCap, Settings, Users } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Separator } from '@/components/ui/separator';
@@ -35,10 +35,9 @@ const NavigationSidebar = () => {
           !isShow ? 'w-[70px]' : 'w-[250px]'
         }`}
       >
-        <div className="h-full flex flex-col justify-between">
+        <div className="flex flex-col justify-between h-full">
           <ul>
             <SidebarItem label="Màn hình chính" icon={<House size={20} />} href="/" isActive={path === ''} />
-            <SidebarItem label="Lịch" icon={<Calendar size={20} />} href="/calendar" isActive={path === 'calendar'} />
             <Separator className="my-2" />
             {!isLoading ? (
               <>

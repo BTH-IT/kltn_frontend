@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { API_URL } from '@/constants/endpoints';
 import http from '@/libs/http';
 import { IGroup } from '@/types/group';
-import UpcomingPlanning from '@/components/pages/groups/UpcomingPlanning';
 import TeamMembers from '@/components/pages/groups/TeamMembers';
 
 const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
@@ -35,8 +34,6 @@ const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId
           </div>
         </CardContent>
       </Card>
-
-      <UpcomingPlanning />
 
       <TeamMembers group={group} />
     </div>

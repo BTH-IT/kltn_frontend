@@ -5,6 +5,9 @@
 import { useState } from 'react';
 import { CalendarIcon, FileTextIcon, ChevronRightIcon, TrashIcon } from 'lucide-react';
 import Markdown from 'react-markdown';
+import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,12 +21,26 @@ import {
 import { IBrief } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatVNDate } from '@/utils';
+import CommonModal from '@/components/modals/CommonModal';
+import briefService from '@/services/briefService';
 
 export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
   const [selectedBrief, setSelectedBrief] = useState<IBrief | null>(null);
+  const [deletingReport, setDeletingReport] = useState(false);
+  const router = useRouter();
 
-  const handleDelete = (brief: IBrief | null) => {
-    console.log('Deleting brief:', brief?.briefId);
+  const handleDeleteReport = async () => {
+    if (!selectedBrief) return;
+
+    try {
+      await briefService.deleteBrief(selectedBrief.groupId, selectedBrief.briefId);
+
+      router.refresh();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
+    }
   };
 
   return (
@@ -41,7 +58,14 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
                   <h2 className="text-xl font-semibold text-gray-800">{brief.title}</h2>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(brief)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setDeletingReport(true);
+                      setSelectedBrief(brief);
+                    }}
+                  >
                     <TrashIcon className="w-4 h-4" />
                   </Button>
                 </div>
@@ -79,7 +103,13 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
             <div className="flex items-center justify-between">
               <DialogTitle className="text-2xl font-bold text-gray-800">{selectedBrief?.title}</DialogTitle>
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" onClick={() => handleDelete(selectedBrief)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setDeletingReport(true);
+                  }}
+                >
                   <TrashIcon className="w-4 h-4" />
                 </Button>
               </div>
@@ -100,6 +130,22 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <CommonModal
+        isOpen={deletingReport}
+        setIsOpen={setDeletingReport}
+        width={400}
+        height={150}
+        title="Bạn có muốn xoá bản tóm tắt này không?"
+        acceptTitle="Xoá"
+        acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
+        ocClickAccept={async () => {
+          if (selectedBrief) {
+            await handleDeleteReport();
+            setDeletingReport(false);
+          }
+        }}
+      />
     </div>
   );
 }
