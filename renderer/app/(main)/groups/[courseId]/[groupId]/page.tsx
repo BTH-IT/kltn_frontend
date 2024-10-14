@@ -6,6 +6,7 @@ import { API_URL } from '@/constants/endpoints';
 import http from '@/libs/http';
 import { IGroup } from '@/types/group';
 import TeamMembers from '@/components/pages/groups/TeamMembers';
+import RequestList from '@/components/pages/groups/RequestList';
 
 const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
   const {
@@ -36,6 +37,8 @@ const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId
       </Card>
 
       <TeamMembers group={group} />
+
+      <RequestList group={group} />
     </div>
   );
 };

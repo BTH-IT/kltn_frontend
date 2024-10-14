@@ -24,6 +24,7 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+    console.log(group);
 
     if (storedUser) {
       setUser(storedUser);

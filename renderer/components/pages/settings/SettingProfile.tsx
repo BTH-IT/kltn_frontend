@@ -40,6 +40,7 @@ const SettingProfile = () => {
 
   const [avatar, setAvatar] = useState<File | null>(null);
   const [user, setUser] = useState<IUser | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
@@ -68,7 +69,7 @@ const SettingProfile = () => {
       form.setValue('dateOfBirth', new Date(user.doB));
       form.setValue('gender', user.gender);
 
-      console.log(user);
+      setLoaded(true);
     }
   }, [user, form]);
 
@@ -123,7 +124,7 @@ const SettingProfile = () => {
 
   return (
     <>
-      {user && (
+      {user && loaded && (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="flex flex-col">
@@ -205,7 +206,11 @@ const SettingProfile = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-bold">Giới tính</FormLabel>
-                  <Select disabled={form.formState.isSubmitting} onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    disabled={form.formState.isSubmitting}
+                    onValueChange={field.onChange}
+                    value={field.value.toString()}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn giới tính" />

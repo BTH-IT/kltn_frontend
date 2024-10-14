@@ -1,6 +1,6 @@
 import { IGroupMember } from './group-member';
 
-import { IBaseModel, IBrief, ICourse, IProject } from '.';
+import { IBaseModel, IBrief, ICourse, IProject, IUser } from '.';
 
 export interface IGroup extends IBaseModel {
   groupId: string;
@@ -13,4 +13,13 @@ export interface IGroup extends IBaseModel {
   isApproved: boolean;
   groupMembers?: IGroupMember[];
   briefs?: IBrief[];
+  requests?: IRequest[];
+}
+
+export interface IRequest extends IBaseModel {
+  requestId: string;
+  userId: string;
+  groupId: string;
+  group?: IGroup;
+  user?: IUser;
 }
