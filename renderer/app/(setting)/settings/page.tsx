@@ -7,7 +7,6 @@ import SettingSecurity from '@/components/pages/settings/SettingSecurity';
 
 export default function UserSettingPage() {
   const param = useSearchParams();
-  console.log(param.get('tab'));
 
   const renderingTabs = {
     profile: <SettingProfile />,

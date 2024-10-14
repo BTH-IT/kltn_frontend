@@ -16,4 +16,5 @@ export const API_URL = {
   SUBMISSIONS: '/submissions',
   SCORES: '/scores',
   BRIEFS: '/briefs',
+  REQUESTS: '/requests',
 };

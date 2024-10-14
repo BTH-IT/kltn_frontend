@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/types';
 import { API_URL } from '@/constants/endpoints';
-import { IGroup } from '@/types/group';
+import { IGroup, IRequest } from '@/types/group';
 
 import configService from './configService';
 
@@ -37,6 +37,15 @@ const groupService = {
   },
   toggleLeader(groupId: string, memberId: string): Promise<ApiResponse<any>> {
     return configService.post(`${API_URL.GROUPS}/${groupId}/leader`, memberId);
+  },
+  makeRequest(groupId: string): Promise<ApiResponse<IRequest>> {
+    return configService.post(`${API_URL.REQUESTS}/${groupId}/make-request`);
+  },
+  aceptRequest(requestId: string): Promise<ApiResponse<IRequest>> {
+    return configService.post(`${API_URL.REQUESTS}/${requestId}/accept-request`);
+  },
+  removeRequest(requestId: string): Promise<ApiResponse<IRequest>> {
+    return configService.delete(`${API_URL.REQUESTS}/${requestId}/remove-request`);
   },
 };
 
