@@ -105,7 +105,6 @@ const NavigationHeader = () => {
             <DropdownMenuTrigger>
               <Avatar>
                 <AvatarImage src={user?.avatar || '/images/avt.png'} />
-                <AvatarFallback>{user?.fullName}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>

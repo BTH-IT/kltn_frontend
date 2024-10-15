@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Lock, LockKeyhole, Mail, User } from 'lucide-react';
+import { Lock, LockKeyhole, Mail, User, IdCard } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -19,6 +19,11 @@ import { passwordSchema } from '../login/page';
 const signUpSchema = z
   .object({
     username: z.string().min(1, 'Username is required'),
+    fullname: z.string().min(1, 'Full name is required'),
+    customId: z
+      .string()
+      .min(1, 'Student ID is required')
+      .refine((value) => value.length === 10, { message: 'Student ID must be 10 characters' }),
     email: z.string().email('Invalid email address'),
     password: passwordSchema,
     confirmPassword: z.string().min(8, 'confirmPassword must be at least 8 characters'),
@@ -83,6 +88,24 @@ export default function Page() {
               placeholder="Username"
               type="text"
               iconStart={<User />}
+            />
+
+            <InputForm
+              name={'fullname'}
+              error={errors.fullname?.message}
+              control={control}
+              placeholder="Full Name"
+              type="text"
+              iconStart={<User />}
+            />
+
+            <InputForm
+              name={'customId'}
+              error={errors.customId?.message}
+              control={control}
+              placeholder="Student ID"
+              type="text"
+              iconStart={<IdCard />}
             />
 
             <InputForm
