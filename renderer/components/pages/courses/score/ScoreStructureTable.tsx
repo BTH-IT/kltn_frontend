@@ -28,7 +28,7 @@ const ScoreStructureTable: React.FC = () => {
     };
 
     fetchTranscripts();
-  }, [course]);
+  }, [course, scoreStructure]);
 
   if (!scoreStructure || !transcripts) {
     return <div>Đang tải bảng điểm...</div>;
@@ -47,7 +47,7 @@ const ScoreStructureTable: React.FC = () => {
       <table className="w-full border border-collapse border-gray-300">
         <thead>
           <tr>
-            <th rowSpan={2} className="px-4 py-2 text-left align-bottom bg-gray-200 border">
+            <th rowSpan={2} className="px-4 py-2 text-center bg-gray-200 border">
               Tên sinh viên
             </th>
           </tr>
@@ -57,6 +57,7 @@ const ScoreStructureTable: React.FC = () => {
                 {leaf.columnName} ({leaf.percent}%)
               </th>
             ))}
+            <th className="px-4 py-2 text-center bg-gray-200 border">Tổng điểm</th>
           </tr>
         </thead>
         <tbody>
@@ -72,6 +73,7 @@ const ScoreStructureTable: React.FC = () => {
                     {score.find((x: any) => x.scoreStructureId === leaf.id)?.value ?? '-'}
                   </td>
                 ))}
+                <td className="px-4 py-2 text-center border">{studentScores.value}</td>
               </tr>
             );
           })}
