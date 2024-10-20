@@ -6,8 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ArrowLeft, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
+import authService from '@/services/authService';
 
 import InputForm from '../_components/InputForm';
 
@@ -26,8 +29,22 @@ export default function Page() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = (data: ForgotPasswordFormInputs) => {
-    console.log(data);
+  const onSubmit = async (values: ForgotPasswordFormInputs) => {
+    try {
+      const data = {
+        email: values.email,
+      };
+
+      const res = await authService.forgotPassword(data);
+
+      if (res) {
+        toast.success('Thành công: Vui lòng kiểm tra email');
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
+    }
   };
 
   return (
