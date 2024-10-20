@@ -4,14 +4,16 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Copy } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent2, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ICourse } from '@/types';
+import courseService from '@/services/courseService';
 
 import { MultiValueInput } from '../common/MultiValueInput';
 
@@ -24,6 +26,7 @@ const InviteStudentModal = ({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   course: ICourse;
 }) => {
+  const router = useRouter();
   const FormSchema = z.object({
     emails: z.array(z.string().email({ message: 'Địa chỉ email không hợp lệ' })).min(1, {
       message: 'Ít nhất một email phải được nhập',
@@ -39,8 +42,10 @@ const InviteStudentModal = ({
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      console.log(values); // Process the emails
+      console.log(values.emails);
+      await courseService.addStudents(course.courseId, values.emails);
       setIsOpen(false);
+      router.refresh();
     } catch (error) {
       console.log(error);
     }
@@ -50,7 +55,7 @@ const InviteStudentModal = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent2 className="max-w-[455px] max-h-[500px] gap-0 duration-0 transition-all p-5 text-gray-700 font-sans">
         <DialogHeader>
-          <DialogTitle className="text-lg">Mời học viên</DialogTitle>
+          <DialogTitle className="text-lg">Mời sinh viên</DialogTitle>
         </DialogHeader>
         <div className="mt-6 text-sm">
           <div className="font-bold">Đường liên kết mời</div>

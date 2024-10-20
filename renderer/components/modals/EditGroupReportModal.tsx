@@ -202,7 +202,7 @@ const EditGroupReportModal = ({
                       <ReactQuill
                         theme="snow"
                         placeholder="Nội dung"
-                        className="flex-1 rounded-md h-[150px]"
+                        className="flex-1 rounded-md"
                         value={field.value}
                         onChange={field.onChange}
                       />

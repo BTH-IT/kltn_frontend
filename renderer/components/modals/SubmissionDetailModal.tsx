@@ -119,7 +119,7 @@ export default function SubmissionDetailModal({ currentStudent, student, setStud
                 <ScrollArea className="h-[200px] w-full rounded-md border p-4">
                   {student?.submission?.description ? (
                     <div
-                      className="markdown"
+                      className="markdown ql-editor"
                       dangerouslySetInnerHTML={{
                         __html: student.submission.description,
                       }}
