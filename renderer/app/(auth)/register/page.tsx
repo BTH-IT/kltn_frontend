@@ -8,6 +8,7 @@ import { Lock, LockKeyhole, Mail, User, IdCard } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
@@ -64,8 +65,8 @@ export default function Page() {
       router.push('/');
       toast.success('Success: login');
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(`Error: ${error.message}`);
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
       }
     }
   };

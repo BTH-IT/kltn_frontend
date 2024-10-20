@@ -166,7 +166,7 @@ const AssignmentAccordion = ({
                 <div className="text-gray-500">
                   {`Đã đăng vào ${formatVNDate(assignment.createdAt, false)} ${
                     assignment.updatedAt != assignment.createdAt && assignment.updatedAt
-                      ? `(Đã chỉnh sửa ${assignment.updatedAt})`
+                      ? `(Đã chỉnh sửa  ${moment(assignment?.updatedAt).fromNow()})`
                       : ''
                   }`}
                 </div>

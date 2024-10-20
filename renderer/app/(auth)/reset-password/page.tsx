@@ -6,8 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ArrowLeft, Lock, LockKeyhole } from 'lucide-react';
 import Link from 'next/link';
+import { redirect, useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
+import authService from '@/services/authService';
 
 import InputForm from '../_components/InputForm';
 
@@ -27,8 +31,36 @@ export default function Page() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const onSubmit = (data: ResetPasswordFormInputs) => {
-    console.log(data);
+  const params = useSearchParams();
+
+  const getTokenAndEmail = (params: URLSearchParams) => {
+    const token = params.get('token');
+    const email = params.get('email');
+    return { token, email };
+  };
+
+  const { token, email } = getTokenAndEmail(params);
+
+  const onSubmit = async (values: ResetPasswordFormInputs) => {
+    try {
+      const data = {
+        email,
+        token,
+        password: values.newPassword,
+        confirmPassword: values.confirmPassword,
+      };
+
+      const res = await authService.resetPassword(data);
+
+      if (res) {
+        toast.success('Đổi mật khẩu thành công');
+        redirect('/login');
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
+    }
   };
 
   return (
@@ -38,9 +70,9 @@ export default function Page() {
       </div>
       <div className="flex items-center justify-center col-span-6">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-[600px] p-5 mx-auto rounded-md">
-          <h2 className="text-3xl font-bold">Reset Password</h2>
+          <h2 className="text-3xl font-bold text-center">Reset Password</h2>
 
-          <div className="flex flex-col gap-5">
+          <div className="mt-10 flex flex-col gap-7 w-[400px]">
             <InputForm
               name={'newPassword'}
               error={errors.newPassword?.message}
@@ -63,7 +95,7 @@ export default function Page() {
           </div>
 
           <Button type="submit" className="mt-10 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
-            Send email
+            Reset Password
           </Button>
 
           <Link href={'/login'} className="mt-10 flex gap-2 items-center justify-center text-[#2FB2AC]">

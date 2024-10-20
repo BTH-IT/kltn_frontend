@@ -10,6 +10,7 @@ import { Lock, User } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
@@ -57,7 +58,9 @@ export default withPermission(() => {
       router.push('/');
       toast.success('Success: login');
     } catch (error) {
-      toast.error("Error: Can't login");
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
     }
   };
 
@@ -90,9 +93,15 @@ export default withPermission(() => {
               iconStart={<Lock />}
               iconEnd
             />
+
+            <div className="w-full flex justify-end">
+              <Link href={'/forgot-password'} className="text-[#2FB2AC]">
+                Forgot password?
+              </Link>
+            </div>
           </div>
 
-          <Button type="submit" className="mt-10 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
+          <Button type="submit" className="mt-5 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
             Log in
           </Button>
 

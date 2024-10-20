@@ -19,6 +19,14 @@ const authService = {
     const url = `${PREFIX}/refresh-token`;
     return axiosClient.post(url, data);
   },
+  forgotPassword(data: any) {
+    const url = `${PREFIX}/forgot-password`;
+    return axiosClient.post(url, data);
+  },
+  resetPassword(data: any) {
+    const url = `${PREFIX}/reset-password`;
+    return axiosClient.post(url, data);
+  },
 };
 
 export default authService;

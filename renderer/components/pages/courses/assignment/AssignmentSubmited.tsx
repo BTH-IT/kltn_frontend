@@ -1,12 +1,13 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
-import { Settings2, Search, Calendar as CalendarIcon, FileText } from 'lucide-react';
+import { useContext, useEffect, useRef, useState, MouseEventHandler } from 'react';
+import { Settings2, Search, Calendar as CalendarIcon, FileText, Printer } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
+import { useReactToPrint } from 'react-to-print';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,9 @@ export default function AssigmentSubmited() {
   const router = useRouter();
 
   const { assignment } = useContext(AssignmentContext);
+
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [students, setStudents] = useState<ISubmissionList[]>([]);
@@ -104,6 +108,10 @@ export default function AssigmentSubmited() {
         toast.error(err?.response?.data?.message || err.message);
       }
     }
+  };
+
+  const handlePrintClick: MouseEventHandler<HTMLButtonElement> = () => {
+    reactToPrintFn();
   };
 
   return (
@@ -195,49 +203,58 @@ export default function AssigmentSubmited() {
         </Popover>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Sinh viên</TableHead>
-            <TableHead>Trạng thái</TableHead>
-            <TableHead>Ngày nộp</TableHead>
-            <TableHead>Điểm</TableHead>
-            <TableHead>Hành động</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredStudents.map((student) => (
-            <TableRow key={student.user.id}>
-              <TableCell>
-                <div className="flex items-center">
-                  <Avatar className="w-8 h-8 mr-2">
-                    <Image src={'/images/avt.png'} alt={student.user.userName} width={1000} height={1000} />
-                  </Avatar>
-                  {student.user.userName}
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant={categorizeStudentStatus(student) === 'Đã chấm bài' ? 'destructive' : 'default'}>
-                  {categorizeStudentStatus(student)}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                {student.submission ? format(new Date(student.submission.createdAt), 'yyyy-MM-dd') : 'N/A'}
-              </TableCell>
-              <TableCell>{student.score !== null ? student.score : 'Chưa chấm bài'}</TableCell>
-              <TableCell>
-                {student.submission && (
-                  <SubmissionDetailModal
-                    currentStudent={student}
-                    student={selectedStudent}
-                    setStudent={setSelectedStudent}
-                  />
-                )}
-              </TableCell>
+      <div className="p-3" ref={contentRef}>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Sinh viên</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead>Ngày nộp</TableHead>
+              <TableHead>Điểm</TableHead>
+              <TableHead className="toHide">Hành động</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredStudents.map((student) => (
+              <TableRow key={student.user.id}>
+                <TableCell>
+                  <div className="flex items-center">
+                    <Avatar className="w-8 h-8 mr-2">
+                      <Image src={'/images/avt.png'} alt={student.user.userName} width={1000} height={1000} />
+                    </Avatar>
+                    {student.user.userName}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={categorizeStudentStatus(student) === 'Đã chấm bài' ? 'destructive' : 'default'}>
+                    {categorizeStudentStatus(student)}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {student.submission ? format(new Date(student.submission.createdAt), 'yyyy-MM-dd') : 'N/A'}
+                </TableCell>
+                <TableCell>{student.score !== null ? student.score : 'Chưa chấm bài'}</TableCell>
+                <TableCell className="toHide">
+                  {student.submission && (
+                    <SubmissionDetailModal
+                      currentStudent={student}
+                      student={selectedStudent}
+                      setStudent={setSelectedStudent}
+                    />
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="w-full flex justify-end mt-5">
+        <Button className="flex gap-2" onClick={handlePrintClick}>
+          <Printer className="w-4 h-4" />
+          In bảng điểm
+        </Button>
+      </div>
       {assignment && (
         <EditAssignmentHmWorkModal
           onOpenModal={isEditModalOpen}

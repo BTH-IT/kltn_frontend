@@ -27,9 +27,7 @@ const GroupsPage = async ({ params }: { params: { courseId: string } }) => {
   if (groups.length > 0) {
     const currentGroup = groups.find((group) => group.groupMembers?.some((member) => member.studentId === user.id));
 
-    if (currentGroup) {
-      redirect(`/groups/${params.courseId}/${currentGroup.groupId}`);
-    }
+    currentGroup && redirect(`/groups/${params.courseId}/${currentGroup.groupId}`);
   }
 
   return (
