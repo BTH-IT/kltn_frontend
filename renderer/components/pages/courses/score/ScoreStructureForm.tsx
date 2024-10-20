@@ -3,6 +3,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Plus, Minus, ChevronDown, ChevronRight } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
@@ -13,6 +16,7 @@ import { CourseContext } from '@/contexts/CourseContext';
 import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
 
 export default function ScoreStructureForm() {
+  const router = useRouter();
   const { course } = useContext(CourseContext);
   const { scoreStructure, setScoreStructure } = useContext(ScoreStructureContext);
   const [expandedColumns, setExpandedColumns] = useState<string[]>([]);
@@ -198,7 +202,7 @@ export default function ScoreStructureForm() {
     if (!course || !scoreStructure) return;
 
     if (totalPercentage !== 100) {
-      alert('Tổng điểm phải bằng 100%. Vui lòng điều chỉnh lại phần trăm.');
+      toast.error('Tổng điểm phải bằng 100%. Vui lòng điều chỉnh lại phần trăm.');
       return;
     }
 
@@ -215,10 +219,12 @@ export default function ScoreStructureForm() {
       };
 
       await scoreStructureService.createScoreStructure(payload);
-      alert('Cập nhật cấu trúc điểm thành công!');
+      toast.success('Cập nhật cấu trúc điểm thành công!');
+      router.refresh();
     } catch (error) {
-      console.error('Lỗi khi cập nhật cấu trúc điểm:', error);
-      alert('Cập nhật cấu trúc điểm thất bại.');
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
     }
   };
 
@@ -242,9 +248,20 @@ export default function ScoreStructureForm() {
         <br />
         Tổng cộng: {totalPercentage.toFixed(2)}%
       </div>
-      <div className="mt-4 text-right">
+      <div className="flex items-center justify-end gap-2 mt-4">
+        <Button
+          onClick={() => {
+            if (course) {
+              setScoreStructure(course.scoreStructure);
+            }
+          }}
+          variant="primary"
+          disabled={totalPercentage !== 100}
+        >
+          Reset
+        </Button>
         <Button onClick={handleSubmit} variant="primary" disabled={totalPercentage !== 100}>
-          Gửi
+          Cập nhật
         </Button>
       </div>
     </div>

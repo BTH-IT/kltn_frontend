@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Info, Pencil } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { cookies } from 'next/headers';
 
 import AnnouncementInput from '@/components/common/AnnouncementInput';
@@ -37,6 +37,7 @@ export default async function CoursePage({ params }: { params: { courseId: strin
             <p className="text-xl font-medium">
               {course.subject?.subjectCode} - {course.subject?.name}
             </p>
+            <p className="text-sm font-normal">Niên khóa: {course.semester}</p>
           </div>
           {user?.id === course.lecturerId && (
             <CoursePersonalizeModal data={course}>
@@ -49,11 +50,11 @@ export default async function CoursePage({ params }: { params: { courseId: strin
               </Button>
             </CoursePersonalizeModal>
           )}
-          <Info
-            className="absolute right-4 bottom-4 flex-col p-2 text-white rounded-full transition-all hover:bg-[rgba(0, 0, 0, 0.8)] cursor-pointer"
+          {/* <Info
+            className='absolute right-4 bottom-4 flex-col p-2 text-white rounded-full transition-all hover:bg-[rgba(0, 0, 0, 0.8)] cursor-pointer'
             width={36}
             height={36}
-          />
+          /> */}
         </div>
         {user?.id === course.lecturerId ? (
           <div className="grid grid-cols-12 gap-6 mt-10">

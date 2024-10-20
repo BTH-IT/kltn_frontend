@@ -33,7 +33,7 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
     if (!selectedBrief) return;
 
     try {
-      await briefService.deleteBrief(selectedBrief.groupId, selectedBrief.briefId);
+      await briefService.deleteBrief(selectedBrief.groupId, selectedBrief.id);
 
       router.refresh();
     } catch (error) {
@@ -48,7 +48,7 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
       {briefs.length > 0 ? (
         briefs.map((brief) => (
           <div
-            key={brief.briefId}
+            key={brief.id}
             className="overflow-hidden transition-all duration-300 bg-white rounded-lg shadow-md hover:shadow-lg"
           >
             <div className="p-6 space-y-4">
@@ -56,18 +56,6 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
                 <div className="flex items-center space-x-3">
                   <FileTextIcon className="w-6 h-6 text-blue-500" />
                   <h2 className="text-xl font-semibold text-gray-800">{brief.title}</h2>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setDeletingReport(true);
-                      setSelectedBrief(brief);
-                    }}
-                  >
-                    <TrashIcon className="w-4 h-4" />
-                  </Button>
                 </div>
               </div>
               <div className="text-gray-600 line-clamp-2 markdown">

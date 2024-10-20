@@ -46,6 +46,12 @@ const courseService = {
     });
   },
 
+  addStudents(courseId: string, emails: string[]): Promise<ApiResponse<boolean>> {
+    return configService.post(`${API_URL.COURSES}/${courseId}/students`, {
+      emails,
+    });
+  },
+
   deleteStudentsOfCourse(courseId: string, userIds: string[]): Promise<ApiResponse<boolean>> {
     return configService.delete(`${API_URL.COURSES}/${courseId}/students/multiple`, {
       data: userIds,
