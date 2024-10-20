@@ -1,6 +1,6 @@
 'use client';
 import { Crown, Plus, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
@@ -13,6 +13,7 @@ import { IGroup, IGroupMember, IUser } from '@/types';
 import CreateGroupMemberModal from '@/components/modals/CreateGroupMemberModal';
 import groupService from '@/services/groupService';
 import { KEY_LOCALSTORAGE } from '@/utils';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 const TeamMembers = ({ group }: { group: IGroup }) => {
   const router = useRouter();
@@ -21,6 +22,22 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
   const [members, setMembers] = useState<IGroupMember[]>(sortedGroupMembers || []);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
+
+  const { setItems } = useContext(BreadcrumbContext);
+
+  useEffect(() => {
+    if (!group.course) return;
+
+    const breadcrumbLabel1 = group.course.name;
+    const breadcrumbLabel2 = group.groupName;
+
+    setItems([
+      { label: 'Lớp học', href: '/' },
+      { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
+      { label: 'Nhóm', href: `/courses/${group.course.courseId}/groups` },
+      { label: breadcrumbLabel2 },
+    ]);
+  }, [group, setItems]);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');

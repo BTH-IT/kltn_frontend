@@ -10,6 +10,8 @@ import { Separator } from '@/components/ui/separator';
 import { IProject } from '@/types';
 import CreateProjectModal from '@/components/modals/CreateProjectModal';
 import { CreateProjectContext } from '@/contexts/CreateProjectContext';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
+import { CourseContext } from '@/contexts/CourseContext';
 
 import { columns } from './columns';
 
@@ -17,6 +19,21 @@ export const ProjectClient = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projectCreated, setProjectCreated] = useState<IProject | null>(null);
   const { projects, setProjects } = useContext(CreateProjectContext);
+  const { course } = useContext(CourseContext);
+
+  const { setItems } = useContext(BreadcrumbContext);
+
+  useEffect(() => {
+    if (!course) return;
+
+    const breadcrumbLabel = course.name;
+
+    setItems([
+      { label: 'Lớp học', href: '/' },
+      { label: breadcrumbLabel, href: `/courses/${course.courseId}` },
+      { label: 'Đề tài' },
+    ]);
+  }, [course, setItems]);
 
   useEffect(() => {
     if (projectCreated) {

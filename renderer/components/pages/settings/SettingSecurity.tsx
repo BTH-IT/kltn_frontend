@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import { IUser } from '@/types';
 import userService from '@/services/userService';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 const passwordSchema = z
   .string()
@@ -43,7 +44,11 @@ const SettingSecurity = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { setItems } = useContext(BreadcrumbContext);
 
+  useEffect(() => {
+    setItems([{ label: 'Lớp học', href: '/' }, { label: 'Cài đặt', href: '/settings' }, { label: 'Bảo mật' }]);
+  }, [setItems]);
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
 

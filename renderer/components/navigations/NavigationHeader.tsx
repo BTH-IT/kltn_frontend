@@ -22,27 +22,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { navigationItemList } from '@/constants/common';
-import { CourseContext } from '@/contexts/CourseContext';
 import { SidebarContext } from '@/contexts/SidebarContext';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { CLEAR_LOCALSTORAGE, KEY_LOCALSTORAGE } from '@/utils';
 import { IUser } from '@/types';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 const NavigationHeader = () => {
   const { setSidebar, isShow } = useContext(SidebarContext);
+  const { items, setItems } = useContext(BreadcrumbContext);
+
   const pathname = usePathname() ?? '';
   const path = pathname?.slice(1, pathname.length - 1);
   const [user, setUser] = useState<IUser | null>(null);
   const router = useRouter();
-
-  const { course } = useContext(CourseContext);
 
   const handleMenuClick = () => {
     setSidebar(!isShow);
   };
 
   const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    path === '' && setItems([{ label: 'Lớp học' }]);
+  }, [path, setItems]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -67,33 +70,29 @@ const NavigationHeader = () => {
           <button className="p-3 rounded-full hover:bg-gray-100" onClick={handleMenuClick}>
             <Menu />
           </button>
-          {path === '' ? (
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="ml-2 text-xl text-black hover:text-green-600 hover:underline hover:cursor-pointer">
-                    Lớp học
-                  </BreadcrumbPage>
+          <Breadcrumb>
+            <BreadcrumbList>
+              {items.map((item, index) => (
+                <BreadcrumbItem key={index}>
+                  {item.href ? (
+                    <Link href={item.href} className="ml-2 text-xl text-black hover:text-green-600 hover:underline">
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <BreadcrumbPage
+                      className={cn(
+                        'ml-2 text-xl text-black',
+                        index !== items.length - 1 && ' hover:text-green-600 hover:underline hover:cursor-pointer',
+                      )}
+                    >
+                      {item.label}
+                    </BreadcrumbPage>
+                  )}
+                  {index < items.length - 1 && <BreadcrumbSeparator />}
                 </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          ) : (
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <Link href="/" className="ml-2 text-xl text-black hover:text-green-600 hover:underline">
-                    Lớp học
-                  </Link>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="ml-2 text-xl text-black">
-                    {navigationItemList[path] ?? course?.name}
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          )}
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
         <div className="flex items-center">
           <CreateCourseModal>
