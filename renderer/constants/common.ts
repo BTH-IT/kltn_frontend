@@ -29,15 +29,6 @@ export const GENDER_OPTIONS = [
 export const MAX_FILE_SIZE = 5 * 1024 * 1024;
 export const SUCCESS_STATUS_CODE = 200;
 
-export const navigationItemList: { [key: string]: string } = {
-  '': 'Màn hình chính',
-  calendar: 'Lịch',
-  'not-reviewed': 'Cần xem xét',
-  todo: 'Việc cần làm',
-  archived: 'Lớp học đã lưu trữ',
-  settings: 'Cài đặt',
-};
-
 export const settingList = [
   {
     title: 'Thông tin cá nhân',

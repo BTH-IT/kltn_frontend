@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { CreateGroupModal } from '@/components/modals/CreateGroupModal';
 import { useGroupContext } from '@/contexts/GroupContext';
 import { ICourse, IUser } from '@/types';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 import { columns } from './columns';
 import { userColumns } from './user-columns';
@@ -20,6 +21,19 @@ const GroupClient = ({ user, course }: { user: IUser | null; course: ICourse | n
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [groupCreated, setGroupCreated] = useState<IGroup | null>(null);
 
+  const { setItems } = useContext(BreadcrumbContext);
+
+  useEffect(() => {
+    if (!course) return;
+
+    const breadcrumbLabel = course.name;
+
+    setItems([
+      { label: 'Lớp học', href: '/' },
+      { label: breadcrumbLabel, href: `/courses/${course.courseId}` },
+      { label: 'Nhóm' },
+    ]);
+  }, [course, setItems]);
   useEffect(() => {
     if (groupCreated) {
       setGroups((prev) => [...prev, groupCreated]);

@@ -9,6 +9,7 @@ const GroupReportPage = async ({ params }: { params: { courseId: string; groupId
   const {
     payload: { data: briefs },
   } = await http.get<IBrief[]>(`${API_URL.BRIEFS}/${params.groupId}/brief`);
+
   return <ReportHistory briefs={briefs} />;
 };
 

@@ -7,6 +7,7 @@ import { CoursesProvider } from '@/contexts/CoursesContext';
 import { CourseProvider } from '@/contexts/CourseContext';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 import { CreateSubjectProvider } from '@/contexts/CreateSubjectContext';
+import { BreadcrumbProvider } from '@/contexts/BreadcrumbContext';
 
 export const metadata: Metadata = {
   title: {
@@ -22,13 +23,15 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       <CourseProvider course={null}>
         <CreateSubjectProvider>
           <SidebarProvider isShow={true}>
-            <div className="h-full">
-              <NavigationHeader />
-              <div className="flex">
-                <NavigationSidebar />
-                <main className="flex-1 h-[calc(100vh-70px)] mt-[70px] overflow-y-auto">{children}</main>
+            <BreadcrumbProvider>
+              <div className="h-full">
+                <NavigationHeader />
+                <div className="flex">
+                  <NavigationSidebar />
+                  <main className="flex-1 h-[calc(100vh-70px)] mt-[70px] overflow-y-auto">{children}</main>
+                </div>
               </div>
-            </div>
+            </BreadcrumbProvider>
           </SidebarProvider>
         </CreateSubjectProvider>
       </CourseProvider>

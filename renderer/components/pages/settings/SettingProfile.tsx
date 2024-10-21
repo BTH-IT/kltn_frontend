@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -17,6 +17,7 @@ import { KEY_LOCALSTORAGE } from '@/utils';
 import { IUser } from '@/types';
 import userService from '@/services/userService';
 import uploadService from '@/services/uploadService';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 const formSchema = z.object({
   phone: z.string().regex(/^(\+84|84|0)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}$/, {
@@ -41,6 +42,15 @@ const SettingProfile = () => {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [user, setUser] = useState<IUser | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const { setItems } = useContext(BreadcrumbContext);
+
+  useEffect(() => {
+    setItems([
+      { label: 'Lớp học', href: '/' },
+      { label: 'Cài đặt', href: '/settings' },
+      { label: 'Thông tin cá nhân' },
+    ]);
+  }, [setItems]);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');

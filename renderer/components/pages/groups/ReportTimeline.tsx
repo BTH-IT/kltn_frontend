@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Plus, Edit, Trash } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
@@ -21,6 +21,7 @@ import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 import ReportCommentList from '@/components/common/ReportCommentList';
 import { generateParagraphs } from '@/libs/utils';
 import briefService from '@/services/briefService';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -30,6 +31,22 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [deletingReport, setDeletingReport] = useState(false);
   const [currentReport, setCurrentReport] = useState<IReport | null>(null);
   const [currentUser, setUser] = useState<IUser | null>(null);
+  const { setItems } = useContext(BreadcrumbContext);
+
+  useEffect(() => {
+    if (!group.course) return;
+
+    const breadcrumbLabel1 = group.course.name;
+    const breadcrumbLabel2 = group.groupName;
+
+    setItems([
+      { label: 'Lớp học', href: '/' },
+      { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
+      { label: 'Nhóm', href: `/courses/${group.course.courseId}/groups` },
+      { label: breadcrumbLabel2, href: `/groups/${group.course.courseId}/${group.groupId}` },
+      { label: 'Báo cáo' },
+    ]);
+  }, [group, setItems]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

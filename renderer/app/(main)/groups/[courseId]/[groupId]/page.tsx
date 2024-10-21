@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Clock, Users as TeamIcon } from 'lucide-react';
+import { Users as TeamIcon } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { API_URL } from '@/constants/endpoints';
@@ -27,10 +27,6 @@ const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId
             <div className="flex items-center space-x-2">
               <TeamIcon className="w-5 h-5" />
               <span>Số lượng thành viên tối đa: {group.numberOfMembers} Nguời</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5" />
-              <span>Duration: 12 weeks</span>
             </div>
           </div>
         </CardContent>

@@ -12,15 +12,29 @@ import { CourseContext } from '@/contexts/CourseContext';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import { IUser } from '@/types';
 import AssignmentList from '@/components/pages/courses/assignment/AssignmentList';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 const AssignmentPage = () => {
   const { course } = useContext(CourseContext);
+  const { setItems } = useContext(BreadcrumbContext);
 
   const [onOpenAssignModal, setOnOpenAssignModal] = useState(false);
   const [assignments, setAssignments] = useState<IAssignment[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    if (!course) return;
+
+    const breadcrumbLabel = course.name;
+
+    setItems([
+      { label: 'Lớp học', href: '/' },
+      { label: breadcrumbLabel, href: `/courses/${course.courseId}` },
+      { label: 'Bài tập' },
+    ]);
+  }, [course, setItems]);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');

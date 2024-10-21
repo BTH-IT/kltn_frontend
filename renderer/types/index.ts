@@ -38,3 +38,8 @@ export interface IBaseModel {
   updatedAt: string;
   deletedAt: string;
 }
+
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}

@@ -30,12 +30,28 @@ import { AssignmentContext } from '@/contexts/AssignmentContext';
 import SubmissionDetailModal from '@/components/modals/SubmissionDetailModal';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import CommonModal from '@/components/modals/CommonModal';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 export default function AssigmentSubmited() {
   const params = useParams();
   const router = useRouter();
 
   const { assignment } = useContext(AssignmentContext);
+  const { setItems } = useContext(BreadcrumbContext);
+
+  useEffect(() => {
+    if (!assignment || !assignment.course) return;
+
+    const breadcrumbLabel1 = assignment.course.name;
+    const breadcrumbLabel2 = assignment.title;
+
+    setItems([
+      { label: 'Lớp học', href: '/' },
+      { label: breadcrumbLabel1, href: `/courses/${assignment.course.courseId}` },
+      { label: 'Bài tập', href: `/courses/${assignment.course.courseId}/assignments` },
+      { label: breadcrumbLabel2 },
+    ]);
+  }, [assignment, setItems]);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });

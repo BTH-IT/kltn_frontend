@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 'use client';
 
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CalendarIcon, FileTextIcon, ChevronRightIcon, TrashIcon } from 'lucide-react';
 import Markdown from 'react-markdown';
 import { useRouter } from 'next/navigation';
@@ -23,11 +23,28 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatVNDate } from '@/utils';
 import CommonModal from '@/components/modals/CommonModal';
 import briefService from '@/services/briefService';
+import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
   const [selectedBrief, setSelectedBrief] = useState<IBrief | null>(null);
   const [deletingReport, setDeletingReport] = useState(false);
   const router = useRouter();
+  const { setItems } = useContext(BreadcrumbContext);
+
+  useEffect(() => {
+    if (!briefs[0].group?.course) return;
+
+    const breadcrumbLabel1 = briefs[0].group?.course.name;
+    const breadcrumbLabel2 = briefs[0].group?.groupName;
+
+    setItems([
+      { label: 'Lớp học', href: '/' },
+      { label: breadcrumbLabel1, href: `/courses/${briefs[0].group?.course.courseId}` },
+      { label: 'Nhóm', href: `/courses/${briefs[0].group.course.courseId}/groups` },
+      { label: breadcrumbLabel2, href: `/groups/${briefs[0].group?.groupId}` },
+      { label: 'Tóm tắt lịch sử báo cáo' },
+    ]);
+  }, [briefs, setItems]);
 
   const handleDeleteReport = async () => {
     if (!selectedBrief) return;
