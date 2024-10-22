@@ -13,8 +13,8 @@ export function DateTimePicker({
   date,
   setDate,
 }: {
-  date?: Date;
-  setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  date?: Date | null | undefined;
+  setDate: React.Dispatch<React.SetStateAction<Date | null | undefined>>;
 }) {
   const handleSelect = (newDay: Date | undefined) => {
     if (!newDay) return;
@@ -47,15 +47,20 @@ export function DateTimePicker({
         >
           <CalendarIcon className="w-4 h-4 mr-2" />
           <div className="flex items-center justify-between flex-1 gap-2">
-            {date ? format(date, 'PPP HH:mm:ss') : <span>Không có ngày hạn</span>}
-            {date && <XIcon className="w-4 h-4 ml-2" onClick={handleClear} />}
+            {date && !isNaN(date.getTime()) ? format(date || '', 'PPP HH:mm:ss') : <span>Không có ngày hạn</span>}
+            {date && !isNaN(date.getTime()) && <XIcon className="w-4 h-4 ml-2" onClick={handleClear} />}
           </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent side="left" align="center" className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={(d: Date | undefined) => d && handleSelect(d)} initialFocus />
+        <Calendar
+          mode="single"
+          selected={date || undefined}
+          onSelect={(d: Date | undefined) => d && handleSelect(d)}
+          initialFocus
+        />
         <div className="p-3 border-t border-border">
-          <TimePicker setDate={handleSetDate} date={date} />
+          <TimePicker setDate={handleSetDate} date={date || undefined} />
         </div>
       </PopoverContent>
     </Popover>

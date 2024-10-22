@@ -21,6 +21,14 @@ import { cn } from '@/libs/utils';
 import courseService from '@/services/courseService';
 import { CourseContext } from '@/contexts/CourseContext';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
+import { ScoreStructureProvider } from '@/contexts/ScoreStructureContext';
+import { IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
+
+import { Switch } from '../ui/switch';
+import { DateTimePicker } from '../common/DatetimePicker';
+import { Slider } from '../common/SliderRange';
+import ScoreStructureForm from '../pages/courses/score/ScoreStructureForm';
 
 import ShowCodeModal from './ShowCodeModal';
 
@@ -38,7 +46,20 @@ const CourseOptionModal = ({
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const { createdCourses, setCreatedCourses } = useContext(CoursesContext);
+  const [startCreateGroup, setStartCreateGroup] = useState<Date | null | undefined>(null);
+  const [endCreateGroup, setEndCreateGroup] = useState<Date | null | undefined>(null);
   const { subjects } = useContext(CreateSubjectContext);
+  const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, []);
 
   const FormSchema = z.object({
     courseGroup: z.string().min(1, {
@@ -54,7 +75,10 @@ const CourseOptionModal = ({
       .refine((subjectId) => subjects.find((subject) => subject.subjectId === subjectId.value), {
         message: 'Mã học phần không hợp lệ.',
       }),
-    enableInvite: z.string(),
+    allowStudentCreateProject: z.boolean(),
+    allowGroupRegistration: z.boolean(),
+    groupSizeRange: z.array(z.number()).nullable(),
+    hasFinalScore: z.boolean(),
   });
 
   const form = useForm({
@@ -62,9 +86,15 @@ const CourseOptionModal = ({
     defaultValues: {
       courseGroup: '',
       subjectId: { label: '', value: '' },
-      enableInvite: 'true',
+      allowStudentCreateProject: false,
+      allowGroupRegistration: false,
+      groupSizeRange: [0, 10],
+      hasFinalScore: false,
     },
   });
+
+  const hasFinalScoreValue = form.watch('hasFinalScore');
+  const allowGroupRegistration = form.watch('allowGroupRegistration');
 
   useEffect(() => {
     if (course && course.subjectId) {
@@ -73,7 +103,13 @@ const CourseOptionModal = ({
         label: `${course.subject?.subjectCode} - ${course.subject?.name}`,
         value: course.subjectId,
       });
-      form.setValue('enableInvite', String(course.enableInvite));
+
+      setStartCreateGroup(new Date(course.settings?.startGroupCreation ?? ''));
+      setEndCreateGroup(new Date(course.settings?.endGroupCreation ?? ''));
+
+      form.setValue('allowStudentCreateProject', course.settings?.allowStudentCreateProject);
+      form.setValue('groupSizeRange', [course.settings?.maxGroupSize || 0, course.settings?.minGroupSize || 10]);
+      form.setValue('hasFinalScore', course.settings?.hasFinalScore || false);
     }
   }, [course, onOpenModal, form]);
 
@@ -89,7 +125,6 @@ const CourseOptionModal = ({
         ...course,
         courseGroup: values.courseGroup,
         subjectId: values.subjectId.value,
-        enableInvite: values.enableInvite === 'true',
       };
 
       const res = await courseService.updateCourse(course.courseId, data);
@@ -176,9 +211,9 @@ const CourseOptionModal = ({
                     </DialogClose>
                   </div>
                 </div>
-                <div className="!my-0 overflow-auto w-full h-[92vh]">
-                  <div className="my-8 mx-auto border-2 rounded-lg p-5 w-[700px]">
-                    <div className="mt-2 mb-6 text-4xl font-medium">Thông tin chi tiết về lớp học</div>
+                <div className="!my-0 overflow-auto w-full h-[92vh] grid grid-cols-12 gap-2 px-3">
+                  <div className="col-span-6 p-5 my-8 border-2 rounded-lg">
+                    <div className="mt-2 text-2xl font-medium">Thông tin chi tiết về lớp học</div>
                     <div className="grid gap-4 py-4">
                       <FormField
                         control={form.control}
@@ -194,7 +229,6 @@ const CourseOptionModal = ({
                                     'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
                                     isLoading && 'hidden',
                                   )}
-                                  id="className"
                                   placeholder="Nhập tên lớp học ..."
                                   {...field}
                                 />
@@ -230,11 +264,6 @@ const CourseOptionModal = ({
                           </FormItem>
                         )}
                       />
-                    </div>
-                  </div>
-                  <div className="mx-auto border-2 rounded-lg p-5 !my-8 w-[700px]">
-                    <div className="mt-2 mb-10 text-4xl font-medium">Cài đặt chung</div>
-                    <div className="grid gap-4 py-4">
                       <div className="flex items-center justify-between">
                         <div className="font-medium">Đường liên kết mời</div>
                         <div className="flex items-center gap-1">
@@ -249,10 +278,6 @@ const CourseOptionModal = ({
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="font-medium">Mã lớp</div>
-                        <div className="pr-4">{course?.inviteCode}</div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">Chế độ xem lớp học</div>
                         <ShowCodeModal invCode={course?.inviteCode || ''} courseName={course?.courseGroup || ''}>
                           <div className="flex items-center justify-center gap-2 px-3 py-1 font-semibold text-blue-500 rounded-md cursor-pointer hover:bg-blue-100/30 hover:text-blue-800">
                             <div className="text-sm mb-[2px]">Hiện mã lớp học</div>
@@ -260,6 +285,91 @@ const CourseOptionModal = ({
                           </div>
                         </ShowCodeModal>
                       </div>
+                      <FormField
+                        control={form.control}
+                        name="hasFinalScore"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between my-3">
+                            <FormLabel className="font-medium text-md">Môn học có làm đồ án / tiểu luận</FormLabel>
+                            <FormControl>
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="allowGroupRegistration"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between my-3">
+                            <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí nhóm</FormLabel>
+                            <FormControl>
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      {hasFinalScoreValue && allowGroupRegistration && (
+                        <div className="flex flex-col gap-4 px-3 mb-2">
+                          <div className="font-medium">Thời hạn đăng kí</div>
+                          <div className="flex items-center justify-between gap-2">
+                            <DateTimePicker date={startCreateGroup} setDate={setStartCreateGroup} />
+                            <DateTimePicker date={endCreateGroup} setDate={setEndCreateGroup} />
+                          </div>
+                        </div>
+                      )}
+                      {allowGroupRegistration && (
+                        <div className="flex flex-col gap-4 px-3">
+                          <div className="font-medium">Số lượng người tối thiểu / tối đa</div>
+
+                          <FormField
+                            control={form.control}
+                            name="groupSizeRange"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col gap-2">
+                                <Slider
+                                  defaultValue={field.value}
+                                  minStepsBetweenThumbs={1}
+                                  max={15}
+                                  min={0}
+                                  step={1}
+                                  onValueChange={field.onChange}
+                                  className={cn('w-full')}
+                                />
+                                <div className="flex justify-between text-sm">
+                                  <span>Tối thiểu: {field.value?.[0] || 0}</span>
+                                  <span>Tối đa: {field.value?.[1] || 0}</span>
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      )}
+                      <FormField
+                        control={form.control}
+                        name="allowStudentCreateProject"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between my-3">
+                            <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí đề tài</FormLabel>
+                            <FormControl>
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="border-2 rounded-lg p-5 !my-8 col-span-6">
+                    <div className="mt-2 text-2xl font-medium">Cài đặt thông tin khác</div>
+                    <div className="grid gap-4 py-4">
+                      <ScoreStructureProvider scoreStructure={course?.scoreStructure || null}>
+                        {course?.lecturerId === user?.id && <ScoreStructureForm />}
+                      </ScoreStructureProvider>
                     </div>
                   </div>
                 </div>

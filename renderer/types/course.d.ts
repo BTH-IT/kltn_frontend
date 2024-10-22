@@ -24,4 +24,17 @@ export interface ICourse {
   announcements: IAnnouncement[];
   assignments: IAssignment[];
   scoreStructure: IScoreStructure;
+  settings: ISetting;
+}
+
+export interface ISetting {
+  settingId: string;
+  courseId: string;
+  startGroupCreation: Date | null;
+  endGroupCreation: Date | null;
+  allowStudentCreateProject: boolean;
+  allowGroupRegistration: boolean;
+  maxGroupSize: number;
+  minGroupSize: number;
+  hasFinalScore: boolean;
 }

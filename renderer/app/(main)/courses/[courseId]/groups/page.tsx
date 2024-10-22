@@ -24,11 +24,14 @@ const GroupsPage = async ({ params }: { params: { courseId: string } }) => {
 
   const user = await getUserFromCookie();
 
-  if (groups.length > 0) {
-    const currentGroup = groups.find((group) => group.groupMembers?.some((member) => member.studentId === user.id));
+  // if (groups.length > 0 && course.lecturerId !== user.id) {
+  //   const currentGroup = groups.find((group) =>
+  //     group.groupMembers?.some((member) => member.studentId === user.id)
+  //   );
 
-    currentGroup && redirect(`/groups/${params.courseId}/${currentGroup.groupId}`);
-  }
+  //   currentGroup &&
+  //     redirect(`/groups/${params.courseId}/${currentGroup.groupId}`);
+  // }
 
   return (
     <div className="flex-1 p-4 pt-6 space-y-4 md:p-8">

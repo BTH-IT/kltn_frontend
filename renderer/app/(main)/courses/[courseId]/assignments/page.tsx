@@ -25,6 +25,16 @@ const AssignmentPage = () => {
   const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, []);
+
+  useEffect(() => {
     if (!course) return;
 
     const breadcrumbLabel = course.name;
@@ -35,16 +45,6 @@ const AssignmentPage = () => {
       { label: 'Bài tập' },
     ]);
   }, [course, setItems]);
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
-
-    if (storedUser) {
-      setUser(storedUser);
-    } else {
-      return router.push('/login');
-    }
-  }, []);
 
   useEffect(() => {
     setIsMounted(true);

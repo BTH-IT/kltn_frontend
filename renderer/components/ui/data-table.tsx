@@ -37,7 +37,7 @@ export function DataTable<TData, TValue>({ columns, data, isSearchable = true }:
   });
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       {isSearchable && (
         <Input
           placeholder={'Search ...'}
@@ -106,6 +106,6 @@ export function DataTable<TData, TValue>({ columns, data, isSearchable = true }:
           </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

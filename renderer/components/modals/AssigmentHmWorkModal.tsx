@@ -45,7 +45,7 @@ const AssignmentHmWorkModal = ({
   const [scoreCols, setScoreCols] = useState<any[]>([]);
   const [scoreSelectedOption, setScoreSelectedOption] = useState<any>(null);
   const [isChooseGroup, setIsChooseGroup] = useState<boolean>(false);
-  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [dueDate, setDueDate] = useState<Date | undefined | null>(undefined);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
 

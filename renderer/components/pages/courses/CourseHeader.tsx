@@ -53,39 +53,7 @@ const CourseHeader = ({ data }: { data: any }) => {
                 : ''
             } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
           >
-            Mọi người
-          </Link>
-          {user?.id === data.lecturerId && (
-            <Link
-              href={`/courses/${data.courseId}/projects`}
-              className={`${
-                newPath === '/projects'
-                  ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                  : ''
-              } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
-            >
-              Đề tài
-            </Link>
-          )}
-          <Link
-            href={`/courses/${data.courseId}/groups`}
-            className={`${
-              newPath === '/groups'
-                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                : ''
-            } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
-          >
-            Nhóm
-          </Link>
-          <Link
-            href={`/courses/${data.courseId}/scores`}
-            className={`${
-              newPath === '/scores'
-                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                : ''
-            } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
-          >
-            Điểm
+            Danh sách sinh viên
           </Link>
           <Link
             href={`/courses/${data.courseId}/assignments`}
@@ -96,6 +64,28 @@ const CourseHeader = ({ data }: { data: any }) => {
             } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
           >
             Bài tập
+          </Link>
+          {user?.id === data.lecturerId && (
+            <Link
+              href={`/courses/${data.courseId}/projects`}
+              className={`${
+                newPath === '/projects'
+                  ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
+                  : ''
+              } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+            >
+              Đồ án / tiểu luận
+            </Link>
+          )}
+          <Link
+            href={`/courses/${data.courseId}/scores`}
+            className={`${
+              newPath === '/scores'
+                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
+                : ''
+            } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+          >
+            Điểm
           </Link>
         </div>
         <TooltipProvider>

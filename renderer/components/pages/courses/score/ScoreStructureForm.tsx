@@ -229,8 +229,7 @@ export default function ScoreStructureForm() {
   };
 
   return (
-    <div className="w-full p-4">
-      <h2 className="mb-4 text-2xl font-bold">Cấu trúc điểm</h2>
+    <div className="w-full px-2">
       <Table>
         <TableHeader>
           <TableRow>
