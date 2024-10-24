@@ -33,6 +33,10 @@ export const userColumns: ColumnDef<IGroup>[] = createColumns([
   {
     id: 'JOIN',
     header: 'Hành động',
-    cell: ({ row }: any) => <CellJoin data={row.original} />,
+    cell: ({ row }: any) => (
+      <div className="flex justify-start">
+        <CellJoin data={row.original} />
+      </div>
+    ),
   },
 ]);

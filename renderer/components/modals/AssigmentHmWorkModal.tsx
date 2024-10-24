@@ -95,11 +95,11 @@ const AssignmentHmWorkModal = ({
   };
 
   const submitForm = async (values: z.infer<typeof FormSchema>, courseId: string) => {
-    if (!scoreSelectedOption) {
-      toast.error('Chọn cột điểm cho bài tập là bắt buộc!');
+    // if (!scoreSelectedOption) {
+    //   toast.error('Chọn cột điểm cho bài tập là bắt buộc!');
 
-      return;
-    }
+    //   return;
+    // }
 
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
@@ -196,6 +196,21 @@ const AssignmentHmWorkModal = ({
                       />
                     </div>
                     <div className="flex flex-col col-span-3 gap-5 p-5 border-l">
+                      <div className="flex flex-col gap-4 px-3">
+                        <div className="font-medium">Loại bài tập</div>
+                        <CreatableSelect
+                          isClearable
+                          options={scoreCols.map((item) => {
+                            return {
+                              value: item.id,
+                              label: `${item.columnName} - ${item.percent}%`,
+                            };
+                          })}
+                          onChange={(selectedOption) => {
+                            setScoreSelectedOption(selectedOption);
+                          }}
+                        />
+                      </div>
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Hạn nộp</div>
                         <DateTimePicker date={dueDate} setDate={setDueDate} />
