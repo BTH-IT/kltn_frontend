@@ -14,7 +14,7 @@ export default function UserSettingPage() {
   };
 
   return (
-    <section className="my-[30px] mx-[200px] border-solid border-[1px] border-gray-300 rounded-lg py-6 px-10">
+    <section className="my-[30px] mx-[50px] border-solid border-[1px] border-gray-300 rounded-lg py-6 px-10">
       {renderingTabs[param.get('tab') as keyof typeof renderingTabs] ?? <SettingProfile />}
     </section>
   );
