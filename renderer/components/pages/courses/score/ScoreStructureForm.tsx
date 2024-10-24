@@ -133,7 +133,13 @@ export default function ScoreStructureForm() {
           <TableCell>
             <div className="flex items-center" style={{ paddingLeft: `${depth * 20}px` }}>
               {column.children?.length > 0 && (
-                <Button variant="ghost" size="sm" className="w-6 h-6 p-0 mr-2" onClick={() => toggleExpand(column.id)}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="w-6 h-6 p-0 mr-2"
+                  onClick={() => toggleExpand(column.id)}
+                >
                   {expandedColumns.includes(column.id) ? (
                     <ChevronDown className="w-4 h-4" />
                   ) : (
@@ -166,7 +172,13 @@ export default function ScoreStructureForm() {
           </TableCell>
           <TableCell className="text-right">
             {column.parentId !== null && column.id !== scoreStructure.children?.[1]?.id && (
-              <Button onClick={() => addSubColumn(column.id)} size="sm" variant="outline" className="mr-2">
+              <Button
+                type="button"
+                onClick={() => addSubColumn(column.id)}
+                size="sm"
+                variant="outline"
+                className="mr-2"
+              >
                 <Plus className="w-4 h-4 mr-2" />
               </Button>
             )}
@@ -174,7 +186,7 @@ export default function ScoreStructureForm() {
               column.id !== scoreStructure.children?.[0]?.id && ( // Không hiển thị cho cột Process
                 <>
                   {depth > 0 && ( // Chỉ cho phép xóa cột con
-                    <Button onClick={() => removeSubColumn(column.id)} size="sm" variant="destructive">
+                    <Button type="button" onClick={() => removeSubColumn(column.id)} size="sm" variant="destructive">
                       <Minus className="w-4 h-4" />
                     </Button>
                   )}
@@ -249,6 +261,7 @@ export default function ScoreStructureForm() {
       </div>
       <div className="flex items-center justify-end gap-2 mt-4">
         <Button
+          type="button"
           onClick={() => {
             if (course) {
               setScoreStructure(course.scoreStructure);
@@ -259,7 +272,7 @@ export default function ScoreStructureForm() {
         >
           Reset
         </Button>
-        <Button onClick={handleSubmit} variant="primary" disabled={totalPercentage !== 100}>
+        <Button type="button" onClick={handleSubmit} variant="primary" disabled={totalPercentage !== 100}>
           Cập nhật
         </Button>
       </div>

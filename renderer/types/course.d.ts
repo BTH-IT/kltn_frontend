@@ -24,7 +24,7 @@ export interface ICourse {
   announcements: IAnnouncement[];
   assignments: IAssignment[];
   scoreStructure: IScoreStructure;
-  settings: ISetting;
+  setting: ISetting;
 }
 
 export interface ISetting {

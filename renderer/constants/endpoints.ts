@@ -17,4 +17,5 @@ export const API_URL = {
   SCORES: '/scores',
   BRIEFS: '/briefs',
   REQUESTS: '/requests',
+  SETTINGS: '/settings',
 };
