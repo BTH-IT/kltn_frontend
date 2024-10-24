@@ -106,10 +106,10 @@ const SettingSecurity = () => {
                     {...field}
                   />
                   <Button variant="ghost" type="button" className="absolute top-0 right-0">
-                    {showCurrentPassword ? (
-                      <EyeOff size={20} className="text-gray-600" onClick={() => setShowCurrentPassword(false)} />
+                    {!showCurrentPassword ? (
+                      <EyeOff size={20} className="text-gray-600" onClick={() => setShowCurrentPassword(true)} />
                     ) : (
-                      <Eye size={20} className="text-gray-600" onClick={() => setShowCurrentPassword(true)} />
+                      <Eye size={20} className="text-gray-600" onClick={() => setShowCurrentPassword(false)} />
                     )}
                   </Button>
                 </div>
@@ -128,10 +128,10 @@ const SettingSecurity = () => {
                 <div className="relative">
                   <Input type={showNewPassword ? 'text' : 'password'} placeholder="Nhập mật khẩu mới" {...field} />
                   <Button variant="ghost" type="button" className="absolute top-0 right-0">
-                    {showNewPassword ? (
-                      <EyeOff size={20} className="text-gray-600" onClick={() => setShowNewPassword(false)} />
+                    {!showNewPassword ? (
+                      <EyeOff size={20} className="text-gray-600" onClick={() => setShowNewPassword(true)} />
                     ) : (
-                      <Eye size={20} className="text-gray-600" onClick={() => setShowNewPassword(true)} />
+                      <Eye size={20} className="text-gray-600" onClick={() => setShowNewPassword(false)} />
                     )}
                   </Button>
                 </div>
@@ -154,10 +154,10 @@ const SettingSecurity = () => {
                     {...field}
                   />
                   <Button variant="ghost" type="button" className="absolute top-0 right-0">
-                    {showConfirmPassword ? (
-                      <EyeOff size={20} className="text-gray-600" onClick={() => setShowConfirmPassword(false)} />
+                    {!showConfirmPassword ? (
+                      <EyeOff size={20} className="text-gray-600" onClick={() => setShowConfirmPassword(true)} />
                     ) : (
-                      <Eye size={20} className="text-gray-600" onClick={() => setShowConfirmPassword(true)} />
+                      <Eye size={20} className="text-gray-600" onClick={() => setShowConfirmPassword(false)} />
                     )}
                   </Button>
                 </div>
@@ -166,7 +166,7 @@ const SettingSecurity = () => {
             </FormItem>
           )}
         />
-        <div className="w-full flex justify-end">
+        <div className="flex justify-end w-full">
           <Button type="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting && (
               <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>

@@ -122,7 +122,13 @@ const CourseOptionModal = ({
     try {
       setHasSubmitted(true);
 
-      console.log(values);
+      if (startCreateGroup && endCreateGroup) {
+        if (startCreateGroup > endCreateGroup) {
+          toast.error('Thời gian bắt đầu không được lớn hơn thời gian kết thúc.');
+          setHasSubmitted(false);
+          return;
+        }
+      }
 
       const infoData = {
         ...course,
@@ -372,7 +378,7 @@ const CourseOptionModal = ({
                           </FormItem>
                         )}
                       />
-                      <div className="mt-4 w-full flex justify-end">
+                      <div className="flex justify-end w-full mt-4">
                         <Button type="submit" disabled={!canSubmit || hasSubmitted} className="w-20" variant="primary">
                           {hasSubmitted && (
                             <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
