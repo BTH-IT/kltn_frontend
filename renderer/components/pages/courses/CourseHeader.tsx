@@ -10,9 +10,9 @@ import { CourseContext } from '@/contexts/CourseContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import CourseOptionModal from '@/components/modals/CourseOptionModal';
 import { KEY_LOCALSTORAGE } from '@/utils';
-import { IUser } from '@/types';
+import { ICourse, IUser } from '@/types';
 
-const CourseHeader = ({ data }: { data: any }) => {
+const CourseHeader = ({ data }: { data: ICourse }) => {
   const pathname = usePathname().replace(/\/$/, '');
 
   const newPath = pathname.slice(pathname.lastIndexOf('/'));
@@ -65,7 +65,7 @@ const CourseHeader = ({ data }: { data: any }) => {
           >
             Bài tập
           </Link>
-          {user?.id === data.lecturerId && (
+          {(user?.id === data.lecturerId || data.setting.hasFinalScore) && (
             <Link
               href={`/courses/${data.courseId}/projects`}
               className={`${

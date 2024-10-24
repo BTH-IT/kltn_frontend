@@ -19,6 +19,10 @@ const ProjectsPage = async ({ params }: { params: { courseId: string } }) => {
     return redirect('/');
   }
 
+  if (!course.setting.hasFinalScore) {
+    return redirect(`/courses/${params.courseId}`);
+  }
+
   const {
     payload: { data: projects },
   } = await http.get<IProject[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.PROJECTS}`);

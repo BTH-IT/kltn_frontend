@@ -109,7 +109,7 @@ const CourseOptionModal = ({
 
       form.setValue('allowGroupRegistration', course.setting?.allowGroupRegistration);
       form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);
-      form.setValue('groupSizeRange', [course.setting?.minGroupSize || 0, course.setting?.maxGroupSize || 10]);
+      form.setValue('groupSizeRange', [course.setting?.minGroupSize || 1, course.setting?.maxGroupSize || 15]);
       form.setValue('hasFinalScore', course.setting?.hasFinalScore || false);
     }
   }, [course, onOpenModal, form]);
@@ -342,14 +342,14 @@ const CourseOptionModal = ({
                                   defaultValue={field.value}
                                   minStepsBetweenThumbs={1}
                                   max={15}
-                                  min={0}
+                                  min={1}
                                   step={1}
                                   onValueChange={field.onChange}
                                   className={cn('w-full')}
                                 />
                                 <div className="flex justify-between text-sm">
-                                  <span>Tối thiểu: {field.value?.[0] || 0}</span>
-                                  <span>Tối đa: {field.value?.[1] || 0}</span>
+                                  <span>Tối thiểu: {field.value?.[0] || 1}</span>
+                                  <span>Tối đa: {field.value?.[1] || 15}</span>
                                 </div>
                                 <FormMessage />
                               </FormItem>

@@ -5,8 +5,7 @@ import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import React, { useContext, useEffect, useState } from 'react';
-import { Select as ReactSelect } from 'react-select-virtualized';
+import React from 'react';
 
 import groupService from '@/services/groupService';
 import { IGroup } from '@/types/group';
@@ -16,60 +15,52 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CreateProjectContext } from '@/contexts/CreateProjectContext';
-import { IProject } from '@/types';
-
-import CreateProjectModal from './CreateProjectModal';
 
 export const CreateGroupModal = ({
   isOpen,
   setIsOpen,
+  minNumberOfMembers,
+  maxNumberOfMembers,
   setGroupCreated,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  minNumberOfMembers: number;
+  maxNumberOfMembers: number;
   setGroupCreated: React.Dispatch<React.SetStateAction<IGroup | null>>;
 }) => {
   const params = useParams();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [projectCreated, setProjectCreated] = useState<IProject | null>(null);
-  const { projects, setProjects } = useContext(CreateProjectContext);
-
-  useEffect(() => {
-    if (projectCreated) {
-      setProjects([...projects, projectCreated]);
-    }
-  }, [projectCreated]);
 
   const FormSchema = z.object({
     groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
-    numberOfMembers: z.coerce.number(),
-    projectId: z
-      .object({
-        label: z.string(),
-        value: z.string().min(1, {
-          message: 'Đề tài là trường bắt buộc.',
-        }),
-      })
-      .refine((projectId) => projects.find((project) => project.projectId === projectId.value), {
-        message: 'Đề tài không hợp lệ.',
-      }),
+    numberOfMembers: z.coerce.number({ invalid_type_error: 'Số lượng thành viên phải là số.' }),
   });
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       groupName: '',
-      numberOfMembers: 2,
-      projectId: { label: '', value: '' },
+      numberOfMembers: minNumberOfMembers,
     },
   });
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
+      if (values.numberOfMembers < minNumberOfMembers) {
+        form.setError('numberOfMembers', {
+          message: `Số lượng thành viên phải lớn hơn hoặc bằng ${minNumberOfMembers}.`,
+        });
+        return;
+      }
+
+      if (values.numberOfMembers > maxNumberOfMembers) {
+        form.setError('numberOfMembers', {
+          message: `Số lượng thành viên phải nhỏ hơn hoặc bằng ${maxNumberOfMembers}.`,
+        });
+        return;
+      }
+
       const res = await groupService.createGroup({
         ...values,
-        projectId: values.projectId.value,
         courseId: params.courseId as string,
       });
       if (res.data) {
@@ -131,51 +122,21 @@ export const CreateGroupModal = ({
                       <FormLabel className="text-xs font-bold uppercase">Số lượng</FormLabel>
                       <FormControl>
                         <>
-                          <Select onValueChange={field.onChange} defaultValue={field.value.toString()}>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Số lượng thành viên tối đa" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="2">2</SelectItem>
-                              <SelectItem value="3">3</SelectItem>
-                              <SelectItem value="4">4</SelectItem>
-                              <SelectItem value="5">5</SelectItem>
-                              <SelectItem value="10">10</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <Input
+                            disabled={form.formState.isSubmitting}
+                            className={cn(
+                              'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                              form.formState.isSubmitting && 'hidden',
+                            )}
+                            id="numberOfMembers"
+                            type="number"
+                            min={0}
+                            onChange={(e) => {
+                              field.onChange(parseInt(e.target.value));
+                            }}
+                          />
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                         </>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="projectId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center justify-between gap-2 text-xs font-bold uppercase">
-                        Đề tài
-                        <Button
-                          className="px-2 py-1"
-                          variant="primary"
-                          type="button"
-                          onClick={() => setIsModalOpen(true)}
-                        >
-                          Đăng ký đề tài
-                        </Button>
-                      </FormLabel>
-                      <FormControl>
-                        <ReactSelect
-                          {...field}
-                          options={projects?.map((p) => {
-                            return {
-                              label: p.title,
-                              value: p.projectId,
-                            };
-                          })}
-                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -194,7 +155,6 @@ export const CreateGroupModal = ({
           </Form>
         </DialogContent>
       </Dialog>
-      <CreateProjectModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} setProjectCreated={setProjectCreated} />
     </>
   );
 };

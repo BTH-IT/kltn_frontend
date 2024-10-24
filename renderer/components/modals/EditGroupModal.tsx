@@ -97,7 +97,7 @@ export const EditGroupModal = ({
         <DialogContent className="sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle className="mx-auto">
-              {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Chỉnh sửa đề tài'}
+              {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Chỉnh sửa nhóm'}
             </DialogTitle>
           </DialogHeader>
           <Form {...form}>

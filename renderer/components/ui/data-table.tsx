@@ -8,7 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
@@ -20,9 +20,17 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isSearchable?: boolean;
+  isProject?: boolean;
+  button?: ReactNode;
 }
 
-export function DataTable<TData, TValue>({ columns, data, isSearchable = true }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  isSearchable = true,
+  isProject = false,
+  button = null,
+}: DataTableProps<TData, TValue>) {
   const [filtering, setFiltering] = useState('');
 
   const table = useReactTable({
@@ -38,13 +46,18 @@ export function DataTable<TData, TValue>({ columns, data, isSearchable = true }:
 
   return (
     <div className="flex flex-col gap-4">
-      {isSearchable && (
-        <Input
-          placeholder={'Search ...'}
-          value={filtering}
-          onChange={(event) => setFiltering(event.target.value)}
-          className="w-full md:max-w-sm"
-        />
+      {isSearchable ? (
+        <div className="flex justify-between">
+          <Input
+            placeholder={'Search ...'}
+            value={filtering}
+            onChange={(event) => setFiltering(event.target.value)}
+            className="w-full md:max-w-sm"
+          />
+          {isProject && button}
+        </div>
+      ) : (
+        <div className="flex justify-end">{isProject && button}</div>
       )}
       <ScrollArea className="h-[calc(80vh-220px)] rounded-md border">
         <Table className="relative">
