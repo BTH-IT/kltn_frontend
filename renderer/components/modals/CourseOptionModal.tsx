@@ -9,9 +9,10 @@ import { useForm } from 'react-hook-form';
 import { Select } from 'react-select-virtualized';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent2, DialogOverlay, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -39,7 +40,6 @@ const CourseOptionModal = ({
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { toast } = useToast();
   const router = useRouter();
   const { course } = useContext(CourseContext);
 
@@ -104,12 +104,13 @@ const CourseOptionModal = ({
         value: course.subjectId,
       });
 
-      setStartCreateGroup(new Date(course.settings?.startGroupCreation ?? ''));
-      setEndCreateGroup(new Date(course.settings?.endGroupCreation ?? ''));
+      setStartCreateGroup(new Date(course.setting?.startGroupCreation ?? ''));
+      setEndCreateGroup(new Date(course.setting?.endGroupCreation ?? ''));
 
-      form.setValue('allowStudentCreateProject', course.settings?.allowStudentCreateProject);
-      form.setValue('groupSizeRange', [course.settings?.maxGroupSize || 0, course.settings?.minGroupSize || 10]);
-      form.setValue('hasFinalScore', course.settings?.hasFinalScore || false);
+      form.setValue('allowGroupRegistration', course.setting?.allowGroupRegistration);
+      form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);
+      form.setValue('groupSizeRange', [course.setting?.minGroupSize || 0, course.setting?.maxGroupSize || 10]);
+      form.setValue('hasFinalScore', course.setting?.hasFinalScore || false);
     }
   }, [course, onOpenModal, form]);
 
@@ -121,41 +122,48 @@ const CourseOptionModal = ({
     try {
       setHasSubmitted(true);
 
-      const data = {
+      console.log(values);
+
+      const infoData = {
         ...course,
         courseGroup: values.courseGroup,
         subjectId: values.subjectId.value,
       };
 
-      const res = await courseService.updateCourse(course.courseId, data);
+      const settingData = {
+        settingId: course.setting?.settingId,
+        courseId: course.courseId,
+        startGroupCreation: startCreateGroup,
+        endGroupCreation: endCreateGroup,
+        allowStudentCreateProject: values.allowStudentCreateProject,
+        allowGroupRegistration: values.allowGroupRegistration,
+        minGroupSize: values.groupSizeRange?.[0],
+        maxGroupSize: values.groupSizeRange?.[1],
+        hasFinalScore: values.hasFinalScore,
+      };
+
+      const [infoRes, settingRes] = await Promise.all([
+        courseService.updateCourse(course.courseId, infoData),
+        courseService.changeSetting(course.courseId, settingData),
+      ]);
 
       createdCourses.forEach((c, index) => {
         if (c.courseId === course.courseId) {
-          createdCourses[index] = res.data;
+          createdCourses[index] = infoRes.data;
           setCreatedCourses([...createdCourses]);
           return;
         }
       });
 
-      if (res.data) {
-        toast({
-          title: 'Cập nhật thông tin lớp học thành công',
-          variant: 'done',
-          duration: 2000,
-        });
-
-        router.refresh();
+      if (infoRes.data && settingRes.data) {
+        toast.success('Cập nhật lớp học thành công');
       }
 
       setHasSubmitted(false);
       setCanSubmit(false);
     } catch (error) {
       console.log(error);
-      toast({
-        title: 'Có lỗi khi cập nhật thông tin lớp học',
-        variant: 'destructive',
-        duration: 2000,
-      });
+      toast.error('Cập nhật lớp học thất bại');
       setHasSubmitted(false);
     }
   };
@@ -166,6 +174,7 @@ const CourseOptionModal = ({
 
   const onCloseModal = () => {
     form.reset();
+    router.refresh();
     setOnOpenModal(false);
   };
 
@@ -174,11 +183,7 @@ const CourseOptionModal = ({
 
     try {
       await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/courses/invite/${course.inviteCode}`);
-      toast({
-        title: 'Đã sao chép link mời tham gia lớp',
-        variant: 'done',
-        duration: 2000,
-      });
+      toast.success('Đã sao chép đường liên kết mời');
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -187,7 +192,12 @@ const CourseOptionModal = ({
   return (
     <>
       <Dialog open={onOpenModal} onOpenChange={onCloseModal}>
-        <DialogContent2 className="w-screen h-screen max-h-screen p-0 font-sans text-gray-700">
+        <DialogContent2
+          className="w-screen h-screen max-h-screen p-0 font-sans text-gray-700"
+          onInteractOutside={(e) => {
+            e.preventDefault();
+          }}
+        >
           <DialogTitle className="hidden"></DialogTitle>
           <div className="flex justify-center">
             <Form {...form}>
@@ -199,12 +209,6 @@ const CourseOptionModal = ({
                 <div className="sticky top-0 left-0 right-0 flex items-center justify-between w-full px-5 py-3 bg-white border-b-2">
                   <div className="font-semibold text-md">Cài đặt lớp học</div>
                   <div className="flex items-center gap-7">
-                    <Button type="submit" disabled={!canSubmit || hasSubmitted} className="w-20" variant="primary">
-                      {hasSubmitted && (
-                        <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
-                      )}
-                      Lưu
-                    </Button>
                     <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                       <X className="w-4 h-4" />
                       <span className="sr-only">Close</span>
@@ -289,11 +293,13 @@ const CourseOptionModal = ({
                         control={form.control}
                         name="hasFinalScore"
                         render={({ field }) => (
-                          <FormItem className="flex items-center justify-between my-3">
-                            <FormLabel className="font-medium text-md">Môn học có làm đồ án / tiểu luận</FormLabel>
-                            <FormControl>
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
+                          <FormItem>
+                            <div className="flex items-center justify-between my-3">
+                              <FormLabel className="font-medium text-md">Môn học có làm đồ án / tiểu luận</FormLabel>
+                              <FormControl>
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                              </FormControl>
+                            </div>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -303,11 +309,13 @@ const CourseOptionModal = ({
                         control={form.control}
                         name="allowGroupRegistration"
                         render={({ field }) => (
-                          <FormItem className="flex items-center justify-between my-3">
-                            <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí nhóm</FormLabel>
-                            <FormControl>
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
+                          <FormItem>
+                            <div className="flex items-center justify-between my-3">
+                              <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí nhóm</FormLabel>
+                              <FormControl>
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                              </FormControl>
+                            </div>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -353,15 +361,25 @@ const CourseOptionModal = ({
                         control={form.control}
                         name="allowStudentCreateProject"
                         render={({ field }) => (
-                          <FormItem className="flex items-center justify-between my-3">
-                            <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí đề tài</FormLabel>
-                            <FormControl>
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
+                          <FormItem>
+                            <div className="flex items-center justify-between my-3">
+                              <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí đề tài</FormLabel>
+                              <FormControl>
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                              </FormControl>
+                            </div>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
+                      <div className="mt-4 w-full flex justify-end">
+                        <Button type="submit" disabled={!canSubmit || hasSubmitted} className="w-20" variant="primary">
+                          {hasSubmitted && (
+                            <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
+                          )}
+                          Lưu
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   <div className="border-2 rounded-lg p-5 !my-8 col-span-6">
