@@ -32,7 +32,7 @@ const EditprojectModal = ({
   const router = useRouter();
 
   const FormSchema = z.object({
-    title: z.string().min(1, { message: 'Tên đề tài là trường bắt buộc.' }),
+    title: z.string().min(1, { message: 'Tên đồ án là trường bắt buộc.' }),
     description: z.string(),
   });
 
@@ -80,7 +80,7 @@ const EditprojectModal = ({
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle className="mx-auto">
-            {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Chỉnh sửa đề tài'}
+            {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Chỉnh sửa đồ án'}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -91,7 +91,7 @@ const EditprojectModal = ({
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase">Tên đề tài</FormLabel>
+                    <FormLabel className="text-xs font-bold uppercase">Tên đồ án</FormLabel>
                     <FormControl>
                       <>
                         <Input

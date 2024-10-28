@@ -42,7 +42,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </Link>
       </div>
 
-      <EditGroupModal isOpen={editModalOpen} setIsOpen={setEditModalOpen} group={data} />
+      <EditGroupModal
+        isOpen={editModalOpen}
+        setIsOpen={setEditModalOpen}
+        group={data}
+        minNumberOfMembers={data.course?.setting.minGroupSize || 1}
+        maxNumberOfMembers={data.course?.setting.maxGroupSize || 15}
+      />
       <CommonModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}

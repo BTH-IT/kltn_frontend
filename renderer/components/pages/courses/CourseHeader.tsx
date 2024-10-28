@@ -65,7 +65,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
           >
             Bài tập
           </Link>
-          {(user?.id === data.lecturerId || data.setting.hasFinalScore) && (
+          {data.setting.hasFinalScore && (
             <Link
               href={`/courses/${data.courseId}/projects`}
               className={`${

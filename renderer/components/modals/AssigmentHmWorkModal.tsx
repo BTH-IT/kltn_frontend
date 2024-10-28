@@ -43,6 +43,7 @@ const AssignmentHmWorkModal = ({
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
   const [scoreCols, setScoreCols] = useState<any[]>([]);
+  const [type, setType] = useState<any>(null);
   const [scoreSelectedOption, setScoreSelectedOption] = useState<any>(null);
   const [isChooseGroup, setIsChooseGroup] = useState<boolean>(false);
   const [dueDate, setDueDate] = useState<Date | undefined | null>(undefined);
@@ -95,12 +96,6 @@ const AssignmentHmWorkModal = ({
   };
 
   const submitForm = async (values: z.infer<typeof FormSchema>, courseId: string) => {
-    // if (!scoreSelectedOption) {
-    //   toast.error('Chọn cột điểm cho bài tập là bắt buộc!');
-
-    //   return;
-    // }
-
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
     const formattedDueDate = dueDate?.toISOString() ?? null;
@@ -113,6 +108,7 @@ const AssignmentHmWorkModal = ({
       attachedLinks: links,
       attachments: resAttachments,
       scoreStructureId: scoreSelectedOption.value,
+      type: type.value,
       isGroupAssigned: isChooseGroup,
     };
 
@@ -131,6 +127,10 @@ const AssignmentHmWorkModal = ({
 
   const onSubmit = async (values: z.infer<typeof FormSchema>): Promise<void> => {
     if (!course) return;
+    if (!type) {
+      toast.error('Vui lòng chọn loại bài tập');
+      return;
+    }
 
     try {
       const data = await createAssignment(values, course.courseId);
@@ -200,14 +200,18 @@ const AssignmentHmWorkModal = ({
                         <div className="font-medium">Loại bài tập</div>
                         <CreatableSelect
                           isClearable
-                          options={scoreCols.map((item) => {
-                            return {
-                              value: item.id,
-                              label: `${item.columnName} - ${item.percent}%`,
-                            };
-                          })}
-                          onChange={(selectedOption) => {
-                            setScoreSelectedOption(selectedOption);
+                          options={[
+                            {
+                              value: 'homework',
+                              label: 'Bài tập về nhà',
+                            },
+                            {
+                              value: 'quiz',
+                              label: 'Bài tập tại lớp',
+                            },
+                          ]}
+                          onChange={(value) => {
+                            setType(value);
                           }}
                         />
                       </div>

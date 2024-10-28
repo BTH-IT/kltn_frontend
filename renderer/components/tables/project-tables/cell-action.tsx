@@ -42,7 +42,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         setIsOpen={setIsDeleteModalOpen}
         width={400}
         height={150}
-        title="Bạn có muốn xoá đề tài này không?"
+        title="Bạn có muốn xoá đồ án này không?"
         acceptTitle="Xoá"
         acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
         ocClickAccept={async () => {

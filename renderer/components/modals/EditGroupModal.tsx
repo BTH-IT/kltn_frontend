@@ -17,17 +17,20 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
 import { useGroupContext } from '@/contexts/GroupContext';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreateProjectContext } from '@/contexts/CreateProjectContext';
 
 export const EditGroupModal = ({
   isOpen,
   setIsOpen,
   group,
+  minNumberOfMembers,
+  maxNumberOfMembers,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   group: IGroup;
+  minNumberOfMembers: number;
+  maxNumberOfMembers: number;
 }) => {
   const { groups, setGroups } = useGroupContext();
   const params = useParams();
@@ -35,16 +38,18 @@ export const EditGroupModal = ({
 
   const FormSchema = z.object({
     groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
-    numberOfMembers: z.coerce.number(),
+    numberOfMembers: z.coerce.number({
+      invalid_type_error: 'Số lượng thành viên phải là số.',
+    }),
     projectId: z
       .object({
         label: z.string(),
         value: z.string().min(1, {
-          message: 'Đề tài là trường bắt buộc.',
+          message: 'đồ án là trường bắt buộc.',
         }),
       })
       .refine((projectId) => projects.find((project) => project.projectId === projectId.value), {
-        message: 'Đề tài không hợp lệ.',
+        message: 'đồ án không hợp lệ.',
       }),
   });
 
@@ -52,7 +57,7 @@ export const EditGroupModal = ({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       groupName: '',
-      numberOfMembers: 2,
+      numberOfMembers: minNumberOfMembers,
       projectId: { label: '', value: '' },
     },
   });
@@ -69,6 +74,20 @@ export const EditGroupModal = ({
   }, [group, form, isOpen]);
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
+      if (values.numberOfMembers < minNumberOfMembers) {
+        form.setError('numberOfMembers', {
+          message: `Số lượng thành viên phải lớn hơn hoặc bằng ${minNumberOfMembers}.`,
+        });
+        return;
+      }
+
+      if (values.numberOfMembers > maxNumberOfMembers) {
+        form.setError('numberOfMembers', {
+          message: `Số lượng thành viên phải nhỏ hơn hoặc bằng ${maxNumberOfMembers}.`,
+        });
+        return;
+      }
+
       const res = await groupService.updateGroup(group.groupId, {
         ...values,
         projectId: values.projectId.value,
@@ -135,18 +154,19 @@ export const EditGroupModal = ({
                       <FormLabel className="text-xs font-bold uppercase">Số lượng</FormLabel>
                       <FormControl>
                         <>
-                          <Select onValueChange={field.onChange} defaultValue={field.value.toString()}>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Số lượng thành viên tối đa" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="2">2</SelectItem>
-                              <SelectItem value="3">3</SelectItem>
-                              <SelectItem value="4">4</SelectItem>
-                              <SelectItem value="5">5</SelectItem>
-                              <SelectItem value="10">10</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <Input
+                            disabled={form.formState.isSubmitting}
+                            className={cn(
+                              'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                              form.formState.isSubmitting && 'hidden',
+                            )}
+                            id="numberOfMembers"
+                            type="number"
+                            min={0}
+                            onChange={(e) => {
+                              field.onChange(parseInt(e.target.value));
+                            }}
+                          />
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                         </>
                       </FormControl>
@@ -159,7 +179,7 @@ export const EditGroupModal = ({
                   name="projectId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-bold uppercase">Đề tài</FormLabel>
+                      <FormLabel className="text-xs font-bold uppercase">đồ án</FormLabel>
                       <FormControl>
                         <ReactSelect
                           {...field}

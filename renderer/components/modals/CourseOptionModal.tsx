@@ -369,7 +369,7 @@ const CourseOptionModal = ({
                         render={({ field }) => (
                           <FormItem>
                             <div className="flex items-center justify-between my-3">
-                              <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí đề tài</FormLabel>
+                              <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí đồ án</FormLabel>
                               <FormControl>
                                 <Switch checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>

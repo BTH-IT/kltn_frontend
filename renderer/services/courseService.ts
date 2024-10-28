@@ -8,6 +8,10 @@ const courseService = {
     return configService.get(`${API_URL.COURSES}`);
   },
 
+  getStats(courseId: string): Promise<ApiResponse<any>> {
+    return configService.get(`${API_URL.COURSES}/${courseId}/statistic`);
+  },
+
   getCourseById(courseId: string): Promise<ApiResponse<ICourse>> {
     return configService.get(`${API_URL.COURSES}/${courseId}`);
   },

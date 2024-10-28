@@ -33,7 +33,9 @@ export const CreateGroupModal = ({
 
   const FormSchema = z.object({
     groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
-    numberOfMembers: z.coerce.number({ invalid_type_error: 'Số lượng thành viên phải là số.' }),
+    numberOfMembers: z.coerce.number({
+      invalid_type_error: 'Số lượng thành viên phải là số.',
+    }),
   });
 
   const form = useForm({
@@ -43,6 +45,7 @@ export const CreateGroupModal = ({
       numberOfMembers: minNumberOfMembers,
     },
   });
+
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       if (values.numberOfMembers < minNumberOfMembers) {

@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IGroup, IProject, IUser } from '@/types';
 import { useGroupContext } from '@/contexts/GroupContext';
 import { Button } from '@/components/ui/button';
+import courseService from '@/services/courseService';
 import { CreateGroupModal } from '@/components/modals/CreateGroupModal';
 
 import { userColumns as groupUserColumns } from '../group-tables/user-columns';
@@ -32,6 +33,7 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [projectCreated, setProjectCreated] = useState<IProject | null>(null);
   const [groupCreated, setGroupCreated] = useState<IGroup | null>(null);
+  const [stats, setStats] = useState<any>(null);
   const [currentGroup, setCurrentGroup] = useState<IGroup | null>(null);
   const { projects } = useContext(CreateProjectContext);
   const { course } = useContext(CourseContext);
@@ -59,6 +61,18 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
   }, [groupCreated]);
 
   useEffect(() => {
+    const fetchStats = async () => {
+      if (!course) return;
+
+      const res = await courseService.getStats(course.courseId);
+      console.log(res);
+      setStats(res.data);
+    };
+
+    fetchStats();
+  }, [course]);
+
+  useEffect(() => {
     if (course && user && groups.length > 0 && course.lecturerId !== user.id) {
       const currentGroup = groups.find((group) => group.groupMembers?.some((member) => member.studentId === user.id));
       currentGroup && setCurrentGroup(currentGroup);
@@ -78,7 +92,7 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
               <FileText className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{1}</div>
+              <div className="text-2xl font-bold">{stats?.numberOfGroups || 0}</div>
             </CardContent>
           </Card>
           <Card>
@@ -87,7 +101,7 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
               <Users className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{2}</div>
+              <div className="text-2xl font-bold">{stats?.numberOfProjects || 0}</div>
             </CardContent>
           </Card>
           <Card>
@@ -96,7 +110,7 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
               <BarChart2 className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{3}</div>
+              <div className="text-2xl font-bold">{stats?.numberOfUngroupStudents || 0}</div>
             </CardContent>
           </Card>
         </div>

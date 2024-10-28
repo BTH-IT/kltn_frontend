@@ -32,7 +32,7 @@ const CreateProjectModal = ({
   const { projects, setProjects } = useContext(CreateProjectContext);
 
   const FormSchema = z.object({
-    title: z.string().min(1, { message: 'Tên đề tài là trường bắt buộc.' }),
+    title: z.string().min(1, { message: 'Tên đồ án là trường bắt buộc.' }),
     description: z.string(),
   });
 
@@ -81,7 +81,7 @@ const CreateProjectModal = ({
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle className="mx-auto">
-            {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Tạo đề tài mới'}
+            {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Tạo đồ án mới'}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -92,7 +92,7 @@ const CreateProjectModal = ({
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase">Tên đề tài</FormLabel>
+                    <FormLabel className="text-xs font-bold uppercase">Tên đồ án</FormLabel>
                     <FormControl>
                       <>
                         <Input
@@ -141,7 +141,7 @@ const CreateProjectModal = ({
                 {form.formState.isSubmitting && (
                   <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                 )}
-                Tạo đề tài
+                Tạo đồ án
               </Button>
             </DialogFooter>
           </form>

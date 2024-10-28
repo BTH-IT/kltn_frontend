@@ -8,7 +8,7 @@ import { IProject } from '@/types';
 export const userColumns: ColumnDef<IProject>[] = createColumns([
   {
     accessorKey: 'title',
-    header: 'Tên đề tài',
+    header: 'Tên đồ án',
     sortable: true,
   },
   {

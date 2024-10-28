@@ -11,7 +11,7 @@ import { CellSwitch } from './cell-swtich';
 export const columns: ColumnDef<IProject>[] = createColumns([
   {
     accessorKey: 'title',
-    header: 'Tên đề tài',
+    header: 'Tên đồ án',
     sortable: true,
   },
   {
