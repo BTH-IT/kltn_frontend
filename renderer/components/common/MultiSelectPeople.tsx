@@ -67,7 +67,7 @@ const MultiSelectPeople = (props: any) => {
           {props.children}
         </components.Input>
       ) : (
-        <div style={{ border: '1px dotted gray' }}>
+        <div>
           <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
             {props.children}
           </components.Input>

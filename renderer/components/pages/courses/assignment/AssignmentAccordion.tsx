@@ -127,8 +127,8 @@ const AssignmentAccordion = ({
                         <DropdownMenuItem
                           className="flex items-center gap-3 p-2 text-md"
                           onClick={(e) => {
-                            e.preventDefault();
                             setIsEditModalOpen(true);
+                            e.stopPropagation();
                           }}
                         >
                           Chỉnh sửa
@@ -136,8 +136,8 @@ const AssignmentAccordion = ({
                         <DropdownMenuItem
                           className="flex items-center gap-3 p-2 text-md"
                           onClick={(e) => {
-                            e.preventDefault();
                             setIsDeleteModalOpen(true);
+                            e.stopPropagation();
                           }}
                         >
                           Xóa
@@ -147,8 +147,8 @@ const AssignmentAccordion = ({
                     <DropdownMenuItem
                       className="flex items-center gap-3 p-2 text-md"
                       onClick={(e) => {
-                        e.preventDefault();
                         handleCopyLinkClick();
+                        e.stopPropagation();
                       }}
                     >
                       Sao chép đường liên kết

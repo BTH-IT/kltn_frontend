@@ -40,7 +40,7 @@ export default function ReportHistory({ briefs }: { briefs: IBrief[] }) {
     setItems([
       { label: 'Lớp học', href: '/' },
       { label: breadcrumbLabel1, href: `/courses/${briefs[0].group?.course.courseId}` },
-      { label: 'Nhóm', href: `/courses/${briefs[0].group.course.courseId}/groups` },
+      { label: 'Đồ án / Tiểu luận', href: `/courses/${briefs[0].group?.course.courseId}/projects` },
       { label: breadcrumbLabel2, href: `/groups/${briefs[0].group?.groupId}` },
       { label: 'Tóm tắt lịch sử báo cáo' },
     ]);

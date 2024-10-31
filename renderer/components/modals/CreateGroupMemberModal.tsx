@@ -54,13 +54,14 @@ const CreateGroupMemberModal = ({
   });
 
   const generateOptions = useCallback(() => {
-    return group?.course?.students.map((s) => {
+    const data = group?.course?.students.map((s) => {
       return {
         label: `${s.fullName || s.userName}`,
         value: s.id,
       };
     });
-  }, [group?.course?.students]);
+    return data?.filter((s) => !group?.groupMembers?.find((m) => m.studentId === s.value));
+  }, [group]);
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {

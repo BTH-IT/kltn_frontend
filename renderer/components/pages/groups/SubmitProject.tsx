@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { AssignmentContext } from '@/contexts/AssignmentContext';
 import CommentList from '@/components/common/CommentList';
-import { IComment, ISubmission, IUser } from '@/types';
+import { IAssignment, IComment, IGroup, ISubmission, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import commentService from '@/services/commentService';
 import {
@@ -37,21 +37,23 @@ import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
-export default function AssignmentDetail() {
-  const { assignment } = useContext(AssignmentContext);
+export default function SubmitProject({ group, assignment }: { group: IGroup; assignment: IAssignment }) {
   const { setItems } = useContext(BreadcrumbContext);
 
   useEffect(() => {
-    if (!assignment || !assignment?.course) return;
+    if (!group.course) return;
 
-    const breadcrumbLabel = assignment.course.name;
+    const breadcrumbLabel1 = group.course.name;
+    const breadcrumbLabel2 = group.groupName;
 
     setItems([
       { label: 'Lớp học', href: '/' },
-      { label: breadcrumbLabel, href: `/courses/${assignment.course.courseId}` },
-      { label: assignment.title },
+      { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
+      { label: 'Đồ án / Tiểu luận', href: `/courses/${group.course.courseId}/projects` },
+      { label: breadcrumbLabel2, href: `/groups/${group.course.courseId}/${group.groupId}` },
+      { label: 'Nộp bài' },
     ]);
-  }, [assignment, setItems]);
+  }, [group, setItems]);
 
   const [comments, setComments] = useState<IComment[]>([]);
   const [currentUser, setUser] = useState<IUser | null>(null);
@@ -85,7 +87,7 @@ export default function AssignmentDetail() {
         if (!currentUser || !assignment.submission) return false;
 
         const isCreator = assignment.submission.createUser.id === currentUser.id;
-        const isLecturer = currentUser.id === assignment.course.lecturerId;
+        const isLecturer = currentUser.id === group.course.lecturerId;
         const isOverdue = assignment.dueDate ? new Date(assignment.dueDate) < new Date() : false;
 
         return isLecturer || (isCreator && !isOverdue);
@@ -95,7 +97,7 @@ export default function AssignmentDetail() {
         setIsSubmissionDeletable(true);
       }
     }
-  }, [assignment, currentUser]);
+  }, [group, assignment, currentUser]);
 
   const onSubmit = async (data: any) => {
     if (!currentUser?.id || !assignment) return;
@@ -213,13 +215,7 @@ export default function AssignmentDetail() {
                     {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
                     {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
                   </p>
-                  {assignment?.scoreStructure && (
-                    <p className="text-sm text-muted-foreground">
-                      Bài tập cho cột điểm: {assignment?.scoreStructure?.columnName} -{' '}
-                      {assignment?.scoreStructure?.percent}
-                      {'%'}
-                    </p>
-                  )}
+                  <p className="text-sm text-muted-foreground">Bài tập cho cột điểm: Cuối kỳ - 50%</p>
                 </div>
               </div>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -230,17 +226,15 @@ export default function AssignmentDetail() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-auto" align="end">
                       <DropdownMenuGroup>
-                        {assignment?.scoreStructure && (
-                          <DropdownMenuItem
-                            onClick={() =>
-                              router.push(
-                                `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
-                              )
-                            }
-                          >
-                            Xem danh sách nộp bài
-                          </DropdownMenuItem>
-                        )}
+                        <DropdownMenuItem
+                          onClick={() =>
+                            router.push(
+                              `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
+                            )
+                          }
+                        >
+                          Xem danh sách nộp bài
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.preventDefault();
@@ -357,13 +351,13 @@ export default function AssignmentDetail() {
           <SubmitAssignmentModal
             onOpenModal={isSubmit}
             setOnOpenModal={setIsSubmit}
-            course={assignment.course}
+            course={group.course}
             assignment={assignment}
           />
           <ViewSubmissionModal
             onOpenModal={isViewSubmissionModalOpen}
             setOnOpenModal={setIsViewSubmissionModalOpen}
-            course={assignment.course}
+            course={group.course}
             assignment={assignment}
             user={currentUser}
           />

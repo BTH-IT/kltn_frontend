@@ -1,4 +1,4 @@
-import { ApiResponse, ICourse, ISetting } from '@/types';
+import { ApiResponse, IAssignment, ICourse, ISetting } from '@/types';
 import { API_URL } from '@/constants/endpoints';
 
 import configService from './configService';
@@ -76,6 +76,9 @@ const courseService = {
 
   changeSetting(courseId: string, data: Partial<ISetting>): Promise<ApiResponse<ISetting>> {
     return configService.post(`${API_URL.SETTINGS}/${courseId}/settings`, data);
+  },
+  getEndTerm(courseId: string): Promise<ApiResponse<IAssignment>> {
+    return configService.get(`${API_URL.COURSES}/${courseId}/end-term`);
   },
 };
 

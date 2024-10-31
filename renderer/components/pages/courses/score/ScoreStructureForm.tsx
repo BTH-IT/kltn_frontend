@@ -206,6 +206,8 @@ export default function ScoreStructureForm() {
     return col.children?.reduce((sum, subCol) => sum + calculateTotalPercentage(subCol), 0);
   };
 
+  console.log(scoreStructure);
+
   const processPercentage = calculateTotalPercentage(scoreStructure.children?.[0] || { percent: 0 });
   const finalExamPercentage = scoreStructure.children?.[1]?.percent || 0;
   const totalPercentage = processPercentage + finalExamPercentage;

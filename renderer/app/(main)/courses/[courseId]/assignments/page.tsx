@@ -49,7 +49,7 @@ const AssignmentPage = () => {
   useEffect(() => {
     setIsMounted(true);
     if (course) {
-      setAssignments(course.assignments);
+      setAssignments(course.assignments.filter((assign) => assign.type.toLowerCase() !== 'final'));
     }
   }, [course, user]);
 

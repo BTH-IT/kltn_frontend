@@ -7,6 +7,7 @@ export interface IAssignment {
   assignmentId: string;
   courseId: string;
   title: string;
+  type: string;
   content: string;
   dueDate?: string | null;
   attachments: any;
