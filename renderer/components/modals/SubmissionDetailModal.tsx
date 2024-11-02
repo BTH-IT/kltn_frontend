@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarIcon, GraduationCapIcon, ClipboardIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
+import { formatVNDate } from '@/utils/index';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -24,9 +26,17 @@ interface StudentSubmissionDialogProps {
   currentStudent: ISubmissionList;
   student: ISubmissionList | null;
   setStudent: React.Dispatch<React.SetStateAction<ISubmissionList | null>>;
+  isGroup?: boolean;
+  groupName?: string;
 }
 
-export default function SubmissionDetailModal({ currentStudent, student, setStudent }: StudentSubmissionDialogProps) {
+export default function SubmissionDetailModal({
+  currentStudent,
+  student,
+  setStudent,
+  isGroup = false,
+  groupName = '',
+}: StudentSubmissionDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [score, setScore] = useState<number | null>(student?.score || null);
   const [activeTab, setActiveTab] = useState('details');
@@ -43,23 +53,28 @@ export default function SubmissionDetailModal({ currentStudent, student, setStud
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Đã chấm':
-        return 'bg-green-500';
+        return 'done';
       case 'Đã nộp':
-        return 'bg-yellow-500';
-      case 'Chưa nộp':
-        return 'bg-red-500';
+        return 'default';
       default:
-        return 'bg-gray-500';
+        return 'destructive';
     }
   };
 
   const handleScoreSubmit = async () => {
-    if (score !== null && student?.submission?.submissionId) {
-      await scoreService.createScoreSubmission(student?.submission?.submissionId, {
-        value: score,
-      });
+    try {
+      if (score !== null && student?.submission?.submissionId) {
+        await scoreService.createScoreSubmission(student?.submission?.submissionId, {
+          value: score,
+        });
 
-      router.refresh();
+        router.refresh();
+      }
+    } catch (error) {
+      console.error(error);
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
     }
   };
 
@@ -80,7 +95,9 @@ export default function SubmissionDetailModal({ currentStudent, student, setStud
                 <AvatarImage src={student?.user.avatar ?? '/images/avt.png'} alt={student?.user.userName} />
                 <AvatarFallback>{student?.user.userName.charAt(0)}</AvatarFallback>
               </Avatar>
-              <span>Bài nộp của {student?.user.userName ?? 'Sinh viên'}</span>
+              <span>
+                Bài nộp của {student?.user.userName ?? 'Sinh viên'} {isGroup && ` - Nhóm: ${groupName}`}
+              </span>
             </div>
             {student?.score !== null && (
               <div className="flex items-center space-x-2 text-sm">
@@ -98,16 +115,13 @@ export default function SubmissionDetailModal({ currentStudent, student, setStud
           <TabsContent value="details">
             <div className="mt-4 space-y-4">
               <div className="flex items-center justify-between">
-                <Badge variant="secondary" className={`${getStatusColor(status)} text-white`}>
+                <Badge variant={getStatusColor(status)} className="text-white px-3 py-1">
                   {status}
                 </Badge>
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                   <CalendarIcon className="w-4 h-4" />
                   <span>
-                    Ngày nộp:{' '}
-                    {student?.submission
-                      ? format(new Date(student.submission.createdAt), 'dd/MM/yyyy')
-                      : 'Chưa nộp bài'}
+                    Ngày nộp: {student?.submission ? formatVNDate(student.submission.createdAt) : 'Chưa nộp bài'}
                   </span>
                 </div>
               </div>

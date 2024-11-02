@@ -16,4 +16,6 @@ export interface ISubmissionList {
   score: number | null;
   submission: ISubmission | null;
   user: IUser;
+  groupId: string;
+  groupName: string;
 }

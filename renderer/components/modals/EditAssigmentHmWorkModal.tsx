@@ -42,11 +42,13 @@ const EditAssignmentHmWorkModal = ({
   setOnOpenModal,
   assignment,
   setAssignments,
+  isFinal = false,
 }: {
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   assignment: IAssignment;
   setAssignments?: React.Dispatch<React.SetStateAction<IAssignment[]>>;
+  isFinal?: boolean;
 }) => {
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
@@ -84,13 +86,16 @@ const EditAssignmentHmWorkModal = ({
       setDueDate(assignment.dueDate ? new Date(assignment.dueDate) : undefined);
       setFiles(assignment.attachments || []);
       setLinks(assignment.attachedLinks || []);
-      setSelectedScore({
-        value: assignment.scoreStructureId,
-        label: `${assignment.scoreStructure?.columnName} - ${assignment.scoreStructure?.percent}%`,
-      });
+      assignment.scoreStructureId !== null &&
+        setSelectedScore({
+          value: assignment.scoreStructureId,
+          label: `${assignment.scoreStructure?.columnName} - ${assignment.scoreStructure?.percent}%`,
+        });
       setIsChooseGroup(assignment.isGroupAssigned);
     }
   }, [assignment, onOpenModal, course, form]);
+
+  console.log(selectedScore);
 
   const handleAddYoutubeLink = (selectedVideo: YoutubeCardProps | null) => {
     if (selectedVideo) {
@@ -110,7 +115,13 @@ const EditAssignmentHmWorkModal = ({
   const submitForm = async (values: z.infer<typeof FormSchema>) => {
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
-    const formattedDueDate = dueDate?.toISOString() ?? null;
+    const formattedDueDate = dueDate
+      ? (() => {
+          const newDate = new Date(dueDate);
+          newDate.setHours(newDate.getHours() + 7);
+          return newDate.toISOString().split('.')[0] + 'Z';
+        })()
+      : null;
 
     const data = {
       title: values.title,
@@ -121,6 +132,7 @@ const EditAssignmentHmWorkModal = ({
       attachments: resAttachments,
       scoreStructureId: scoreSelectedOption.value,
       isGroupAssigned: isChooseGroup,
+      type: assignment.type,
     };
 
     return await assignmentService.updateAssignment(assignment.assignmentId, data);
@@ -231,11 +243,16 @@ const EditAssignmentHmWorkModal = ({
                           onChange={(selectedOption) => {
                             setScoreSelectedOption(selectedOption);
                           }}
+                          isDisabled={isFinal}
                         />
                       </div>
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Áp dụng cho nhóm?</div>
-                        <Switch checked={isChooseGroup} onCheckedChange={(value) => setIsChooseGroup(value)} />
+                        <Switch
+                          checked={isChooseGroup}
+                          onCheckedChange={(value) => setIsChooseGroup(value)}
+                          disabled={isFinal}
+                        />
                       </div>
                     </div>
                   </div>

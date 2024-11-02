@@ -246,7 +246,7 @@ export default function AssignmentDetail() {
                         )}
                         <DropdownMenuItem
                           onClick={(e) => {
-                            e.preventDefault();
+                            e.stopPropagation();
                             setIsEdit(true);
                           }}
                         >
@@ -254,7 +254,7 @@ export default function AssignmentDetail() {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
-                            e.preventDefault();
+                            e.stopPropagation();
                             setIsDeleteModalOpen(true);
                           }}
                         >

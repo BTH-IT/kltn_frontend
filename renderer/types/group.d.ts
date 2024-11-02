@@ -5,7 +5,7 @@ import { IBaseModel, IBrief, ICourse, IProject, IUser } from '.';
 export interface IGroup extends IBaseModel {
   groupId: string;
   courseId: string;
-  course?: ICourse;
+  course: ICourse;
   groupName: string;
   projectId?: string;
   numberOfMembers: number;
