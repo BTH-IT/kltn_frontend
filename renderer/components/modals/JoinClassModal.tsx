@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,14 +22,26 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/libs/utils';
 import courseService from '@/services/courseService';
 import { CoursesContext } from '@/contexts/CoursesContext';
+import { IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
-  const { enrolledCourses, setenrolledCourses } = useContext(CoursesContext);
+  const { enrolledCourses, setEnrolledCourses } = useContext(CoursesContext);
   const router = useRouter();
-  const user = null;
+  const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, []);
 
   const FormSchema = z.object({
     inviteCode: z.string().refine((inviteCode) => inviteCode.length === 7, {
@@ -57,11 +69,11 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       setHasSubmitted(true);
-      const res = await courseService.getClassByInviteCode(values.inviteCode.toLowerCase());
-      if (res.data?.classId && user?.id) {
-        await classService.addStudentToClass(String(res.data.classId), user.id);
-        setenrolledCourses([...enrolledCourses, res.data]);
-        router.push(`/course/${res.data.classId}`);
+      const res = await courseService.getCourseByInviteCode(values.inviteCode.toLowerCase());
+      if (res.data?.courseId && user?.email) {
+        await courseService.addStudents(String(res.data.courseId), [user.email]);
+        setEnrolledCourses([...enrolledCourses, res.data]);
+        router.push(`/course/${res.data.courseId}`);
 
         setHasSubmitted(false);
       } else {
@@ -146,7 +158,7 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
               type="submit"
               className="text-blue-500 hover:bg-blue-50/50 hover:text-blue-500"
             >
-              OK
+              Ok
             </Button>
           </DialogFooter>
         </DialogContent>

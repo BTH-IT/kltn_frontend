@@ -5,7 +5,6 @@
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Lock, User } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
@@ -16,23 +15,9 @@ import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
 import { SET_LOCALSTORAGE } from '@/utils';
 import withPermission from '@/libs/hoc/withPermission';
+import { signUpSchema, SignUpFormInputs } from '@/utils/schemas';
 
 import InputForm from '../_components/InputForm';
-
-export const passwordSchema = z
-  .string()
-  .min(8, 'Password must be at least 8 characters')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(/[#!@$%^&*-]/, 'Password must contain at least one special character (#?!@$%^&*-)');
-
-const signUpSchema = z.object({
-  identifier: z.string().min(1, 'Username or email is required'),
-  password: passwordSchema,
-});
-
-type SignUpFormInputs = z.infer<typeof signUpSchema>;
 
 export default withPermission(() => {
   const router = useRouter();
@@ -94,7 +79,7 @@ export default withPermission(() => {
               iconEnd
             />
 
-            <div className="w-full flex justify-end">
+            <div className="flex justify-end w-full">
               <Link href={'/forgot-password'} className="text-[#2FB2AC]">
                 Forgot password?
               </Link>

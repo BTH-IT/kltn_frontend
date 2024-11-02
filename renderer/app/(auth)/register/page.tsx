@@ -13,9 +13,9 @@ import { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
 import { SET_LOCALSTORAGE } from '@/utils';
+import { passwordSchema } from '@/utils/schemas';
 
 import InputForm from '../_components/InputForm';
-import { passwordSchema } from '../login/page';
 
 const signUpSchema = z
   .object({
@@ -24,7 +24,9 @@ const signUpSchema = z
     customId: z
       .string()
       .min(1, 'Student ID is required')
-      .refine((value) => value.length === 10, { message: 'Student ID must be 10 characters' }),
+      .refine((value) => value.length === 10, {
+        message: 'Student ID must be 10 characters',
+      }),
     email: z.string().email('Invalid email address'),
     password: passwordSchema,
     confirmPassword: z.string().min(8, 'confirmPassword must be at least 8 characters'),

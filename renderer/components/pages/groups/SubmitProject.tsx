@@ -49,8 +49,14 @@ export default function SubmitProject({ group, assignment }: { group: IGroup; as
     setItems([
       { label: 'Lớp học', href: '/' },
       { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
-      { label: 'Đồ án / Tiểu luận', href: `/courses/${group.course.courseId}/projects` },
-      { label: breadcrumbLabel2, href: `/groups/${group.course.courseId}/${group.groupId}` },
+      {
+        label: 'Đồ án / Tiểu luận',
+        href: `/courses/${group.course.courseId}/projects`,
+      },
+      {
+        label: breadcrumbLabel2,
+        href: `/groups/${group.course.courseId}/${group.groupId}`,
+      },
       { label: 'Nộp bài' },
     ]);
   }, [group, setItems]);
@@ -87,7 +93,7 @@ export default function SubmitProject({ group, assignment }: { group: IGroup; as
         if (!currentUser || !assignment.submission) return false;
 
         const isCreator = assignment.submission.createUser.id === currentUser.id;
-        const isLecturer = currentUser.id === group.course.lecturerId;
+        const isLecturer = currentUser.id === group.course?.lecturerId;
         const isOverdue = assignment.dueDate ? new Date(assignment.dueDate) < new Date() : false;
 
         return isLecturer || (isCreator && !isOverdue);
@@ -351,13 +357,13 @@ export default function SubmitProject({ group, assignment }: { group: IGroup; as
           <SubmitAssignmentModal
             onOpenModal={isSubmit}
             setOnOpenModal={setIsSubmit}
-            course={group.course}
+            course={group.course || null}
             assignment={assignment}
           />
           <ViewSubmissionModal
             onOpenModal={isViewSubmissionModalOpen}
             setOnOpenModal={setIsViewSubmissionModalOpen}
-            course={group.course}
+            course={group.course || null}
             assignment={assignment}
             user={currentUser}
           />

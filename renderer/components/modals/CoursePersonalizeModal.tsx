@@ -44,20 +44,23 @@ const CoursePersonalizeModal = ({ children, data }: { children: React.ReactNode;
     if (!file) return;
 
     try {
-      const url = await uploadService.uploadFile(file);
+      const res = await uploadService.uploadMultipleFileWithAWS3([file]);
 
-      await courseService.updateCourse(String(data.classId), {
+      if (!res[0].url) return;
+
+      await courseService.updateCourse(String(data.courseId), {
         ...data,
-        background: url,
+        background: res[0].url,
       });
 
-      setUploadedImageUrl(url);
+      setUploadedImageUrl(res[0].url);
       setFile(null);
 
       toast({
-        title: 'Image Uploaded Successfully',
-        description: 'Your image has been uploaded and set as the cover image.',
+        title: 'Tải ảnh lên thành công',
+        description: 'Ảnh của bạn đã được tải lên và đặt làm ảnh bìa.',
       });
+
       router.refresh();
     } catch (error) {
       console.error('Upload failed', error);
