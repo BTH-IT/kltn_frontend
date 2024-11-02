@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import '@/styles/components/navigation/nav-sidebar.scss';
-import { House, GraduationCap, Settings, Users } from 'lucide-react';
+import { House, GraduationCap, Settings, Users, Pocket } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Separator } from '@/components/ui/separator';
@@ -82,6 +82,12 @@ const NavigationSidebar = () => {
           <div>
             <Separator className="my-2" />
             <ul className="py-3">
+              <SidebarItem
+                label="Lớp học đã lưu trữ"
+                icon={<Pocket size={20} />}
+                href="/saves"
+                isActive={path === 'saves'}
+              />
               <SidebarItem
                 label="Cài đặt"
                 icon={<Settings size={20} />}

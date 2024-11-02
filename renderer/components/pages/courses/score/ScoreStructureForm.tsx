@@ -24,6 +24,18 @@ export default function ScoreStructureForm() {
   useEffect(() => {
     if (course) {
       setScoreStructure(course.scoreStructure || null);
+
+      const getExpandableColumnIds = (col: IScoreStructure): string[] => {
+        let ids = col.children?.length > 0 ? [col.id] : [];
+        col.children?.forEach((child) => {
+          ids = ids.concat(getExpandableColumnIds(child));
+        });
+        return ids;
+      };
+
+      if (course.scoreStructure) {
+        setExpandedColumns(getExpandableColumnIds(course.scoreStructure));
+      }
     }
   }, [course, setScoreStructure]);
 
