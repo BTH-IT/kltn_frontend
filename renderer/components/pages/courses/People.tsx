@@ -169,7 +169,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
           type={isTeacher ? 'teacher' : 'student'}
           dropdownMenu={
             <>
-              {user?.id === course.lecturerId && (
+              {user?.id === course.lecturerId && user?.id !== d.id && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild className="cursor-pointer">
                     <EllipsisVertical />

@@ -47,8 +47,14 @@ export default function AssigmentSubmited() {
 
     setItems([
       { label: 'Lớp học', href: '/' },
-      { label: breadcrumbLabel1, href: `/courses/${assignment.course.courseId}` },
-      { label: 'Bài tập', href: `/courses/${assignment.course.courseId}/assignments` },
+      {
+        label: breadcrumbLabel1,
+        href: `/courses/${assignment.course.courseId}`,
+      },
+      {
+        label: 'Bài tập',
+        href: `/courses/${assignment.course.courseId}/assignments`,
+      },
       { label: breadcrumbLabel2 },
     ]);
   }, [assignment, setItems]);
@@ -135,9 +141,6 @@ export default function AssigmentSubmited() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">{assignment?.title || ''}</h1>
         <div className="flex space-x-2">
-          {/* <Button variant="ghost" size="icon">
-            <Settings2 className="w-5 h-5" />
-          </Button> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="cursor-pointer">
               <Settings2 className="w-5 h-5" />
@@ -265,7 +268,7 @@ export default function AssigmentSubmited() {
         </Table>
       </div>
 
-      <div className="w-full flex justify-end mt-5">
+      <div className="flex justify-end w-full mt-5">
         <Button className="flex gap-2" onClick={handlePrintClick}>
           <Printer className="w-4 h-4" />
           In bảng điểm

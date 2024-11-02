@@ -180,7 +180,7 @@ const AssignmentAccordion = ({
                 href={`/courses/${assignment.courseId}/assignments/${assignment.assignmentId}`}
                 className="p-3 font-medium text-center text-blue-600 transition-all duration-300 ease-in-out rounded-md hover:text-blue-800 hover:bg-blue-100/30"
               >
-                {type === 'document' ? 'Xem tài liệu' : 'Xem Hướng dẫn'}
+                {type === 'document' ? 'Xem tài liệu' : 'Xem chi tiết'}
               </Link>
             </div>
           </div>

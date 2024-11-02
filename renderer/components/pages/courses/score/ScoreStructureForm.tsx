@@ -37,7 +37,6 @@ export default function ScoreStructureForm() {
       columnName: 'Cột con mới',
       percent: 0,
       parentId,
-      maxPercent: 0,
       children: [],
     };
 
@@ -206,8 +205,6 @@ export default function ScoreStructureForm() {
     return col.children?.reduce((sum, subCol) => sum + calculateTotalPercentage(subCol), 0);
   };
 
-  console.log(scoreStructure);
-
   const processPercentage = calculateTotalPercentage(scoreStructure.children?.[0] || { percent: 0 });
   const finalExamPercentage = scoreStructure.children?.[1]?.percent || 0;
   const totalPercentage = processPercentage + finalExamPercentage;
@@ -227,7 +224,6 @@ export default function ScoreStructureForm() {
         columnName: scoreStructure.columnName,
         percent: scoreStructure.percent,
         courseId: course.courseId,
-        maxPercent: scoreStructure.maxPercent as number,
         parentId: null,
         children: scoreStructure.children, // Bao gồm cấu trúc con đầy đủ
       };
