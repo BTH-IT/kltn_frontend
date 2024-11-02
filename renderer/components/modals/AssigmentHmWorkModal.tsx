@@ -98,6 +98,11 @@ const AssignmentHmWorkModal = ({
   const submitForm = async (values: z.infer<typeof FormSchema>, courseId: string) => {
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
+    if (!type.value) {
+      toast.error('Vui lòng chọn loại bài tập');
+      return;
+    }
+
     const formattedDueDate = dueDate?.toISOString() ?? null;
 
     const data = {
@@ -107,7 +112,7 @@ const AssignmentHmWorkModal = ({
       dueDate: formattedDueDate,
       attachedLinks: links,
       attachments: resAttachments,
-      scoreStructureId: scoreSelectedOption.value,
+      scoreStructureId: scoreSelectedOption?.value,
       type: type.value,
       isGroupAssigned: isChooseGroup,
     };
@@ -206,7 +211,7 @@ const AssignmentHmWorkModal = ({
                               label: 'Bài tập về nhà',
                             },
                             {
-                              value: 'quiz',
+                              value: 'classwork',
                               label: 'Bài tập tại lớp',
                             },
                           ]}

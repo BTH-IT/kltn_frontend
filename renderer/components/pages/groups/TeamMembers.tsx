@@ -34,7 +34,7 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
     setItems([
       { label: 'Lớp học', href: '/' },
       { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
-      { label: 'Nhóm', href: `/courses/${group.course.courseId}/groups` },
+      { label: 'Đồ án / Tiểu luận', href: `/courses/${group.course.courseId}/projects` },
       { label: breadcrumbLabel2 },
     ]);
   }, [group, setItems]);

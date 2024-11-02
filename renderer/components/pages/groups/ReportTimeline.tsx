@@ -42,7 +42,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
     setItems([
       { label: 'Lớp học', href: '/' },
       { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
-      { label: 'Nhóm', href: `/courses/${group.course.courseId}/groups` },
+      { label: 'Đồ án / Tiểu luận', href: `/courses/${group.course.courseId}/projects` },
       { label: breadcrumbLabel2, href: `/groups/${group.course.courseId}/${group.groupId}` },
       { label: 'Báo cáo' },
     ]);
