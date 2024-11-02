@@ -54,7 +54,7 @@ export const getLeafColumns = (node: IScoreStructure): IScoreStructure[] => {
   return leaves;
 };
 
-const formatDateTime = (isoString: string) => {
+export const formatDateTime = (isoString: string) => {
   const date = new Date(isoString);
   const options: any = {
     day: '2-digit',

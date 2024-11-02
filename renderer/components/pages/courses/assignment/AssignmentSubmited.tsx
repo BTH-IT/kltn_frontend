@@ -4,7 +4,7 @@ import { useContext, useEffect, useRef, useState, MouseEventHandler } from 'reac
 import { Settings2, Search, Calendar as CalendarIcon, FileText, Printer } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
 import { useReactToPrint } from 'react-to-print';
@@ -32,8 +32,7 @@ import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkMo
 import CommonModal from '@/components/modals/CommonModal';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
-export default function AssigmentSubmited() {
-  const params = useParams();
+export default function AssigmentSubmited({ submissions }: { submissions: ISubmissionList[] }) {
   const router = useRouter();
 
   const { assignment } = useContext(AssignmentContext);
@@ -57,24 +56,15 @@ export default function AssigmentSubmited() {
   const reactToPrintFn = useReactToPrint({ contentRef });
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [students, setStudents] = useState<ISubmissionList[]>([]);
+  const [studentSubmissions, setStudentSubmissions] = useState<ISubmissionList[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedStudent, setSelectedStudent] = useState<ISubmissionList | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
-    const handleData = async () => {
-      try {
-        const res = await assignmentService.getSubmissionsById(params.assignmentId as string);
-        console.log(res.data);
-        setStudents(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    handleData();
-  }, [params.assignmentId]);
+    setStudentSubmissions(submissions);
+  }, [submissions]);
 
   const now = new Date();
 
@@ -97,12 +87,12 @@ export default function AssigmentSubmited() {
   };
 
   const stats = {
-    submitted: students.filter((student) => categorizeStudentStatus(student) === 'Đã nộp').length,
-    graded: students.filter((student) => categorizeStudentStatus(student) === 'Đã chấm bài').length,
-    notSubmit: students.filter((student) => categorizeStudentStatus(student) === 'Chưa nộp bài').length,
+    submitted: studentSubmissions.filter((student) => categorizeStudentStatus(student) === 'Đã nộp').length,
+    graded: studentSubmissions.filter((student) => categorizeStudentStatus(student) === 'Đã chấm bài').length,
+    notSubmit: studentSubmissions.filter((student) => categorizeStudentStatus(student) === 'Chưa nộp bài').length,
   };
 
-  const filteredStudents = students.filter(
+  const filteredStudents = studentSubmissions.filter(
     (student) =>
       student.user.userName.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (!selectedDate ||
@@ -146,7 +136,7 @@ export default function AssigmentSubmited() {
               <DropdownMenuGroup>
                 <DropdownMenuItem
                   onClick={(e) => {
-                    e.preventDefault();
+                    e.stopPropagation();
                     setIsEditModalOpen(true);
                   }}
                 >
@@ -154,7 +144,7 @@ export default function AssigmentSubmited() {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={(e) => {
-                    e.preventDefault();
+                    e.stopPropagation();
                     setIsDeleteModalOpen(true);
                   }}
                 >
@@ -242,7 +232,7 @@ export default function AssigmentSubmited() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={categorizeStudentStatus(student) === 'Đã chấm bài' ? 'destructive' : 'default'}>
+                  <Badge variant={categorizeStudentStatus(student) === 'Đã chấm bài' ? 'done' : 'default'}>
                     {categorizeStudentStatus(student)}
                   </Badge>
                 </TableCell>

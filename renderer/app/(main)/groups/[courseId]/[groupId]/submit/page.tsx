@@ -8,9 +8,10 @@ const GroupSubmitPage = async ({ params }: { params: { courseId: string; groupId
     payload: { data: group },
   } = await http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`);
   const {
-    payload: { data: assignment },
+    payload: { data: data },
   } = await http.get<IAssignment>(`${API_URL.COURSES}/${params.courseId}/end-term`);
-  return <SubmitProject group={group} assignment={assignment} />;
+
+  return <SubmitProject group={group} data={data} />;
 };
 
 export default GroupSubmitPage;

@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { add, format } from 'date-fns';
+import { add } from 'date-fns';
 import { Calendar as CalendarIcon, X as XIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/libs/utils';
+import { formatVNDate } from '@/utils';
 
 import { TimePicker } from './TimePicker';
 
@@ -47,7 +48,7 @@ export function DateTimePicker({
         >
           <CalendarIcon className="w-4 h-4 mr-2" />
           <div className="flex items-center justify-between flex-1 gap-2">
-            {date && !isNaN(date.getTime()) ? format(date || '', 'PPP HH:mm:ss') : <span>Không có ngày hạn</span>}
+            {date && !isNaN(date.getTime()) ? formatVNDate(date.toISOString() || '') : <span>Không có ngày hạn</span>}
             {date && !isNaN(date.getTime()) && <XIcon className="w-4 h-4 ml-2" onClick={handleClear} />}
           </div>
         </Button>
