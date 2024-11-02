@@ -296,22 +296,20 @@ const BulletForm = ({
             </div>
           )}
         </div>
-        <div className="px-3 pt-3">
-          <Controller
-            name="content"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <ReactQuill
-                theme="snow"
-                placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
-                className="flex-1 rounded-md h-[180px]"
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </div>
+        <Controller
+          name="content"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <ReactQuill
+              theme="snow"
+              placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
+              className="flex-1 rounded-md h-[180px] mx-3 mt-3"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
         <div>
           <AnnouncementFileList files={files} setFiles={setFiles} />
           <AnnouncementLinkList links={links} setLinks={setLinks} />

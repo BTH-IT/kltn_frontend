@@ -50,33 +50,35 @@ const CommentInput = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex gap-3 items-center p-4 comment ${isFocus ? 'active' : ''}`}
+      className={`flex gap-3 items-end pt-6 comment w-full ${isFocus ? 'active' : ''}`}
     >
-      <Image
-        src={currentUser?.avatar || '/images/avt.png'}
-        height={3000}
-        width={3000}
-        alt="avatar"
-        className="w-[35px] h-[35px] rounded-full flex-shrink-0"
-      />
+      <div className="flex items-start flex-1 gap-3">
+        <Image
+          src={currentUser?.avatar || '/images/avt.png'}
+          height={3000}
+          width={3000}
+          alt="avatar"
+          className="w-[35px] h-[35px] rounded-full flex-shrink-0"
+        />
 
-      <Controller
-        name="content"
-        control={control}
-        defaultValue=""
-        render={({ field }) => (
-          <ReactQuill
-            theme="snow"
-            placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
-            className="flex-1 !rounded-full"
-            value={field.value}
-            onChange={field.onChange}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-          />
-        )}
-      />
-      <button disabled={formState.isSubmitting}>
+        <Controller
+          name="content"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <ReactQuill
+              theme="snow"
+              placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
+              className="flex-1 !rounded-full w-full"
+              value={field.value}
+              onChange={field.onChange}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+            />
+          )}
+        />
+      </div>
+      <button disabled={formState.isSubmitting} className="mb-1">
         <SendHorizontal />
       </button>
     </form>

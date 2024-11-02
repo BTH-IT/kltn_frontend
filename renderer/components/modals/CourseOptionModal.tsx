@@ -16,7 +16,6 @@ import { Dialog, DialogClose, DialogContent2, DialogOverlay, DialogTitle } from 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/components/ui/use-toast';
 import { CoursesContext } from '@/contexts/CoursesContext';
 import { cn } from '@/libs/utils';
 import courseService from '@/services/courseService';

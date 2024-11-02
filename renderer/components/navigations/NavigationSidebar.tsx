@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import '@/styles/components/navigation/nav-sidebar.scss';
-import { House, GraduationCap, Settings, Users } from 'lucide-react';
+import { House, GraduationCap, Settings, Users, Pocket } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Separator } from '@/components/ui/separator';
@@ -59,19 +59,21 @@ const NavigationSidebar = () => {
                     <Separator className="my-2" />
                   </>
                 )}
-                <SidebarItem label="Đã đăng ký" icon={<GraduationCap size={20} />} isDropdown={true}>
-                  <div className="max-h-[175px] min-h-[175px] overflow-y-auto">
-                    {enrolledCourses.map((item) => (
-                      <SidebarItemClass
-                        key={item.courseId}
-                        label={item.name}
-                        subLabel={item.subject?.subjectCode}
-                        href={`${API_URL.COURSES}/${item.courseId}`}
-                        isActive={`/${path}`.includes(`${API_URL.COURSES}/${item.courseId}`)}
-                      />
-                    ))}
-                  </div>
-                </SidebarItem>
+                {enrolledCourses && enrolledCourses.length > 0 && (
+                  <SidebarItem label="Đã đăng ký" icon={<GraduationCap size={20} />} isDropdown={true}>
+                    <div className="max-h-[175px] min-h-[175px] overflow-y-auto">
+                      {enrolledCourses.map((item) => (
+                        <SidebarItemClass
+                          key={item.courseId}
+                          label={item.name}
+                          subLabel={item.subject?.subjectCode}
+                          href={`${API_URL.COURSES}/${item.courseId}`}
+                          isActive={`/${path}`.includes(`${API_URL.COURSES}/${item.courseId}`)}
+                        />
+                      ))}
+                    </div>
+                  </SidebarItem>
+                )}
               </>
             ) : (
               <Loading containerClassName="max-h-24" spinnerClassName="max-w-14 max-h-14 !border-8" />
@@ -80,6 +82,12 @@ const NavigationSidebar = () => {
           <div>
             <Separator className="my-2" />
             <ul className="py-3">
+              <SidebarItem
+                label="Lớp học đã lưu trữ"
+                icon={<Pocket size={20} />}
+                href="/saves"
+                isActive={path === 'saves'}
+              />
               <SidebarItem
                 label="Cài đặt"
                 icon={<Settings size={20} />}

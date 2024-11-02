@@ -51,8 +51,14 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
     setItems([
       { label: 'Lớp học', href: '/' },
       { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
-      { label: 'Đồ án / Tiểu luận', href: `/courses/${group.course.courseId}/projects` },
-      { label: breadcrumbLabel2, href: `/groups/${group.course.courseId}/${group.groupId}` },
+      {
+        label: 'Đồ án / Tiểu luận',
+        href: `/courses/${group.course.courseId}/projects`,
+      },
+      {
+        label: breadcrumbLabel2,
+        href: `/groups/${group.course.courseId}/${group.groupId}`,
+      },
       { label: 'Nộp bài' },
     ]);
   }, [group, setItems]);
@@ -89,7 +95,6 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
         const isCreator = assignment[0].submission.createUser.id === currentUser.id;
         const isLecturer = currentUser.id === group.course.lecturerId;
         const isOverdue = assignment[0].dueDate ? new Date(assignment[0].dueDate) < new Date() : false;
-
         return isLecturer || (isCreator && !isOverdue);
       };
 

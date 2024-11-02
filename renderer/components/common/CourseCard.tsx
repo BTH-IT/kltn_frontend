@@ -28,7 +28,7 @@ const CourseCard = ({ item }: { item: ICourse }) => {
         />
         <div className="z-10 p-4">
           <div className="font-semibold text-2xl max-w-[252px] truncate shadow-inner">{item.name}</div>
-          <div className="max-w-[185px] text-sm truncate font-normal shadow-inner">{item.subjectName}</div>
+          <div className="max-w-[185px] text-sm truncate font-normal shadow-inner">{item.subject?.name}</div>
         </div>
         <Image
           src={'/images/avt.png'}

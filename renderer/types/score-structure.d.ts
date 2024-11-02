@@ -3,7 +3,6 @@ export interface IScoreStructure {
   columnName: string;
   percent: number;
   parentId?: string | null;
-  maxPercent?: number | null;
   children: IScoreStructure[];
 }
 

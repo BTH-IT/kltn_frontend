@@ -1,7 +1,9 @@
 'use client';
+
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { Printer } from 'lucide-react';
+import { utils, writeFile } from 'xlsx';
 
 import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
 import { CourseContext } from '@/contexts/CourseContext';
@@ -47,6 +49,29 @@ const ScoreStructureTable: React.FC = () => {
     return transcript ? transcript.scores : {};
   };
 
+  const handleExportExcel = () => {
+    const data = course.students?.map((student) => {
+      const studentScores: any = getStudentScores(student.id);
+      const score = getLeafColumns(studentScores);
+      const row: Record<string, any> = {
+        'Tên sinh viên': student.userName,
+      };
+
+      leafColumns.forEach((leaf: any) => {
+        row[`${leaf.columnName} (${leaf.percent}%)`] =
+          score.find((x: any) => x.scoreStructureId === leaf.id)?.value ?? '-';
+      });
+
+      row['Tổng điểm'] = studentScores.value ?? '-';
+      return row;
+    });
+
+    const ws = utils.json_to_sheet(data);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, 'Bảng điểm');
+    writeFile(wb, 'Bang_diem.xlsx');
+  };
+
   const handlePrintClick: React.MouseEventHandler<HTMLButtonElement> = () => {
     reactToPrintFn();
   };
@@ -54,7 +79,7 @@ const ScoreStructureTable: React.FC = () => {
   return (
     <div className="p-4">
       <div className="p-3" ref={contentRef}>
-        <h2 className="text-2xl font-bold mb-4">Bảng điểm</h2>
+        <h2 className="mb-4 text-2xl font-bold">Bảng điểm</h2>
         <table className="w-full border border-collapse border-gray-300">
           <thead>
             <tr>
@@ -91,8 +116,12 @@ const ScoreStructureTable: React.FC = () => {
           </tbody>
         </table>
       </div>
-      <div className="w-full flex justify-end mt-5">
-        <Button className="flex gap-2" onClick={handlePrintClick}>
+      <div className="flex justify-end w-full mt-5">
+        <Button className="flex gap-2" onClick={handleExportExcel}>
+          <Printer className="w-4 h-4" />
+          Xuất Excel
+        </Button>
+        <Button className="flex gap-2 ml-2" onClick={handlePrintClick}>
           <Printer className="w-4 h-4" />
           In bảng điểm
         </Button>
