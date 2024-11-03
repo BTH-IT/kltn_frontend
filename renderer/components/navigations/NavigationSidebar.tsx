@@ -85,8 +85,8 @@ const NavigationSidebar = () => {
               <SidebarItem
                 label="Lớp học đã lưu trữ"
                 icon={<Pocket size={20} />}
-                href="/saves"
-                isActive={path === 'saves'}
+                href="/archives"
+                isActive={path === 'archives'}
               />
               <SidebarItem
                 label="Cài đặt"

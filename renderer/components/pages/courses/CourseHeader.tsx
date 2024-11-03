@@ -4,13 +4,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
-import { Settings } from 'lucide-react';
+import { ArchiveRestore, ArchiveX, Settings, Trash2 } from 'lucide-react';
 
 import { CourseContext } from '@/contexts/CourseContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import CourseOptionModal from '@/components/modals/CourseOptionModal';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import { ICourse, IUser } from '@/types';
+import CommonModal from '@/components/modals/CommonModal';
 
 const CourseHeader = ({ data }: { data: ICourse }) => {
   const pathname = usePathname().replace(/\/$/, '');
@@ -53,7 +54,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
                 : ''
             } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
           >
-            Danh sách sinh viên
+            Sinh viên
           </Link>
           <Link
             href={`/courses/${data.courseId}/assignments`}
@@ -92,12 +93,39 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
           <div className="flex items-center gap-4">
             {user?.id === data.lecturerId && (
               <>
+                {!data.saveAt ? (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <ArchiveRestore onClick={() => {}} />
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>Lưu trữ lớp học</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <ArchiveX onClick={() => {}} />
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>Hủy lưu trữ lớp học</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
                 <Tooltip>
                   <TooltipTrigger>
                     <Settings onClick={() => setOnOpenModal(true)} />
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
                     <p>Cài đặt lớp học</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Trash2 onClick={() => {}} />
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>Xóa lớp học</p>
                   </TooltipContent>
                 </Tooltip>
               </>
@@ -107,6 +135,17 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
       </div>
 
       <CourseOptionModal onOpenModal={onOpenModal} setOnOpenModal={setOnOpenModal} />
+
+      <CommonModal
+        isOpen={false}
+        setIsOpen={() => {}}
+        width={500}
+        height={150}
+        title="Bạn có chắc muốn abc không?"
+        acceptTitle="Hủy"
+        acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
+        ocClickAccept={async () => {}}
+      />
     </>
   );
 };

@@ -25,6 +25,7 @@ export interface ICourse {
   assignments: IAssignment[];
   scoreStructure: IScoreStructure;
   setting: ISetting;
+  saveAt: string | null;
 }
 
 export interface ISetting {
