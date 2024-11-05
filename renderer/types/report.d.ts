@@ -1,4 +1,4 @@
-import { IBaseModel, IComment, ICourse, IUser } from '.';
+import { IBaseModel, IBrief, IComment, ICourse, IUser } from '.';
 
 export interface IReport extends IBaseModel {
   reportId: string;
@@ -11,4 +11,5 @@ export interface IReport extends IBaseModel {
   attachments?: any;
   course?: ICourse;
   comments: IComment[];
+  brief: IBrief | null;
 }

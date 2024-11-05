@@ -2,7 +2,7 @@
 'use client';
 
 import { useContext, useEffect, useState } from 'react';
-import { Plus, Edit, Trash } from 'lucide-react';
+import { Plus, Edit, Trash, ScrollText } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
@@ -22,12 +22,14 @@ import ReportCommentList from '@/components/common/ReportCommentList';
 import { generateParagraphs } from '@/libs/utils';
 import briefService from '@/services/briefService';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
+import BriefGroupReportModal from '@/components/modals/BriefGroupReportModal';
 
 const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [reports, setReports] = useState<IReport[]>([]);
   const [addingReport, setAddingReport] = useState(false);
   const [editingReport, setEditingReport] = useState(false);
+  const [briefReport, setBriefReport] = useState(false);
   const [deletingReport, setDeletingReport] = useState(false);
   const [currentReport, setCurrentReport] = useState<IReport | null>(null);
   const [currentUser, setUser] = useState<IUser | null>(null);
@@ -42,8 +44,14 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
     setItems([
       { label: 'Lớp học', href: '/' },
       { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
-      { label: 'Đồ án / Tiểu luận', href: `/courses/${group.course.courseId}/projects` },
-      { label: breadcrumbLabel2, href: `/groups/${group.course.courseId}/${group.groupId}` },
+      {
+        label: 'Đồ án / Tiểu luận',
+        href: `/courses/${group.course.courseId}/projects`,
+      },
+      {
+        label: breadcrumbLabel2,
+        href: `/groups/${group.course.courseId}/${group.groupId}`,
+      },
       { label: 'Báo cáo' },
     ]);
   }, [group, setItems]);
@@ -81,7 +89,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
     }
   };
 
-  const handleGenerateBrief = async () => {
+  const handleGenerateBrief = async (report: IReport) => {
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_KEY || '');
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-pro-002',
@@ -90,11 +98,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
     const prompt =
       'Tôi muốn một bản tóm tắt chi tiết về tiến độ của phần viết báo cáo, bao gồm cả những thông tin về cấu trúc và nội dung của báo cáo sau (chỉ lấy nội dung tóm tắt): ';
 
-    const res = await reportService.getReports(group.groupId);
-
-    if (!res.data) return;
-
-    const fullPrompt = prompt + generateParagraphs(res.data);
+    const fullPrompt = prompt + generateParagraphs([report]);
 
     const result = await model.generateContent(fullPrompt);
 
@@ -103,9 +107,8 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
     await briefService.createBrief(group.groupId, {
       title: 'Tóm tắt báo cáo lúc ' + formatVNDate(new Date().toString()),
       content,
+      reportId: report.reportId,
     });
-
-    toast.success('Tạo tóm tắt báo cáo thành công');
   };
 
   return (
@@ -114,12 +117,8 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
         <>
           <Card className="w-full bg-white shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between border-b bg-gray-50">
-              <CardTitle className="text-2xl font-bold text-gray-800">Báo cáo dự án</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-800">Báo cáo tiến độ</CardTitle>
               <div className="flex items-center justify-center gap-2">
-                <Button onClick={handleGenerateBrief} className="text-white bg-blue-500 hover:bg-blue-600">
-                  Tóm tắt báo cáo
-                </Button>
-
                 <Button
                   onClick={() => {
                     setAddingReport(true);
@@ -127,7 +126,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
                   className="text-white bg-blue-500 hover:bg-blue-600"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Thêm mục mới
+                  Báo cáo tiến độ
                 </Button>
               </div>
             </CardHeader>
@@ -155,6 +154,16 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
                           </div>
                         </div>
                         <div className="flex space-x-4">
+                          <ScrollText
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              setCurrentReport(report);
+                              await handleGenerateBrief(report);
+                              setBriefReport(true);
+                            }}
+                            className="w-4 h-4 text-green-500"
+                          />
+
                           <Edit
                             className="w-4 h-4 text-blue-500"
                             onClick={(e) => {
@@ -205,6 +214,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
             setReports={setReports}
             report={currentReport}
           />
+          <BriefGroupReportModal isOpen={briefReport} setIsOpen={setBriefReport} report={currentReport} />
           <CommonModal
             isOpen={deletingReport}
             setIsOpen={setDeletingReport}

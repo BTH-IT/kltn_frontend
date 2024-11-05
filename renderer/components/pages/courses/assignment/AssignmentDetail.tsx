@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon } from 'lucide-react';
+import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon, GraduationCap } from 'lucide-react';
 import moment from 'moment';
 import { Controller, useForm } from 'react-hook-form';
 import Image from 'next/image';
@@ -225,48 +225,52 @@ export default function AssignmentDetail() {
                   )}
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                {assignment?.createUser?.id === currentUser?.id ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild className="cursor-pointer">
-                      <EllipsisVertical />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-auto" align="end">
-                      <DropdownMenuGroup>
-                        {assignment?.scoreStructure && (
-                          <DropdownMenuItem
-                            onClick={() =>
-                              router.push(
-                                `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
-                              )
-                            }
-                          >
-                            Xem danh sách nộp bài
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsEdit(true);
-                          }}
-                        >
-                          Chỉnh sửa
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsDeleteModalOpen(true);
-                          }}
-                        >
-                          Xóa
-                        </DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <></>
+              <div>
+                {assignment?.scoreStructure && (
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <GraduationCap
+                      className="w-6 h-6 mr-2"
+                      onClick={() =>
+                        router.push(
+                          `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
+                        )
+                      }
+                    />
+                  </Button>
                 )}
-              </Button>
+
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  {assignment?.createUser?.id === currentUser?.id ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild className="cursor-pointer">
+                        <EllipsisVertical />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-auto" align="end">
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsEdit(true);
+                            }}
+                          >
+                            Chỉnh sửa
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsDeleteModalOpen(true);
+                            }}
+                          >
+                            Xóa
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <></>
+                  )}
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-3 pt-6">

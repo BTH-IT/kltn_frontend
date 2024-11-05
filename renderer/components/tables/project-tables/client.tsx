@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { BarChart2, FileText, Plus, Users } from 'lucide-react';
+import { AlertCircle, BarChart2, FileText, Plus, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { DataTable } from '@/components/ui/data-table';
@@ -86,6 +86,7 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
       <div className="flex items-start justify-between">
         <Heading title="Đồ án / tiểu luận" description="Quản lý đồ án / tiểu luận" />
       </div>
+
       {user?.id === course?.lecturerId && (
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
@@ -108,7 +109,7 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Số thành viên chưa có nhóm</CardTitle>
+              <CardTitle className="text-sm font-medium">Số thành viên chưa tham gia nhóm</CardTitle>
               <BarChart2 className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -134,14 +135,14 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="projects">Đồ án</TabsTrigger>
+          <TabsTrigger value="projects">Quản lý các đồ án</TabsTrigger>
           <TabsTrigger
             onClick={() => {
               currentGroup && router.push(`/groups/${course?.courseId}/${currentGroup.groupId}`);
             }}
             value="groups"
           >
-            Nhóm
+            Quản lý các nhóm
           </TabsTrigger>
         </TabsList>
         <TabsContent value="projects">

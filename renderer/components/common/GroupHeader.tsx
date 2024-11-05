@@ -30,7 +30,7 @@ const GroupHeader = ({ data }: { data: any }) => {
               : ''
           } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
         >
-          Nộp bài
+          Nộp đồ án / tiểu luận
         </Link>
         <Link
           href={`/groups/${data.courseId}/${data.groupId}/reports`}
@@ -40,17 +40,7 @@ const GroupHeader = ({ data }: { data: any }) => {
               : ''
           } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
         >
-          Báo cáo
-        </Link>
-        <Link
-          href={`/groups/${data.courseId}/${data.groupId}/report-history`}
-          className={`${
-            newPath === '/report-history'
-              ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-              : ''
-          } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
-        >
-          Lịch sử tóm tắt báo cáo
+          Báo cáo tiến độ đồ án / tiểu luận
         </Link>
       </div>
     </div>

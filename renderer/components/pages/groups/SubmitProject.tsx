@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon } from 'lucide-react';
+import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon, GraduationCap } from 'lucide-react';
 import moment from 'moment';
 import { Controller, useForm } from 'react-hook-form';
 import Image from 'next/image';
@@ -223,38 +223,45 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
                   <p className="text-sm text-muted-foreground">Bài tập cho cột điểm: Cuối kỳ - 50%</p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                {assignment[0]?.createUser?.id === currentUser?.id ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild className="cursor-pointer">
-                      <EllipsisVertical />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-auto" align="end">
-                      <DropdownMenuGroup>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            router.push(
-                              `${API_URL.COURSES}/${assignment[0]?.courseId}${API_URL.ASSIGNMENTS}/${assignment[0]?.assignmentId}/submits`,
-                            )
-                          }
-                        >
-                          Xem danh sách nộp bài
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            setIsEdit(true);
-                            e.stopPropagation();
-                          }}
-                        >
-                          Chỉnh sửa
-                        </DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <></>
+
+              <div>
+                {assignment[0]?.scoreStructure && (
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <GraduationCap
+                      className="w-6 h-6 mr-2"
+                      onClick={() =>
+                        router.push(
+                          `${API_URL.COURSES}/${assignment[0]?.courseId}${API_URL.ASSIGNMENTS}/${assignment[0]?.assignmentId}/submits`,
+                        )
+                      }
+                    />
+                  </Button>
                 )}
-              </Button>
+
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  {assignment[0]?.createUser?.id === currentUser?.id ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild className="cursor-pointer">
+                        <EllipsisVertical className="w-6 h-6 mr-2" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-auto" align="end">
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              setIsEdit(true);
+                              e.stopPropagation();
+                            }}
+                          >
+                            Chỉnh sửa
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <></>
+                  )}
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-3 pt-6">

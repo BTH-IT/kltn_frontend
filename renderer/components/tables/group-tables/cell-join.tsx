@@ -107,7 +107,7 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
   };
 
   console.log(requestAvailable, isRequestSent);
-  // console.log(isThisGroup, data.groupName);
+  console.log(isThisGroup, data.groupName);
 
   return (
     <div className="flex items-center justify-center gap-3">

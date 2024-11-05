@@ -46,16 +46,18 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
           >
             Bảng tin
           </Link>
-          <Link
-            href={`/courses/${data.courseId}/people`}
-            className={`${
-              newPath === '/people'
-                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                : ''
-            } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
-          >
-            Sinh viên
-          </Link>
+          {user?.id === data.lecturerId && (
+            <Link
+              href={`/courses/${data.courseId}/people`}
+              className={`${
+                newPath === '/people'
+                  ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
+                  : ''
+              } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+            >
+              Danh sách sinh viên
+            </Link>
+          )}
           <Link
             href={`/courses/${data.courseId}/assignments`}
             className={`${
