@@ -47,6 +47,7 @@ const AssignmentHmWorkModal = ({
   const [scoreSelectedOption, setScoreSelectedOption] = useState<any>(null);
   const [isChooseGroup, setIsChooseGroup] = useState<boolean>(false);
   const [dueDate, setDueDate] = useState<Date | undefined | null>(undefined);
+  const [registerExpiryDate, setRegisterExpiryDate] = useState<Date | undefined | null>(undefined);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
 
@@ -76,6 +77,7 @@ const AssignmentHmWorkModal = ({
     form.reset();
     setScoreSelectedOption(false);
     setDueDate(undefined);
+    setRegisterExpiryDate(undefined);
     setFiles([]);
     setLinks([]);
   };
@@ -201,6 +203,10 @@ const AssignmentHmWorkModal = ({
                       />
                     </div>
                     <div className="flex flex-col col-span-3 gap-5 p-5 border-l">
+                      <div className="flex gap-6 px-3">
+                        <div className="font-medium">Áp dụng cho nhóm?</div>
+                        <Switch checked={isChooseGroup} onCheckedChange={(value) => setIsChooseGroup(value)} />
+                      </div>
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Loại bài tập</div>
                         <CreatableSelect
@@ -220,6 +226,12 @@ const AssignmentHmWorkModal = ({
                           }}
                         />
                       </div>
+                      {isChooseGroup && course?.setting.hasFinalScore && (
+                        <div className="flex flex-col gap-4 px-3">
+                          <div className="font-medium">Hạn đăng kí nhóm</div>
+                          <DateTimePicker date={registerExpiryDate} setDate={setRegisterExpiryDate} />
+                        </div>
+                      )}
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Hạn nộp</div>
                         <DateTimePicker date={dueDate} setDate={setDueDate} />
@@ -238,10 +250,6 @@ const AssignmentHmWorkModal = ({
                             setScoreSelectedOption(selectedOption);
                           }}
                         />
-                      </div>
-                      <div className="flex flex-col gap-4 px-3">
-                        <div className="font-medium">Áp dụng cho nhóm?</div>
-                        <Switch checked={isChooseGroup} onCheckedChange={(value) => setIsChooseGroup(value)} />
                       </div>
                     </div>
                   </div>

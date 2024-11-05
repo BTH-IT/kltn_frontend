@@ -79,6 +79,8 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
     }
   }, [course, user, groups]);
 
+  console.log(currentGroup);
+
   return (
     <>
       <div className="flex items-start justify-between">

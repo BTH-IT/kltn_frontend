@@ -69,8 +69,11 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
     }
   };
 
-  const toggleLeader = async (studentId: string) => {
-    const res = await groupService.toggleLeader(group.groupId, studentId);
+  const setLeader = async (studentId: string) => {
+    const data = {
+      studentId,
+    };
+    const res = await groupService.setLeader(group.groupId, data);
     console.log(res);
     toast.success('Đặt trưởng nhóm thành công');
     setMembers(
@@ -125,7 +128,7 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
                       <>
                         {!member.isLeader && (
                           <>
-                            <Button variant="outline" size="sm" onClick={() => toggleLeader(member.studentId)}>
+                            <Button variant="outline" size="sm" onClick={() => setLeader(member.studentId)}>
                               Đặt làm trưởng nhóm
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => removeMember(member)}>

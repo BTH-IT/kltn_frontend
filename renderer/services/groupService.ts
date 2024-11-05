@@ -35,8 +35,8 @@ const groupService = {
       data: JSON.stringify(memberId),
     });
   },
-  toggleLeader(groupId: string, memberId: string): Promise<ApiResponse<any>> {
-    return configService.post(`${API_URL.GROUPS}/${groupId}/leader`, memberId);
+  setLeader(groupId: string, data: any): Promise<ApiResponse<any>> {
+    return configService.post(`${API_URL.GROUPS}/${groupId}/leader`, data);
   },
   makeRequest(groupId: string): Promise<ApiResponse<IRequest>> {
     return configService.post(`${API_URL.REQUESTS}/${groupId}/make-request`);

@@ -54,7 +54,7 @@ const CreateGroupMemberModal = ({
   });
 
   const generateOptions = useCallback(() => {
-    const data = group?.course?.students.map((s) => {
+    const data = group?.course?.students?.map((s) => {
       return {
         label: `${s.fullName || s.userName}`,
         value: s.id,
@@ -94,6 +94,8 @@ const CreateGroupMemberModal = ({
     form.reset();
     setIsOpen(!isOpen);
   };
+
+  if (!group?.course?.students) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
