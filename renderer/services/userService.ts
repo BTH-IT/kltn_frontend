@@ -1,4 +1,4 @@
-import { ApiResponse, IUser } from '@/types';
+import { ApiResponse, IRequest, IUser } from '@/types';
 import { API_URL } from '@/constants/endpoints';
 
 import configService from './configService';
@@ -29,6 +29,9 @@ const userService = {
   },
   changePassword(userId: string, data: { currentPassword: string; newPassword: string }) {
     return configService.patch(`${API_URL.USERS}/${userId}/change-password`, data);
+  },
+  getAllRequests(): Promise<ApiResponse<IRequest[]>> {
+    return configService.get(`${API_URL.REQUESTS}/user/requests`);
   },
 };
 

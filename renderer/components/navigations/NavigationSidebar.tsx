@@ -81,7 +81,7 @@ const NavigationSidebar = () => {
           </ul>
           <div>
             <Separator className="my-2" />
-            <ul className="py-3">
+            <ul className="flex flex-col gap-3 mb-2 mt-4">
               <SidebarItem
                 label="Lớp học đã lưu trữ"
                 icon={<Pocket size={20} />}
