@@ -1,4 +1,4 @@
-import { add } from 'date-fns';
+import { add, addHours } from 'date-fns';
 import { Calendar as CalendarIcon, X as XIcon } from 'lucide-react';
 import * as React from 'react';
 
@@ -13,31 +13,41 @@ import { TimePicker } from './TimePicker';
 export function DateTimePicker({
   date,
   setDate,
+  onChange = () => {},
 }: {
   date?: Date | null | undefined;
   setDate: React.Dispatch<React.SetStateAction<Date | null | undefined>>;
+  onChange?: () => void;
 }) {
   const handleSelect = (newDay: Date | undefined) => {
     if (!newDay) return;
+    // Add 7 hours to match the timezone
+    const adjustedDate = addHours(newDay, 7);
     if (!date) {
-      setDate(newDay);
+      setDate(adjustedDate);
+      onChange();
       return;
     }
-    const diff = newDay.getTime() - date.getTime();
+    const diff = adjustedDate.getTime() - date.getTime();
     const diffInDays = diff / (1000 * 60 * 60 * 24);
     const newDateFull = add(date, { days: Math.ceil(diffInDays) });
 
     setDate(newDateFull);
+    onChange();
   };
 
   const handleSetDate = (date: Date | undefined) => {
     if (date) {
-      setDate(date);
+      // Add 7 hours to match the timezone
+      const adjustedDate = addHours(date, 7);
+      setDate(adjustedDate);
+      onChange();
     }
   };
 
   const handleClear = () => {
     setDate(undefined);
+    onChange();
   };
 
   return (

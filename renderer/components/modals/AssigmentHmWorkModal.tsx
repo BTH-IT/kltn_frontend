@@ -229,7 +229,7 @@ const AssignmentHmWorkModal = ({
                           checked={isChooseGroup}
                           onCheckedChange={(value) => setIsChooseGroup(value)}
                         />
-                        {isChooseGroup && (
+                        {isChooseGroup && !course?.setting.dueDateToJoinGroup ? (
                           <>
                             <div className="font-medium col-span-8">Sử dụng lại nhóm đồ án?</div>
                             <Switch
@@ -237,6 +237,21 @@ const AssignmentHmWorkModal = ({
                               checked={useFinalGroup}
                               onCheckedChange={(value) => setUseFinalGroup(value)}
                             />
+                          </>
+                        ) : (
+                          <>
+                            {isChooseGroup &&
+                              course?.setting.dueDateToJoinGroup &&
+                              course?.setting.dueDateToJoinGroup <= new Date() && (
+                                <>
+                                  <div className="font-medium col-span-8">Sử dụng lại nhóm đồ án?</div>
+                                  <Switch
+                                    className="col-span-4"
+                                    checked={useFinalGroup}
+                                    onCheckedChange={(value) => setUseFinalGroup(value)}
+                                  />
+                                </>
+                              )}
                           </>
                         )}
                       </div>

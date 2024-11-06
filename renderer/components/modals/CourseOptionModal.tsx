@@ -51,16 +51,6 @@ const CourseOptionModal = ({
   const { subjects } = useContext(CreateSubjectContext);
   const [user, setUser] = useState<IUser | null>(null);
 
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
-
-    if (storedUser) {
-      setUser(storedUser);
-    } else {
-      return router.push('/login');
-    }
-  }, []);
-
   const FormSchema = z.object({
     courseGroup: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
@@ -92,6 +82,16 @@ const CourseOptionModal = ({
       hasFinalScore: false,
     },
   });
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, []);
 
   const hasFinalScoreValue = form.watch('hasFinalScore');
   const allowGroupRegistration = form.watch('allowGroupRegistration');
@@ -196,6 +196,8 @@ const CourseOptionModal = ({
       console.error('Failed to copy text: ', err);
     }
   };
+
+  console.log(canSubmit);
 
   return (
     <>
@@ -310,7 +312,13 @@ const CourseOptionModal = ({
                       {hasFinalScoreValue && (
                         <div className="flex flex-col gap-4 px-3 mb-2">
                           <div className="font-medium">Thời hạn cho phép tham gia vào nhóm</div>
-                          <DateTimePicker date={dueDateToJoinGroup} setDate={setDueDateToJoinGroup} />
+                          <DateTimePicker
+                            date={dueDateToJoinGroup}
+                            setDate={setDueDateToJoinGroup}
+                            onChange={() => {
+                              setCanSubmit(true);
+                            }}
+                          />
                         </div>
                       )}
                       <FormField
@@ -332,8 +340,20 @@ const CourseOptionModal = ({
                         <div className="flex flex-col gap-4 px-3 mb-2">
                           <div className="font-medium">Thời hạn đăng kí</div>
                           <div className="flex items-center justify-between gap-2">
-                            <DateTimePicker date={startCreateGroup} setDate={setStartCreateGroup} />
-                            <DateTimePicker date={endCreateGroup} setDate={setEndCreateGroup} />
+                            <DateTimePicker
+                              date={startCreateGroup}
+                              setDate={setStartCreateGroup}
+                              onChange={() => {
+                                setCanSubmit(true);
+                              }}
+                            />
+                            <DateTimePicker
+                              date={endCreateGroup}
+                              setDate={setEndCreateGroup}
+                              onChange={() => {
+                                setCanSubmit(true);
+                              }}
+                            />
                           </div>
                         </div>
                       )}
