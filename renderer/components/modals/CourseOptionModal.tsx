@@ -200,12 +200,7 @@ const CourseOptionModal = ({
   return (
     <>
       <Dialog open={onOpenModal} onOpenChange={onCloseModal}>
-        <DialogContent2
-          className="w-screen h-screen max-h-screen p-0 font-sans text-gray-700"
-          onInteractOutside={(e) => {
-            e.preventDefault();
-          }}
-        >
+        <DialogContent2 className="w-screen h-screen max-h-screen p-0 font-sans text-gray-700">
           <DialogTitle className="hidden"></DialogTitle>
           <div className="flex justify-center">
             <Form {...form}>
@@ -312,14 +307,12 @@ const CourseOptionModal = ({
                           </FormItem>
                         )}
                       />
-
                       {hasFinalScoreValue && (
                         <div className="flex flex-col gap-4 px-3 mb-2">
                           <div className="font-medium">Thời hạn cho phép tham gia vào nhóm</div>
                           <DateTimePicker date={dueDateToJoinGroup} setDate={setDueDateToJoinGroup} />
                         </div>
                       )}
-
                       <FormField
                         control={form.control}
                         name="allowGroupRegistration"

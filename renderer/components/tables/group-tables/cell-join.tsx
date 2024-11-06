@@ -3,16 +3,15 @@
 
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import groupService from '@/services/groupService';
 import userService from '@/services/userService';
 import { IUser } from '@/types';
-import { IGroup } from '@/types/group';
+import { IGroup, IRequest } from '@/types/group';
 import { KEY_LOCALSTORAGE } from '@/utils';
-
 interface CellJoinProps {
   data: IGroup;
 }
@@ -21,100 +20,106 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
   const router = useRouter();
 
   const [user, setUser] = useState<IUser | null>(null);
-  const [requestAvailable, setRequestAvailable] = useState(false);
-  const [isThisGroup, setIsThisGroup] = useState(false);
   const [isRequestSent, setIsRequestSent] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [hasRequest, setHasRequest] = useState(false);
+  const [userHasRequestOther, setUserHasRequestOther] = useState(false);
+  const [groupHasRequest, setGroupHasRequest] = useState(false);
+  const [allRequests, setAllRequests] = useState<IRequest[]>([]);
 
+  // Memoize `groupMembers` leader check to optimize re-renders
+  const hasLeader = useMemo(() => data?.groupMembers?.some((member) => member.isLeader), [data]);
+
+  // Fetch user data from localStorage and redirect to login if not available
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
-
+    const storedUser = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER);
     if (storedUser) {
-      setUser(storedUser);
+      setUser(JSON.parse(storedUser));
     } else {
-      return router.push('/login');
+      router.push('/login');
     }
-  }, []);
+  }, [router]);
 
-  const isRequestAvailable = () => {
-    const isHaveMember = data?.groupMembers?.length !== 0;
-
-    return !isHaveMember;
-  };
-
+  // Fetch all requests made by the user and set request-related states
   useEffect(() => {
-    const fetchUserRequest = async () => {
-      const res = await userService.getAllRequests();
+    const fetchUserRequests = async () => {
+      try {
+        const res = await userService.getAllRequests();
+        if (res) {
+          const userRequests = res.data || [];
+          const userRequestForGroup = userRequests.some(
+            (request) => request.groupId === data.groupId && request.userId === user?.id,
+          );
+          setHasRequest(userRequestForGroup);
 
-      if (res) {
-        const isRequested = res.data.find((request) => request.groupId === data.groupId);
+          const otherGroupRequest = userRequests.some(
+            (request) => request.groupId !== data.groupId && request.userId === user?.id,
+          );
+          setUserHasRequestOther(otherGroupRequest);
 
-        if (isRequested) {
-          setIsRequestSent(true);
+          setGroupHasRequest((data?.requests?.length ?? 0) > 0);
+
+          setAllRequests(userRequests);
         }
+      } catch (error) {
+        console.error('Error fetching user requests:', error);
       }
     };
-    fetchUserRequest();
 
-    if (user) {
-      const available = isRequestAvailable();
-      setRequestAvailable(available);
-    }
-
-    setIsMounted(true);
+    if (user) fetchUserRequests();
   }, [data, user]);
 
+  // Send a join request
   const sendRequest = async () => {
     try {
       const res = await groupService.makeRequest(data.groupId);
-
       if (res) {
         toast.success('Gửi yêu cầu tham gia thành công');
-        setRequestAvailable(false);
+        setIsRequestSent(true);
+        router.refresh();
       }
     } catch (error) {
-      console.error(error);
+      console.error('Error sending join request:', error);
       if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || error.message);
+        toast.error(error.response?.data?.message || error.message);
       }
     }
   };
 
+  // Cancel the join request
   const cancelRequest = async () => {
     try {
-      const request = data.requests?.find((request) => request.userId === user?.id);
-
+      const request = allRequests.find((request) => request.userId === user?.id && request.groupId === data.groupId);
       if (request) {
         const res = await groupService.removeRequest(request.requestId);
-
         if (res) {
           toast.success('Huỷ yêu cầu tham gia thành công');
-          setRequestAvailable(true);
+          router.refresh();
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error('Error canceling join request:', error);
       if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || error.message);
+        toast.error(error.response?.data?.message || error.message);
       }
     }
   };
 
-  console.log(requestAvailable, isRequestSent);
-  console.log(isThisGroup, data.groupName);
-
   return (
     <div className="flex items-center justify-center gap-3">
-      {isMounted && (
+      {hasLeader ? null : (
         <>
-          {requestAvailable && !data.requests?.some((request) => request.groupId === data?.groupId) ? (
-            <Button disabled={!requestAvailable || isRequestSent} variant="primary" onClick={sendRequest}>
-              Gửi yêu cầu tham gia
-            </Button>
-          ) : (
+          {hasRequest ? (
             <Button variant="destructive" onClick={cancelRequest}>
               Huỷ yêu cầu
             </Button>
+          ) : (
+            !isRequestSent &&
+            !groupHasRequest &&
+            !userHasRequestOther && (
+              <Button variant="primary" onClick={sendRequest}>
+                Yêu cầu tham gia
+              </Button>
+            )
           )}
         </>
       )}

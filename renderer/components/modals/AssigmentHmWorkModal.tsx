@@ -14,6 +14,8 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { getLeafColumns } from '@/libs/utils';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
@@ -24,7 +26,6 @@ import { formatDuration } from '@/utils';
 import { DateTimePicker } from '../common/DatetimePicker';
 import { YoutubeCardProps } from '../common/YoutubeCard';
 import AssignmentForm from '../forms/AssignmentForm';
-import { Switch } from '../ui/switch';
 
 import AddLinkModal from './AddLinkModal';
 import AddYoutubeLinkModal from './AddYoutubeLinkModal';
@@ -46,6 +47,8 @@ const AssignmentHmWorkModal = ({
   const [type, setType] = useState<any>(null);
   const [scoreSelectedOption, setScoreSelectedOption] = useState<any>(null);
   const [isChooseGroup, setIsChooseGroup] = useState<boolean>(false);
+  const [useFinalGroup, setUseFinalGroup] = useState<boolean>(false);
+  const [autoGenerateCount, setAutoGenerateCount] = useState('1');
   const [dueDate, setDueDate] = useState<Date | undefined | null>(undefined);
   const [registerExpiryDate, setRegisterExpiryDate] = useState<Date | undefined | null>(undefined);
   const [files, setFiles] = useState<File[]>([]);
@@ -76,6 +79,10 @@ const AssignmentHmWorkModal = ({
   const resetForm = () => {
     form.reset();
     setScoreSelectedOption(false);
+    setType(null);
+    setIsChooseGroup(false);
+    setUseFinalGroup(false);
+    setAutoGenerateCount('1');
     setDueDate(undefined);
     setRegisterExpiryDate(undefined);
     setFiles([]);
@@ -107,16 +114,23 @@ const AssignmentHmWorkModal = ({
 
     const formattedDueDate = dueDate?.toISOString() ?? null;
 
+    let assignmentOptions = {};
+
+    if (isChooseGroup) {
+      assignmentOptions = useFinalGroup ? { useFinalGroup } : { autoGenerateCount };
+    }
+
     const data = {
       courseId,
       title: values.title,
       content: values.content,
-      dueDate: formattedDueDate,
-      attachedLinks: links,
-      attachments: resAttachments,
       scoreStructureId: scoreSelectedOption?.value,
       type: type.value,
       isGroupAssigned: isChooseGroup,
+      dueDate: formattedDueDate,
+      attachedLinks: links,
+      attachments: resAttachments,
+      assignmentOptions,
     };
 
     return await assignmentService.createAssignment(data);
@@ -136,6 +150,11 @@ const AssignmentHmWorkModal = ({
     if (!course) return;
     if (!type) {
       toast.error('Vui lòng chọn loại bài tập');
+      return;
+    }
+
+    if (isChooseGroup && !useFinalGroup && (!autoGenerateCount || parseInt(autoGenerateCount) < 1)) {
+      toast.error('Vui lòng điền số lượng nhóm cần tạo');
       return;
     }
 
@@ -202,11 +221,36 @@ const AssignmentHmWorkModal = ({
                         setIsOpenSelectYoutubeModal={setIsOpenSelectYoutubeModal}
                       />
                     </div>
-                    <div className="flex flex-col col-span-3 gap-5 p-5 border-l">
-                      <div className="flex gap-6 px-3">
-                        <div className="font-medium">Áp dụng cho nhóm?</div>
-                        <Switch checked={isChooseGroup} onCheckedChange={(value) => setIsChooseGroup(value)} />
+                    <div className="flex flex-col col-span-3 gap-7 p-5 border-l">
+                      <div className="px-3 grid grid-cols-12 gap-y-7">
+                        <div className="font-medium col-span-8">Áp dụng cho nhóm?</div>
+                        <Switch
+                          className="col-span-4"
+                          checked={isChooseGroup}
+                          onCheckedChange={(value) => setIsChooseGroup(value)}
+                        />
+                        {isChooseGroup && (
+                          <>
+                            <div className="font-medium col-span-8">Sử dụng lại nhóm đồ án?</div>
+                            <Switch
+                              className="col-span-4"
+                              checked={useFinalGroup}
+                              onCheckedChange={(value) => setUseFinalGroup(value)}
+                            />
+                          </>
+                        )}
                       </div>
+                      {isChooseGroup && !useFinalGroup && (
+                        <div className="flex flex-col px-3 gap-4">
+                          <div className="font-medium ">Số lượng nhóm cần tạo:</div>
+                          <Input
+                            type="number"
+                            value={autoGenerateCount}
+                            onChange={(e) => setAutoGenerateCount(e.target.value)}
+                            min={1}
+                          />
+                        </div>
+                      )}
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Loại bài tập</div>
                         <CreatableSelect
