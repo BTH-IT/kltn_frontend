@@ -4,31 +4,31 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Copy, Scan, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Select } from 'react-select-virtualized';
-import * as z from 'zod';
-import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent2, DialogOverlay, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CoursesContext } from '@/contexts/CoursesContext';
-import { cn } from '@/libs/utils';
-import courseService from '@/services/courseService';
 import { CourseContext } from '@/contexts/CourseContext';
+import { CoursesContext } from '@/contexts/CoursesContext';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 import { ScoreStructureProvider } from '@/contexts/ScoreStructureContext';
+import { cn } from '@/libs/utils';
+import courseService from '@/services/courseService';
 import { IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 
-import { Switch } from '../ui/switch';
 import { DateTimePicker } from '../common/DatetimePicker';
 import { Slider } from '../common/SliderRange';
 import ScoreStructureForm from '../pages/courses/score/ScoreStructureForm';
+import { Switch } from '../ui/switch';
 
 import ShowCodeModal from './ShowCodeModal';
 
@@ -104,9 +104,9 @@ const CourseOptionModal = ({
         value: course.subjectId,
       });
 
-      setStartCreateGroup(new Date(course.setting?.startGroupCreation ?? ''));
-      setEndCreateGroup(new Date(course.setting?.endGroupCreation ?? ''));
-      setDueDateToJoinGroup(new Date(course.setting?.dueDateToJoinGroup ?? ''));
+      setStartCreateGroup(course.setting?.startGroupCreation ? new Date(course.setting.startGroupCreation) : null);
+      setEndCreateGroup(course.setting?.endGroupCreation ? new Date(course.setting.endGroupCreation) : null);
+      setDueDateToJoinGroup(course.setting?.dueDateToJoinGroup ? new Date(course.setting.dueDateToJoinGroup) : null);
 
       form.setValue('allowGroupRegistration', course.setting?.allowGroupRegistration);
       form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);

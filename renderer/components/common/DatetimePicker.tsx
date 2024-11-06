@@ -1,10 +1,10 @@
-import * as React from 'react';
 import { add } from 'date-fns';
 import { Calendar as CalendarIcon, X as XIcon } from 'lucide-react';
+import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { cn } from '@/libs/utils';
 import { formatVNDate } from '@/utils';
 
@@ -26,6 +26,7 @@ export function DateTimePicker({
     const diff = newDay.getTime() - date.getTime();
     const diffInDays = diff / (1000 * 60 * 60 * 24);
     const newDateFull = add(date, { days: Math.ceil(diffInDays) });
+
     setDate(newDateFull);
   };
 
@@ -40,8 +41,8 @@ export function DateTimePicker({
   };
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button
           variant={'outline'}
           className={cn('w-[280px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
@@ -52,18 +53,20 @@ export function DateTimePicker({
             {date && !isNaN(date.getTime()) && <XIcon className="w-4 h-4 ml-2" onClick={handleClear} />}
           </div>
         </Button>
-      </PopoverTrigger>
-      <PopoverContent side="left" align="center" className="w-auto p-0">
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="left" align="center" className="w-auto p-0">
         <Calendar
           mode="single"
           selected={date || undefined}
-          onSelect={(d: Date | undefined) => d && handleSelect(d)}
+          onSelect={(d: Date | undefined) => {
+            d && handleSelect(d);
+          }}
           initialFocus
         />
         <div className="p-3 border-t border-border">
           <TimePicker setDate={handleSetDate} date={date || undefined} />
         </div>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
