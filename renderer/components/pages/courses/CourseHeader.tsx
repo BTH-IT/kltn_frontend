@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 'use client';
 
+import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
@@ -12,6 +13,7 @@ import CourseOptionModal from '@/components/modals/CourseOptionModal';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import { ICourse, IUser } from '@/types';
 import CommonModal from '@/components/modals/CommonModal';
+import courseService from '@/services/courseService';
 
 const CourseHeader = ({ data }: { data: ICourse }) => {
   const pathname = usePathname().replace(/\/$/, '');
@@ -24,6 +26,10 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
 
   const { setCourse } = useContext(CourseContext);
 
+  const [isArchiveModalOpen, setArchiveModalOpen] = useState(false);
+  const [isUnarchiveModalOpen, setUnarchiveModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+
   useEffect(() => {
     if (data) {
       setCourse(data);
@@ -31,6 +37,36 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
     const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
     setUser(user);
   }, [data, setCourse]);
+
+  const handleArchiveCourse = async () => {
+    try {
+      await courseService.archive(data.courseId);
+      setArchiveModalOpen(false);
+      toast.success('Lưu trữ lớp học thành công!');
+    } catch (error) {
+      toast.error('Không thể lưu trữ lớp học.');
+    }
+  };
+
+  const handleUnarchiveCourse = async () => {
+    try {
+      await courseService.unarchive(data.courseId);
+      setUnarchiveModalOpen(false);
+      toast.success('Bỏ lưu trữ lớp học thành công!');
+    } catch (error) {
+      toast.error('Không thể bỏ lưu trữ lớp học.');
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    try {
+      await courseService.deleteCourse(data.courseId);
+      setDeleteModalOpen(false);
+      toast.success('Xóa lớp học thành công!');
+    } catch (error) {
+      toast.error('Không thể xóa lớp học.');
+    }
+  };
 
   return (
     <>
@@ -98,7 +134,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
                 {!data.saveAt ? (
                   <Tooltip>
                     <TooltipTrigger>
-                      <ArchiveRestore onClick={() => {}} />
+                      <ArchiveRestore onClick={() => setArchiveModalOpen(true)} />
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
                       <p>Lưu trữ lớp học</p>
@@ -107,7 +143,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
                 ) : (
                   <Tooltip>
                     <TooltipTrigger>
-                      <ArchiveX onClick={() => {}} />
+                      <ArchiveX onClick={() => setUnarchiveModalOpen(true)} />
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
                       <p>Hủy lưu trữ lớp học</p>
@@ -124,7 +160,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Trash2 onClick={() => {}} />
+                    <Trash2 onClick={() => setDeleteModalOpen(true)} />
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
                     <p>Xóa lớp học</p>
@@ -139,14 +175,36 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
       <CourseOptionModal onOpenModal={onOpenModal} setOnOpenModal={setOnOpenModal} />
 
       <CommonModal
-        isOpen={false}
-        setIsOpen={() => {}}
+        isOpen={isArchiveModalOpen}
+        setIsOpen={setArchiveModalOpen}
         width={500}
         height={150}
-        title="Bạn có chắc muốn abc không?"
-        acceptTitle="Hủy"
+        title="Bạn có chắc muốn lưu trữ lớp học không?"
+        acceptTitle="Xác nhận"
+        acceptClassName="hover:bg-blue-50 text-blue-600 transition-all duration-400"
+        ocClickAccept={handleArchiveCourse}
+      />
+
+      <CommonModal
+        isOpen={isUnarchiveModalOpen}
+        setIsOpen={setUnarchiveModalOpen}
+        width={500}
+        height={150}
+        title="Bạn có chắc muốn hủy lưu trữ lớp học không?"
+        acceptTitle="Xác nhận"
+        acceptClassName="hover:bg-blue-50 text-blue-600 transition-all duration-400"
+        ocClickAccept={handleUnarchiveCourse}
+      />
+
+      <CommonModal
+        isOpen={isDeleteModalOpen}
+        setIsOpen={setDeleteModalOpen}
+        width={500}
+        height={150}
+        title="Bạn có chắc muốn xóa lớp học không?"
+        acceptTitle="Xóa"
         acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
-        ocClickAccept={async () => {}}
+        ocClickAccept={handleDeleteCourse}
       />
     </>
   );

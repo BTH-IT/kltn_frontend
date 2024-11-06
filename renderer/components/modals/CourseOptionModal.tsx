@@ -46,6 +46,7 @@ const CourseOptionModal = ({
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const { createdCourses, setCreatedCourses } = useContext(CoursesContext);
   const [startCreateGroup, setStartCreateGroup] = useState<Date | null | undefined>(null);
+  const [dueDateToJoinGroup, setDueDateToJoinGroup] = useState<Date | null | undefined>(null);
   const [endCreateGroup, setEndCreateGroup] = useState<Date | null | undefined>(null);
   const { subjects } = useContext(CreateSubjectContext);
   const [user, setUser] = useState<IUser | null>(null);
@@ -105,6 +106,7 @@ const CourseOptionModal = ({
 
       setStartCreateGroup(new Date(course.setting?.startGroupCreation ?? ''));
       setEndCreateGroup(new Date(course.setting?.endGroupCreation ?? ''));
+      setDueDateToJoinGroup(new Date(course.setting?.dueDateToJoinGroup ?? ''));
 
       form.setValue('allowGroupRegistration', course.setting?.allowGroupRegistration);
       form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);
@@ -139,6 +141,7 @@ const CourseOptionModal = ({
         settingId: course.setting?.settingId,
         courseId: course.courseId,
         startGroupCreation: startCreateGroup,
+        dueDateToJoinGroup: dueDateToJoinGroup,
         endGroupCreation: endCreateGroup,
         allowStudentCreateProject: values.allowStudentCreateProject,
         allowGroupRegistration: values.allowGroupRegistration,
@@ -309,6 +312,13 @@ const CourseOptionModal = ({
                           </FormItem>
                         )}
                       />
+
+                      {hasFinalScoreValue && (
+                        <div className="flex flex-col gap-4 px-3 mb-2">
+                          <div className="font-medium">Thời hạn cho phép tham gia vào nhóm</div>
+                          <DateTimePicker date={dueDateToJoinGroup} setDate={setDueDateToJoinGroup} />
+                        </div>
+                      )}
 
                       <FormField
                         control={form.control}

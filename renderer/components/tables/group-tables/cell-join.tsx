@@ -56,12 +56,6 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
     };
     fetchUserRequest();
 
-    const isGroup = data.requests?.find((request) => request.groupId === data?.groupId);
-
-    if (isGroup) {
-      setIsThisGroup(true);
-    }
-
     if (user) {
       const available = isRequestAvailable();
       setRequestAvailable(available);
@@ -113,7 +107,7 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
     <div className="flex items-center justify-center gap-3">
       {isMounted && (
         <>
-          {requestAvailable || (!requestAvailable && !isThisGroup) ? (
+          {requestAvailable && !data.requests?.some((request) => request.groupId === data?.groupId) ? (
             <Button disabled={!requestAvailable || isRequestSent} variant="primary" onClick={sendRequest}>
               Gửi yêu cầu tham gia
             </Button>

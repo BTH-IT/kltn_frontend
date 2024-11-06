@@ -33,6 +33,7 @@ export interface ISetting {
   courseId: string;
   startGroupCreation: Date | null;
   endGroupCreation: Date | null;
+  dueDateToJoinGroup: Date | null;
   allowStudentCreateProject: boolean;
   allowGroupRegistration: boolean;
   maxGroupSize: number;

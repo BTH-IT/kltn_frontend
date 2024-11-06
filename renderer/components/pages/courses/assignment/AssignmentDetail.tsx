@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon, GraduationCap } from 'lucide-react';
+import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon, GraduationCap, UsersRound } from 'lucide-react';
 import moment from 'moment';
 import { Controller, useForm } from 'react-hook-form';
 import Image from 'next/image';
@@ -233,6 +233,19 @@ export default function AssignmentDetail() {
                       onClick={() =>
                         router.push(
                           `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
+                        )
+                      }
+                    />
+                  </Button>
+                )}
+
+                {assignment?.createUser?.id === currentUser?.id && assignment?.isGroupAssigned && (
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <UsersRound
+                      className="w-6 h-6 mr-2"
+                      onClick={() =>
+                        router.push(
+                          `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/groups`,
                         )
                       }
                     />

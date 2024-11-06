@@ -31,7 +31,7 @@ const userService = {
     return configService.patch(`${API_URL.USERS}/${userId}/change-password`, data);
   },
   getAllRequests(): Promise<ApiResponse<IRequest[]>> {
-    return configService.get(`${API_URL.REQUESTS}/user/requests`);
+    return configService.get(`${API_URL.ACCOUNTS}/requests`);
   },
 };
 

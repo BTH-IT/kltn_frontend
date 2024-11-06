@@ -46,7 +46,7 @@ const MultiSelectPeople = (props: any) => {
             className="w-4 h-4 line-clamp-1"
           />
         )}
-        <div className="flex gap-2 items-center ml-5">
+        <div className="flex items-center gap-2 ml-5">
           <Image
             src={props.data.image ?? '/images/avt.png'}
             alt="logo"
@@ -149,7 +149,7 @@ const MultiSelectPeople = (props: any) => {
     menu: (def: any) => ({ ...def, zIndex: 9999 }),
   };
 
-  if (props.isSelectAll && props.options.length !== 0) {
+  if (props.isSelectAll && props?.options?.length !== 0) {
     isAllSelected.current = filteredSelectedOptions?.length === filteredOptions?.length;
 
     if (filteredSelectedOptions?.length > 0) {
@@ -167,7 +167,7 @@ const MultiSelectPeople = (props: any) => {
         inputValue={selectInput}
         onInputChange={onInputChange}
         onKeyDown={onKeyDown}
-        options={[allOption, ...props.options]}
+        options={[allOption, ...props?.options]}
         onChange={handleChange}
         components={{
           Option: Option,

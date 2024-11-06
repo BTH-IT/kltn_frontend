@@ -80,6 +80,12 @@ const courseService = {
   getEndTerm(courseId: string): Promise<ApiResponse<IAssignment>> {
     return configService.get(`${API_URL.COURSES}/${courseId}/end-term`);
   },
+  archive(courseId: string): Promise<ApiResponse<IAssignment>> {
+    return configService.post(`${API_URL.COURSES}/${courseId}/saved`);
+  },
+  unarchive(courseId: string): Promise<ApiResponse<IAssignment>> {
+    return configService.post(`${API_URL.COURSES}/${courseId}/cancel-saved`);
+  },
 };
 
 export default courseService;
