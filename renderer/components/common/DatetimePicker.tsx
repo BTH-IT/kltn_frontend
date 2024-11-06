@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { add } from 'date-fns';
+import { add, addHours } from 'date-fns';
 import { Calendar as CalendarIcon, X as XIcon } from 'lucide-react';
+import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { cn } from '@/libs/utils';
 import { formatVNDate } from '@/utils';
 
@@ -13,35 +13,46 @@ import { TimePicker } from './TimePicker';
 export function DateTimePicker({
   date,
   setDate,
+  onChange = () => {},
 }: {
   date?: Date | null | undefined;
   setDate: React.Dispatch<React.SetStateAction<Date | null | undefined>>;
+  onChange?: () => void;
 }) {
   const handleSelect = (newDay: Date | undefined) => {
     if (!newDay) return;
+    // Add 7 hours to match the timezone
+    const adjustedDate = addHours(newDay, 7);
     if (!date) {
-      setDate(newDay);
+      setDate(adjustedDate);
+      onChange();
       return;
     }
-    const diff = newDay.getTime() - date.getTime();
+    const diff = adjustedDate.getTime() - date.getTime();
     const diffInDays = diff / (1000 * 60 * 60 * 24);
     const newDateFull = add(date, { days: Math.ceil(diffInDays) });
+
     setDate(newDateFull);
+    onChange();
   };
 
   const handleSetDate = (date: Date | undefined) => {
     if (date) {
-      setDate(date);
+      // Add 7 hours to match the timezone
+      const adjustedDate = addHours(date, 7);
+      setDate(adjustedDate);
+      onChange();
     }
   };
 
   const handleClear = () => {
     setDate(undefined);
+    onChange();
   };
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button
           variant={'outline'}
           className={cn('w-[280px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
@@ -52,18 +63,20 @@ export function DateTimePicker({
             {date && !isNaN(date.getTime()) && <XIcon className="w-4 h-4 ml-2" onClick={handleClear} />}
           </div>
         </Button>
-      </PopoverTrigger>
-      <PopoverContent side="left" align="center" className="w-auto p-0">
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="left" align="center" className="w-auto p-0">
         <Calendar
           mode="single"
           selected={date || undefined}
-          onSelect={(d: Date | undefined) => d && handleSelect(d)}
+          onSelect={(d: Date | undefined) => {
+            d && handleSelect(d);
+          }}
           initialFocus
         />
         <div className="p-3 border-t border-border">
           <TimePicker setDate={handleSetDate} date={date || undefined} />
         </div>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

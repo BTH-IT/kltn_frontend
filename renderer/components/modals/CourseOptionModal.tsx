@@ -4,31 +4,31 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Copy, Scan, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Select } from 'react-select-virtualized';
-import * as z from 'zod';
-import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent2, DialogOverlay, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CoursesContext } from '@/contexts/CoursesContext';
-import { cn } from '@/libs/utils';
-import courseService from '@/services/courseService';
 import { CourseContext } from '@/contexts/CourseContext';
+import { CoursesContext } from '@/contexts/CoursesContext';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 import { ScoreStructureProvider } from '@/contexts/ScoreStructureContext';
+import { cn } from '@/libs/utils';
+import courseService from '@/services/courseService';
 import { IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 
-import { Switch } from '../ui/switch';
 import { DateTimePicker } from '../common/DatetimePicker';
 import { Slider } from '../common/SliderRange';
 import ScoreStructureForm from '../pages/courses/score/ScoreStructureForm';
+import { Switch } from '../ui/switch';
 
 import ShowCodeModal from './ShowCodeModal';
 
@@ -50,16 +50,6 @@ const CourseOptionModal = ({
   const [endCreateGroup, setEndCreateGroup] = useState<Date | null | undefined>(null);
   const { subjects } = useContext(CreateSubjectContext);
   const [user, setUser] = useState<IUser | null>(null);
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
-
-    if (storedUser) {
-      setUser(storedUser);
-    } else {
-      return router.push('/login');
-    }
-  }, []);
 
   const FormSchema = z.object({
     courseGroup: z.string().min(1, {
@@ -93,6 +83,16 @@ const CourseOptionModal = ({
     },
   });
 
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, []);
+
   const hasFinalScoreValue = form.watch('hasFinalScore');
   const allowGroupRegistration = form.watch('allowGroupRegistration');
 
@@ -104,9 +104,9 @@ const CourseOptionModal = ({
         value: course.subjectId,
       });
 
-      setStartCreateGroup(new Date(course.setting?.startGroupCreation ?? ''));
-      setEndCreateGroup(new Date(course.setting?.endGroupCreation ?? ''));
-      setDueDateToJoinGroup(new Date(course.setting?.dueDateToJoinGroup ?? ''));
+      setStartCreateGroup(course.setting?.startGroupCreation ? new Date(course.setting.startGroupCreation) : null);
+      setEndCreateGroup(course.setting?.endGroupCreation ? new Date(course.setting.endGroupCreation) : null);
+      setDueDateToJoinGroup(course.setting?.dueDateToJoinGroup ? new Date(course.setting.dueDateToJoinGroup) : null);
 
       form.setValue('allowGroupRegistration', course.setting?.allowGroupRegistration);
       form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);
@@ -197,15 +197,12 @@ const CourseOptionModal = ({
     }
   };
 
+  console.log(canSubmit);
+
   return (
     <>
       <Dialog open={onOpenModal} onOpenChange={onCloseModal}>
-        <DialogContent2
-          className="w-screen h-screen max-h-screen p-0 font-sans text-gray-700"
-          onInteractOutside={(e) => {
-            e.preventDefault();
-          }}
-        >
+        <DialogContent2 className="w-screen h-screen max-h-screen p-0 font-sans text-gray-700">
           <DialogTitle className="hidden"></DialogTitle>
           <div className="flex justify-center">
             <Form {...form}>
@@ -312,14 +309,18 @@ const CourseOptionModal = ({
                           </FormItem>
                         )}
                       />
-
                       {hasFinalScoreValue && (
                         <div className="flex flex-col gap-4 px-3 mb-2">
                           <div className="font-medium">Thời hạn cho phép tham gia vào nhóm</div>
-                          <DateTimePicker date={dueDateToJoinGroup} setDate={setDueDateToJoinGroup} />
+                          <DateTimePicker
+                            date={dueDateToJoinGroup}
+                            setDate={setDueDateToJoinGroup}
+                            onChange={() => {
+                              setCanSubmit(true);
+                            }}
+                          />
                         </div>
                       )}
-
                       <FormField
                         control={form.control}
                         name="allowGroupRegistration"
@@ -339,8 +340,20 @@ const CourseOptionModal = ({
                         <div className="flex flex-col gap-4 px-3 mb-2">
                           <div className="font-medium">Thời hạn đăng kí</div>
                           <div className="flex items-center justify-between gap-2">
-                            <DateTimePicker date={startCreateGroup} setDate={setStartCreateGroup} />
-                            <DateTimePicker date={endCreateGroup} setDate={setEndCreateGroup} />
+                            <DateTimePicker
+                              date={startCreateGroup}
+                              setDate={setStartCreateGroup}
+                              onChange={() => {
+                                setCanSubmit(true);
+                              }}
+                            />
+                            <DateTimePicker
+                              date={endCreateGroup}
+                              setDate={setEndCreateGroup}
+                              onChange={() => {
+                                setCanSubmit(true);
+                              }}
+                            />
                           </div>
                         </div>
                       )}

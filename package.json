@@ -78,6 +78,7 @@
     "next-qrcode": "^2.5.1",
     "nextjs-toploader": "^1.6.12",
     "prettier": "^3.3.2",
+    "prettier-eslint": "^16.3.0",
     "query-string": "^9.0.0",
     "react-day-picker": "^8.10.1",
     "react-google-drive-picker": "^1.2.2",

@@ -1,27 +1,27 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
-import { AlertCircle, BarChart2, FileText, Plus, Users } from 'lucide-react';
+import { BarChart2, FileText, Plus, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useContext, useEffect, useState } from 'react';
 
+import { CreateGroupModal } from '@/components/modals/CreateGroupModal';
+import CreateProjectModal from '@/components/modals/CreateProjectModal';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import CreateProjectModal from '@/components/modals/CreateProjectModal';
-import { CreateProjectContext } from '@/contexts/CreateProjectContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 import { CourseContext } from '@/contexts/CourseContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { IGroup, IProject, IUser } from '@/types';
+import { CreateProjectContext } from '@/contexts/CreateProjectContext';
 import { useGroupContext } from '@/contexts/GroupContext';
-import { Button } from '@/components/ui/button';
 import courseService from '@/services/courseService';
-import { CreateGroupModal } from '@/components/modals/CreateGroupModal';
+import { IGroup, IProject, IUser } from '@/types';
 
-import { userColumns as groupUserColumns } from '../group-tables/user-columns';
 import { columns as groupColumns } from '../group-tables/columns';
+import { userColumns as groupUserColumns } from '../group-tables/user-columns';
 
 import { columns as projectColumns } from './columns';
 import { userColumns as projectUserColumns } from './user-columns';

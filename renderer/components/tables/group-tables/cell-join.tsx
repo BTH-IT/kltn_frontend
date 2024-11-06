@@ -1,18 +1,17 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
+import React, { useEffect, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 
-import { IGroup, IRequest } from '@/types/group';
-import groupService from '@/services/groupService';
-import { IUser } from '@/types';
-import { KEY_LOCALSTORAGE } from '@/utils';
 import { Button } from '@/components/ui/button';
+import groupService from '@/services/groupService';
 import userService from '@/services/userService';
-
+import { IUser } from '@/types';
+import { IGroup, IRequest } from '@/types/group';
+import { KEY_LOCALSTORAGE } from '@/utils';
 interface CellJoinProps {
   data: IGroup;
 }
