@@ -1,13 +1,12 @@
 'use client';
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { Dispatch, SetStateAction, useCallback, useContext } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { z } from 'zod';
 
 import MultiSelectPeople from '@/components/common/MultiSelectPeople';
-import { cn } from '@/libs/utils';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,10 +16,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { IGroup, IGroupMember } from '@/types';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CourseContext } from '@/contexts/CourseContext';
+import { cn } from '@/libs/utils';
 import groupService from '@/services/groupService';
+import { IGroup, IGroupMember } from '@/types';
 
 const CreateGroupMemberModal = ({
   isOpen,
@@ -33,7 +34,7 @@ const CreateGroupMemberModal = ({
   group: IGroup;
   setMembers: Dispatch<SetStateAction<IGroupMember[]>>;
 }) => {
-  console.log(group?.course?.students);
+  const { course } = useContext(CourseContext);
 
   const FormSchema = z.object({
     student: z
@@ -54,13 +55,13 @@ const CreateGroupMemberModal = ({
   });
 
   const generateOptions = useCallback(() => {
-    const data = group?.course?.students?.map((s) => {
+    const data = course?.students?.map((s) => {
       return {
         label: `${s.fullName || s.userName}`,
-        value: s.id,
+        value: s.email,
       };
     });
-    return data?.filter((s) => !group?.groupMembers?.find((m) => m.studentId === s.value));
+    return data?.filter((s) => !group?.groupMembers?.find((m) => m.studentObj?.email === s.value));
   }, [group]);
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
@@ -70,7 +71,7 @@ const CreateGroupMemberModal = ({
         return;
       }
       const data = {
-        studentIds: values.student.map((s) => s.value),
+        emails: values.student.map((s) => s.value),
       };
       const res = await groupService.addMember(group.groupId, data);
       if (res.data) {
@@ -94,8 +95,6 @@ const CreateGroupMemberModal = ({
     form.reset();
     setIsOpen(!isOpen);
   };
-
-  if (!group?.course?.students) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

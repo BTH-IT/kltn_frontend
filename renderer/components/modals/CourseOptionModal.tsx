@@ -197,8 +197,6 @@ const CourseOptionModal = ({
     }
   };
 
-  console.log(canSubmit);
-
   return (
     <>
       <Dialog open={onOpenModal} onOpenChange={onCloseModal}>

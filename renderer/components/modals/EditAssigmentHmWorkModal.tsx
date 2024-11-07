@@ -3,29 +3,28 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import { NotebookText, X } from 'lucide-react';
 import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { toast } from 'react-toastify';
 import CreatableSelect from 'react-select/creatable';
-import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
+import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
-import { AssignmentContext } from '@/contexts/AssignmentContext';
 import { Form } from '@/components/ui/form';
+import { AssignmentContext } from '@/contexts/AssignmentContext';
+import { CourseContext } from '@/contexts/CourseContext';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
-import { ICourse, MetaLinkData } from '@/types';
+import { MetaLinkData } from '@/types';
 import { IAssignment } from '@/types/assignment';
 import { formatDuration, getLeafColumns } from '@/utils';
-import { CourseContext } from '@/contexts/CourseContext';
 
 import { DateTimePicker } from '../common/DatetimePicker';
-import AssignmentForm from '../forms/AssignmentForm';
 import { YoutubeCardProps } from '../common/YoutubeCard';
+import AssignmentForm from '../forms/AssignmentForm';
 
 import AddLinkModal from './AddLinkModal';
 import AddYoutubeLinkModal from './AddYoutubeLinkModal';
@@ -58,7 +57,6 @@ const EditAssignmentHmWorkModal = ({
   const [dueDate, setDueDate] = useState<Date | undefined | null>(undefined);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
-  const [isChooseGroup, setIsChooseGroup] = useState<boolean>(false);
 
   const { course } = useContext(CourseContext);
   const { setAssignment } = useContext(AssignmentContext);
@@ -91,7 +89,6 @@ const EditAssignmentHmWorkModal = ({
           value: assignment.scoreStructureId,
           label: `${assignment.scoreStructure?.columnName} - ${assignment.scoreStructure?.percent}%`,
         });
-      setIsChooseGroup(assignment.isGroupAssigned);
     }
   }, [assignment, onOpenModal, course, form]);
 
@@ -131,7 +128,6 @@ const EditAssignmentHmWorkModal = ({
       attachedLinks: links,
       attachments: resAttachments,
       scoreStructureId: scoreSelectedOption.value,
-      isGroupAssigned: isChooseGroup,
       type: assignment.type,
     };
 
@@ -182,7 +178,6 @@ const EditAssignmentHmWorkModal = ({
     setDueDate(undefined);
     setFiles([]);
     setLinks([]);
-    setIsChooseGroup(false);
   };
 
   return (
@@ -244,14 +239,6 @@ const EditAssignmentHmWorkModal = ({
                             setScoreSelectedOption(selectedOption);
                           }}
                           isDisabled={isFinal}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-4 px-3">
-                        <div className="font-medium">Áp dụng cho nhóm?</div>
-                        <Switch
-                          checked={isChooseGroup}
-                          onCheckedChange={(value) => setIsChooseGroup(value)}
-                          disabled={isFinal}
                         />
                       </div>
                     </div>

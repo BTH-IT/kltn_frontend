@@ -1,23 +1,24 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
-import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon, GraduationCap, UsersRound } from 'lucide-react';
-import moment from 'moment';
-import { Controller, useForm } from 'react-hook-form';
-import Image from 'next/image';
-import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { EllipsisVertical, FileText, GraduationCap, SendHorizontal, UsersRound } from 'lucide-react';
+import moment from 'moment';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useContext, useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
+import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
+import CommentList from '@/components/common/CommentList';
+import CommonModal from '@/components/modals/CommonModal';
+import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
+import SubmitAssignmentModal from '@/components/modals/SubmitAssignmentModal';
+import ViewSubmissionModal from '@/components/modals/ViewSubmissionModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AssignmentContext } from '@/contexts/AssignmentContext';
-import CommentList from '@/components/common/CommentList';
-import { IComment, ISubmission, IUser } from '@/types';
-import { KEY_LOCALSTORAGE } from '@/utils';
-import commentService from '@/services/commentService';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,15 +26,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import CommonModal from '@/components/modals/CommonModal';
-import assignmentService from '@/services/assignmentService';
-import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import { API_URL } from '@/constants/endpoints';
-import SubmitAssignmentModal from '@/components/modals/SubmitAssignmentModal';
-import ViewSubmissionModal from '@/components/modals/ViewSubmissionModal';
-import submissionService from '@/services/submissionService';
-import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
+import { AssignmentContext } from '@/contexts/AssignmentContext';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
+import assignmentService from '@/services/assignmentService';
+import commentService from '@/services/commentService';
+import submissionService from '@/services/submissionService';
+import { IComment, ISubmission, IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -239,7 +239,7 @@ export default function AssignmentDetail() {
                   </Button>
                 )}
 
-                {assignment?.createUser?.id === currentUser?.id && assignment?.isGroupAssigned && (
+                {assignment?.isGroupAssigned && (
                   <Button variant="ghost" size="icon" className="rounded-full">
                     <UsersRound
                       className="w-6 h-6 mr-2"
