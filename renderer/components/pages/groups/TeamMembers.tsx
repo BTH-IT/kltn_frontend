@@ -1,19 +1,19 @@
 'use client';
 import { Crown, Plus, X } from 'lucide-react';
-import React, { useContext, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
+import CreateGroupMemberModal from '@/components/modals/CreateGroupMemberModal';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { IGroup, IGroupMember, IUser } from '@/types';
-import CreateGroupMemberModal from '@/components/modals/CreateGroupMemberModal';
-import groupService from '@/services/groupService';
-import { KEY_LOCALSTORAGE } from '@/utils';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
+import groupService from '@/services/groupService';
+import { IGroup, IGroupMember, IUser } from '@/types';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 const TeamMembers = ({ group }: { group: IGroup }) => {
   const router = useRouter();
@@ -91,9 +91,12 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Thành viên nhóm</CardTitle>
-            <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" /> Thêm thành viên
-            </Button>
+            {(user?.id === group?.course?.lecturerId ||
+              group.groupMembers?.some((member) => member.isLeader && member.studentId === user?.id)) && (
+              <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" /> Thêm thành viên
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
