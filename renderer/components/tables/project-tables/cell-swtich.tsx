@@ -14,6 +14,7 @@ interface CellSwitchProps {
 }
 
 export const CellSwitch: React.FC<CellSwitchProps> = ({ data }) => {
+  const router = useRouter();
   const [checked, setChecked] = useState(data.isApproved);
 
   const handleChange = async (checked: boolean) => {
@@ -24,6 +25,7 @@ export const CellSwitch: React.FC<CellSwitchProps> = ({ data }) => {
       });
 
       setChecked(checked);
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
