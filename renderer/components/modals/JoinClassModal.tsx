@@ -44,8 +44,8 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const FormSchema = z.object({
-    inviteCode: z.string().refine((inviteCode) => inviteCode.length === 7, {
-      message: 'Mã lớp phải là một chuổi 7 ký tự.',
+    inviteCode: z.string().refine((inviteCode) => inviteCode.length === 6, {
+      message: 'Mã lớp phải là một chuổi 6 ký tự.',
     }),
   });
 
@@ -57,10 +57,10 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
   });
 
   const inputChangeHandler = (value: string) => {
-    if (value.length === 7) {
-      setCanSubmit(true);
-    } else {
+    if (value.length === 6) {
       setCanSubmit(false);
+    } else {
+      setCanSubmit(true);
     }
   };
 
@@ -69,9 +69,9 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       setHasSubmitted(true);
-      const res = await courseService.getCourseByInviteCode(values.inviteCode.toLowerCase());
+      const res = await courseService.addStudentToCourseByInviteCode(values.inviteCode.toLowerCase());
+
       if (res.data?.courseId && user?.email) {
-        await courseService.addStudents(String(res.data.courseId), [user.email]);
         setEnrolledCourses([...enrolledCourses, res.data]);
         router.push(`/course/${res.data.courseId}`);
 
@@ -111,7 +111,7 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
                           <Input
                             disabled={isLoading}
                             className={cn(
-                              'text-2xl h-16 focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                              'focus-visible:ring-0 text-black focus-visible:ring-offset-0 py-2',
                               isLoading && 'hidden',
                             )}
                             onChangeCapture={(event) => {
@@ -130,7 +130,7 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
               </div>
               <DialogFooter>
                 <Button
-                  disabled={!canSubmit}
+                  disabled={canSubmit}
                   className={cn('w-20', isLoading && 'hidden')}
                   variant="primary"
                   type="submit"

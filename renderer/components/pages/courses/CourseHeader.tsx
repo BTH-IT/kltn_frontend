@@ -3,7 +3,7 @@
 
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
 import { ArchiveRestore, ArchiveX, Settings, Trash2 } from 'lucide-react';
 
@@ -17,6 +17,8 @@ import courseService from '@/services/courseService';
 
 const CourseHeader = ({ data }: { data: ICourse }) => {
   const pathname = usePathname().replace(/\/$/, '');
+
+  const router = useRouter();
 
   const newPath = pathname.slice(pathname.lastIndexOf('/'));
 
@@ -43,6 +45,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
       await courseService.archive(data.courseId);
       setArchiveModalOpen(false);
       toast.success('Lưu trữ lớp học thành công!');
+      router.refresh();
     } catch (error) {
       toast.error('Không thể lưu trữ lớp học.');
     }
@@ -53,6 +56,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
       await courseService.unarchive(data.courseId);
       setUnarchiveModalOpen(false);
       toast.success('Bỏ lưu trữ lớp học thành công!');
+      router.refresh();
     } catch (error) {
       toast.error('Không thể bỏ lưu trữ lớp học.');
     }
@@ -63,6 +67,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
       await courseService.deleteCourse(data.courseId);
       setDeleteModalOpen(false);
       toast.success('Xóa lớp học thành công!');
+      router.refresh();
     } catch (error) {
       toast.error('Không thể xóa lớp học.');
     }
@@ -132,14 +137,24 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
             {user?.id === data.lecturerId && (
               <>
                 {!data.saveAt ? (
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <ArchiveRestore onClick={() => setArchiveModalOpen(true)} />
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p>Lưu trữ lớp học</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Settings onClick={() => setOnOpenModal(true)} />
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Chỉnh sửa cài đặt lớp học</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <ArchiveRestore onClick={() => setArchiveModalOpen(true)} />
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Lưu trữ lớp học</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </>
                 ) : (
                   <Tooltip>
                     <TooltipTrigger>
@@ -150,14 +165,6 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
                     </TooltipContent>
                   </Tooltip>
                 )}
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Settings onClick={() => setOnOpenModal(true)} />
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <p>Cài đặt lớp học</p>
-                  </TooltipContent>
-                </Tooltip>
                 <Tooltip>
                   <TooltipTrigger>
                     <Trash2 onClick={() => setDeleteModalOpen(true)} />

@@ -47,12 +47,19 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
         if (res) {
           const userRequests = res.data || [];
           const userRequestForGroup = userRequests.some(
-            (request) => request.groupId === data.groupId && request.userId === user?.id,
+            (request) =>
+              request.groupId === data.groupId &&
+              request.userId === user?.id &&
+              request.group?.groupType == data.groupType,
           );
+
           setHasRequest(userRequestForGroup);
 
           const otherGroupRequest = userRequests.some(
-            (request) => request.groupId !== data.groupId && request.userId === user?.id,
+            (request) =>
+              request.groupId !== data.groupId &&
+              request.userId === user?.id &&
+              request.group?.groupType == data.groupType,
           );
           setUserHasRequestOther(otherGroupRequest);
 

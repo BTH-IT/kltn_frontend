@@ -69,6 +69,7 @@ const CourseOptionModal = ({
     allowGroupRegistration: z.boolean(),
     groupSizeRange: z.array(z.number()).nullable(),
     hasFinalScore: z.boolean(),
+    enableInvite: z.boolean(),
   });
 
   const form = useForm({
@@ -78,6 +79,7 @@ const CourseOptionModal = ({
       subjectId: { label: '', value: '' },
       allowStudentCreateProject: false,
       allowGroupRegistration: false,
+      enableInvite: false,
       groupSizeRange: [0, 10],
       hasFinalScore: false,
     },
@@ -95,6 +97,7 @@ const CourseOptionModal = ({
 
   const hasFinalScoreValue = form.watch('hasFinalScore');
   const allowGroupRegistration = form.watch('allowGroupRegistration');
+  const enableInvite = form.watch('enableInvite');
 
   useEffect(() => {
     if (course && course.subjectId) {
@@ -109,6 +112,7 @@ const CourseOptionModal = ({
       setDueDateToJoinGroup(course.setting?.dueDateToJoinGroup ? new Date(course.setting.dueDateToJoinGroup) : null);
 
       form.setValue('allowGroupRegistration', course.setting?.allowGroupRegistration);
+      form.setValue('enableInvite', course.enableInvite);
       form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);
       form.setValue('groupSizeRange', [course.setting?.minGroupSize || 1, course.setting?.maxGroupSize || 15]);
       form.setValue('hasFinalScore', course.setting?.hasFinalScore || false);
@@ -135,6 +139,7 @@ const CourseOptionModal = ({
         ...course,
         courseGroup: values.courseGroup,
         subjectId: values.subjectId.value,
+        enableInvite: values.enableInvite,
       };
 
       const settingData = {
@@ -271,27 +276,49 @@ const CourseOptionModal = ({
                           </FormItem>
                         )}
                       />
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">Đường liên kết mời</div>
-                        <div className="flex items-center gap-1">
-                          <div className="text-sm">{`${process.env.NEXT_PUBLIC_URL}/courses/invite/${course?.inviteCode}`}</div>
-                          <div
-                            onClick={() => handleCopyInvLinkClick()}
-                            className="flex items-center justify-center w-12 h-12 p-0 rounded-full cursor-pointer hover:bg-gray-100/60"
-                          >
-                            <Copy width={20} height={20} />
+                      <FormField
+                        control={form.control}
+                        name="enableInvite"
+                        render={({ field }) => (
+                          <FormItem>
+                            <div className="flex items-center justify-between my-3">
+                              <FormLabel className="font-medium text-md">
+                                Cho phép thành viên tham gia bằng mã mời
+                              </FormLabel>
+                              <FormControl>
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                              </FormControl>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {enableInvite && (
+                        <>
+                          <div className="flex items-center justify-between">
+                            <div className="font-medium">Đường liên kết mời</div>
+                            <div className="flex items-center gap-1">
+                              <div className="text-sm">{`${process.env.NEXT_PUBLIC_URL}/courses/invite/${course?.inviteCode}`}</div>
+                              <div
+                                onClick={() => handleCopyInvLinkClick()}
+                                className="flex items-center justify-center w-12 h-12 p-0 rounded-full cursor-pointer hover:bg-gray-100/60"
+                              >
+                                <Copy width={20} height={20} />
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">Mã lớp</div>
-                        <ShowCodeModal invCode={course?.inviteCode || ''} courseName={course?.courseGroup || ''}>
-                          <div className="flex items-center justify-center gap-2 px-3 py-1 font-semibold text-blue-500 rounded-md cursor-pointer hover:bg-blue-100/30 hover:text-blue-800">
-                            <div className="text-sm mb-[2px]">Hiện mã lớp học</div>
-                            <Scan width={20} height={20} />
+                          <div className="flex items-center justify-between">
+                            <div className="font-medium">Mã lớp</div>
+                            <ShowCodeModal invCode={course?.inviteCode || ''} courseName={course?.courseGroup || ''}>
+                              <div className="flex items-center justify-center gap-2 px-3 py-1 font-semibold text-blue-500 rounded-md cursor-pointer hover:bg-blue-100/30 hover:text-blue-800">
+                                <div className="text-sm mb-[2px]">Hiện mã lớp học</div>
+                                <Scan width={20} height={20} />
+                              </div>
+                            </ShowCodeModal>
                           </div>
-                        </ShowCodeModal>
-                      </div>
+                        </>
+                      )}
                       <FormField
                         control={form.control}
                         name="hasFinalScore"
@@ -412,7 +439,7 @@ const CourseOptionModal = ({
                     <div className="mt-2 text-2xl font-medium">Cài đặt thông tin khác</div>
                     <div className="grid gap-4 py-4">
                       <ScoreStructureProvider scoreStructure={course?.scoreStructure || null}>
-                        {course?.lecturerId === user?.id && <ScoreStructureForm />}
+                        <ScoreStructureForm />
                       </ScoreStructureProvider>
                     </div>
                   </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -33,6 +33,7 @@ export const CreateAssignmentGroupModal = ({
   setGroups: React.Dispatch<React.SetStateAction<IGroup[]>>;
 }) => {
   const params = useParams();
+  const router = useRouter();
 
   const FormSchema = z.object({
     groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
@@ -69,12 +70,16 @@ export const CreateAssignmentGroupModal = ({
         ...values,
         courseId: params.courseId as string,
         assignmentId: assignment.assignmentId,
+        groupType: 'Normal',
       });
+
       if (res.data) {
         setGroups((prev) => [...prev, res.data]);
       }
+
       form.reset();
       setIsOpen(false);
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -85,6 +90,7 @@ export const CreateAssignmentGroupModal = ({
     form.reset();
     setIsOpen(!isOpen);
   };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -155,7 +161,7 @@ export const CreateAssignmentGroupModal = ({
                   {form.formState.isSubmitting && (
                     <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
-                  Tạo nhóm
+                  Tạo nhóm mới
                 </Button>
               </DialogFooter>
             </form>

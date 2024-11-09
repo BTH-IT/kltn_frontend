@@ -14,7 +14,7 @@ const CourseCard = ({ item }: { item: ICourse }) => {
   const router = useRouter();
   return (
     <Card
-      onClick={() => router.push(`courses/${item.courseId}`)}
+      onClick={() => router.replace(`/courses/${item.courseId}`)}
       className="font-sans rounded-xl overflow-hidden cursor-pointer relative
               hover:shadow-[0_1px_2px_0_rgba(60,64,67,.3),0_2px_6px_2px_rgba(60,64,67,.15)]"
     >

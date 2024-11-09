@@ -17,7 +17,7 @@ const AnnouncementInput = ({ course }: { course: ICourse | null }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <BulletinInput course={course} setAnnouncements={setAnnouncements} />
+      {!course?.saveAt && <BulletinInput course={course} setAnnouncements={setAnnouncements} />}
       <AnnouncementList announcements={announcements} setAnnouncements={setAnnouncements} course={course} />
     </div>
   );

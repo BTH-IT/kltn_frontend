@@ -186,7 +186,7 @@ const BulletForm = ({
     if (!user?.id || !course?.courseId) return;
 
     try {
-      const resAttachments = await uploadService.uploadMultipleFileWithAWS3(files);
+      const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
       const res = await announcementService.createAnnouncement({
         content: values.content,
@@ -194,10 +194,7 @@ const BulletForm = ({
         userId: user.id,
         attachedLinks: links,
         attachments: resAttachments || [],
-        mentions:
-          mentionOptionSelected && mentionOptionSelected.length !== course.students.length
-            ? mentionOptionSelected?.map((opt) => opt.value)
-            : [],
+        mentions: mentionOptionSelected ? mentionOptionSelected.map((opt) => opt.value) : [],
       });
 
       let announceCount = 1;
@@ -269,8 +266,8 @@ const BulletForm = ({
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 p-4">
         <div className="flex flex-col gap-4 px-3">
           {user?.id === course?.lecturerId && (
-            <div className="flex items-center gap-10">
-              <div>
+            <div className="flex flex-col items-center gap-10">
+              <div className="flex flex-col w-full">
                 <div className="mb-2 font-medium">Đăng trong</div>
                 <MultiSelectClassroom
                   options={generateClassOptions()}
@@ -278,10 +275,14 @@ const BulletForm = ({
                   value={courseOptionSelected}
                   isSelectAll={true}
                   menuPlacement={'bottom'}
-                  className="w-[300px]"
                 />
               </div>
-              <div className={cn('', (courseOptionSelected?.length ?? 0) > 1 && 'hidden')}>
+              <div
+                className={cn(
+                  'flex flex-col w-full',
+                  ((courseOptionSelected?.length ?? 0) > 1 || course?.students.length <= 0) && 'hidden',
+                )}
+              >
                 <div className="mb-2 font-medium">Dành cho</div>
                 <MultiSelectPeople
                   isDisabled={(courseOptionSelected?.length ?? 0) > 1}
@@ -290,7 +291,7 @@ const BulletForm = ({
                   value={mentionOptionSelected}
                   isSelectAll={true}
                   menuPlacement={'bottom'}
-                  className="w-[300px]"
+                  className="min-w-[300px] w-full"
                 />
               </div>
             </div>
@@ -396,7 +397,7 @@ const BulletForm = ({
                       (mentionOptionSelected !== null && mentionOptionSelected?.length > 0)
                     ))
                 }
-                className="w-20"
+                className="min-w-20"
                 variant="primaryReverge"
               >
                 {formState.isSubmitting && (

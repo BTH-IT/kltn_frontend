@@ -21,7 +21,7 @@ const MultiSelectClassroom = (props: any) => {
   let filteredSelectedOptions = filterOptions(props.value, selectInput);
 
   const Option = (props: any) => (
-    <components.Option {...props} className="h-[58px]">
+    <components.Option {...props} className="min-h-[58px]">
       <div className="flex flex-row items-center">
         {props.value === '*' && !isAllSelected.current && filteredSelectedOptions?.length > 0 ? (
           <input

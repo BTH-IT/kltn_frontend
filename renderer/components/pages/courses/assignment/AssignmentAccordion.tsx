@@ -107,61 +107,63 @@ const AssignmentAccordion = ({
                     : 'Không có ngày đến hạn'}
               </div>
             </div>
-            <div
-              className={cn('button-container absolute top-0 translate-y-[18%] right-2', !showButton && 'opacity-0')}
-            >
-              <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdown}>
-                <DropdownMenuTrigger asChild className="cursor-pointer">
-                  <Button
-                    variant="primaryGhost"
-                    className="h-12 p-3 text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <EllipsisVertical />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-auto" align="start">
-                  <DropdownMenuGroup>
-                    {isTeacher && (
-                      <>
-                        <DropdownMenuItem
-                          className="flex items-center gap-3 p-2 text-md"
-                          onClick={(e) => {
-                            setIsEditModalOpen(true);
-                            e.stopPropagation();
-                          }}
-                        >
-                          Chỉnh sửa
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="flex items-center gap-3 p-2 text-md"
-                          onClick={(e) => {
-                            setIsDeleteModalOpen(true);
-                            e.stopPropagation();
-                          }}
-                        >
-                          Xóa
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                    <DropdownMenuItem
-                      className="flex items-center gap-3 p-2 text-md"
-                      onClick={(e) => {
-                        handleCopyLinkClick();
-                        e.stopPropagation();
-                      }}
+            {!assignment.course?.saveAt && (
+              <div
+                className={cn('button-container absolute top-0 translate-y-[18%] right-2', !showButton && 'opacity-0')}
+              >
+                <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdown}>
+                  <DropdownMenuTrigger asChild className="cursor-pointer">
+                    <Button
+                      variant="primaryGhost"
+                      className="h-12 p-3 text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200"
+                      onClick={(event) => event.stopPropagation()}
                     >
-                      Sao chép đường liên kết
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                      <EllipsisVertical />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-auto" align="end">
+                    <DropdownMenuGroup>
+                      {isTeacher && (
+                        <>
+                          <DropdownMenuItem
+                            className="flex items-center gap-3 p-2 text-md"
+                            onClick={(e) => {
+                              setIsEditModalOpen(true);
+                              e.stopPropagation();
+                            }}
+                          >
+                            Chỉnh sửa
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="flex items-center gap-3 p-2 text-md"
+                            onClick={(e) => {
+                              setIsDeleteModalOpen(true);
+                              e.stopPropagation();
+                            }}
+                          >
+                            Xóa
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                      <DropdownMenuItem
+                        className="flex items-center gap-3 p-2 text-md"
+                        onClick={(e) => {
+                          handleCopyLinkClick();
+                          e.stopPropagation();
+                        }}
+                      >
+                        Sao chép đường liên kết
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
           </div>
         </AccordionTriggerNoIcon>
         <AccordionContent>
-          <div className="min-h-40 max-h-[342px] overflow-auto py-5">
-            <div className="flex flex-col gap-4 pb-5 pl-5 pr-8">
+          <div className="py-5 overflow-auto min-h-40">
+            <div className="flex flex-col gap-4 pb-5 pl-5 pr-8 overflow-y-auto">
               <div className="flex items-center justify-between text-sm">
                 <div className="text-gray-500">
                   {`Đã đăng vào ${formatVNDate(assignment.createdAt, false)} ${

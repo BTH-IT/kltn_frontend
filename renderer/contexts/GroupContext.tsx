@@ -26,7 +26,7 @@ export const GroupContextProvider = ({ children, groups }: { children: React.Rea
     if (!groups || groups.length === 0) {
       fetchData();
     }
-  }, [params.courseId, groups]);
+  }, [params.courseId]);
   return (
     <GroupContext.Provider
       value={{

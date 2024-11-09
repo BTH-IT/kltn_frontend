@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext, useEffect, useRef, useState, MouseEventHandler } from 'react';
-import { Settings2, Search, Calendar as CalendarIcon, FileText, Printer } from 'lucide-react';
+import { Settings2, Search, Calendar as CalendarIcon, FileText, Printer, ArrowLeftFromLine } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -95,14 +95,18 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
   const stats = {
     submitted: studentSubmissions.filter((student) => categorizeStudentStatus(student) === 'Đã nộp').length,
     graded: studentSubmissions.filter((student) => categorizeStudentStatus(student) === 'Đã chấm bài').length,
-    notSubmit: studentSubmissions.filter((student) => categorizeStudentStatus(student) === 'Chưa nộp bài').length,
+    notSubmit: studentSubmissions.filter(
+      (student) =>
+        categorizeStudentStatus(student) === 'Chưa nộp bài' || categorizeStudentStatus(student) === 'Trễ hạn',
+    ).length,
   };
 
   const filteredStudents = studentSubmissions.filter(
     (student) =>
       student.user.userName.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (!selectedDate ||
-        format(student.submission?.createdAt ?? '', 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')),
+        (student.submission?.createdAt &&
+          format(new Date(student.submission.createdAt), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd'))),
   );
 
   const handleRemove = async () => {
@@ -130,7 +134,13 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
     <div className="container p-4 mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">{assignment?.title || ''}</h1>
-        <div className="flex space-x-2">
+        <div className="flex items-center space-x-2">
+          <ArrowLeftFromLine
+            className="w-5 h-5 cursor-pointer"
+            onClick={() => {
+              router.push(`/courses/${assignment?.courseId}/assignments/${assignment?.assignmentId}`);
+            }}
+          />
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="cursor-pointer">
               <Settings2 className="w-5 h-5" />
@@ -159,35 +169,58 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Đã nộp</CardTitle>
-            <FileText className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.submitted}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Đã chấm điểm</CardTitle>
-            <FileText className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.graded}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Chưa nộp bài</CardTitle>
-            <FileText className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.notSubmit}</div>
-          </CardContent>
-        </Card>
-      </div>
+      {assignment?.scoreStructure ? (
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Đã nộp</CardTitle>
+              <FileText className="w-4 h-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.submitted}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Đã chấm điểm</CardTitle>
+              <FileText className="w-4 h-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.graded}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Chưa nộp bài</CardTitle>
+              <FileText className="w-4 h-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.notSubmit}</div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        <div className="grid grid-cols-12 gap-4 mb-6">
+          <Card className="col-span-6">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Đã nộp</CardTitle>
+              <FileText className="w-4 h-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.submitted}</div>
+            </CardContent>
+          </Card>
+          <Card className="col-span-6">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Chưa nộp bài</CardTitle>
+              <FileText className="w-4 h-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.notSubmit}</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
@@ -220,7 +253,7 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
               <TableHead>Trạng thái</TableHead>
               <TableHead>Ngày nộp</TableHead>
               <TableHead>Điểm</TableHead>
-              <TableHead className="toHide">Hành động</TableHead>
+              <TableHead className="toHide">Xem và chấm bài</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

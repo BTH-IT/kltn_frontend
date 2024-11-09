@@ -26,6 +26,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { API_URL } from '@/constants/endpoints';
 import { AssignmentContext } from '@/contexts/AssignmentContext';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
@@ -183,7 +184,7 @@ export default function AssignmentDetail() {
   const categorizeStatus = (submission: ISubmission | null) => {
     const now = new Date();
 
-    const dueDate = new Date(assignment?.dueDate || '');
+    const dueDate = assignment?.dueDate ? new Date(assignment.dueDate) : now;
 
     if (!submission) {
       if (assignment?.dueDate === null) return 'Đã giao';
@@ -198,225 +199,243 @@ export default function AssignmentDetail() {
 
   return (
     <>
-      <div className="grid grid-cols-12 gap-8">
-        <Card
-          className={`col-span-9 border-none shadow-lg ${
-            currentUser?.id === assignment?.createUser?.id && 'col-span-12'
-          }`}
-        >
-          <CardHeader className="rounded-t-lg bg-primary/10">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
-                  <FileText className="w-6 h-6 text-primary" />
+      <TooltipProvider>
+        <div className="grid grid-cols-12 gap-8">
+          <Card
+            className={`col-span-9 border-none shadow-lg ${
+              currentUser?.id === assignment?.createUser?.id && 'col-span-12'
+            }`}
+          >
+            <CardHeader className="rounded-t-lg bg-primary/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
+                    <FileText className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl font-bold text-primary">{assignment?.title}</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
+                      {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
+                    </p>
+                    {assignment?.scoreStructure && (
+                      <p className="text-sm text-muted-foreground">
+                        Bài tập cho cột điểm: {assignment?.scoreStructure?.columnName} -{' '}
+                        {assignment?.scoreStructure?.percent}
+                        {'%'}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold text-primary">{assignment?.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
-                    {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
-                  </p>
-                  {assignment?.scoreStructure && (
-                    <p className="text-sm text-muted-foreground">
-                      Bài tập cho cột điểm: {assignment?.scoreStructure?.columnName} -{' '}
-                      {assignment?.scoreStructure?.percent}
-                      {'%'}
-                    </p>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <GraduationCap
+                          className="w-6 h-6 mr-2"
+                          onClick={() =>
+                            router.push(
+                              `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
+                            )
+                          }
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>Xem và chấm bài</TooltipContent>
+                    </Tooltip>
+                  </Button>
+
+                  {assignment?.isGroupAssigned && (
+                    <Button variant="ghost" size="icon" className="rounded-full">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <UsersRound
+                            className="w-6 h-6 mr-2"
+                            onClick={() =>
+                              router.push(
+                                `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/groups`,
+                              )
+                            }
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>Xem nhóm</TooltipContent>
+                      </Tooltip>
+                    </Button>
                   )}
+
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    {assignment?.createUser?.id === currentUser?.id ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild className="cursor-pointer">
+                          <EllipsisVertical />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-auto" align="end">
+                          <DropdownMenuGroup>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsEdit(true);
+                              }}
+                            >
+                              Chỉnh sửa
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsDeleteModalOpen(true);
+                              }}
+                            >
+                              Xóa
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <></>
+                    )}
+                  </Button>
                 </div>
               </div>
-              <div>
-                {assignment?.scoreStructure && (
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <GraduationCap
-                      className="w-6 h-6 mr-2"
-                      onClick={() =>
-                        router.push(
-                          `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
-                        )
-                      }
-                    />
-                  </Button>
-                )}
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3 pt-6">
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: assignment?.content || '',
+                }}
+                className="pb-4 border-b markdown ql-editor"
+              />
+              <AnnouncementAttachList links={assignment?.attachedLinks || []} files={assignment?.attachments || []} />
+              <CommentList
+                comments={comments}
+                handleRemoveComment={handleRemoveComment}
+                handleUpdateComment={handleUpdateComment}
+              />
+            </CardContent>
+            <CardFooter className="border-t rounded-b-lg bg-muted/50">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className={`flex gap-3 items-end pt-5 comment w-full px-4 pb-4 ${isFocus ? 'active' : ''}`}
+              >
+                <div className="flex items-start flex-1 gap-3">
+                  <Image
+                    src={currentUser?.avatar || '/images/avt.png'}
+                    height={3000}
+                    width={3000}
+                    alt="avatar"
+                    className="w-[35px] h-[35px] rounded-full flex-shrink-0"
+                  />
 
-                {assignment?.isGroupAssigned && (
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <UsersRound
-                      className="w-6 h-6 mr-2"
-                      onClick={() =>
-                        router.push(
-                          `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/groups`,
-                        )
-                      }
-                    />
-                  </Button>
-                )}
-
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  {assignment?.createUser?.id === currentUser?.id ? (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild className="cursor-pointer">
-                        <EllipsisVertical />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-auto" align="end">
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setIsEdit(true);
-                            }}
-                          >
-                            Chỉnh sửa
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setIsDeleteModalOpen(true);
-                            }}
-                          >
-                            Xóa
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <Controller
+                    name="content"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <ReactQuill
+                        theme="snow"
+                        placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
+                        className="flex-1 !rounded-full w-full"
+                        value={field.value}
+                        onChange={field.onChange}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                      />
+                    )}
+                  />
+                </div>
+                <button disabled={formState.isSubmitting} className="mb-1">
+                  <SendHorizontal />
+                </button>
+              </form>
+            </CardFooter>
+          </Card>
+          <div className={`col-span-3 ${currentUser?.id === assignment?.createUser?.id && 'col-span-12'}`}>
+            {currentUser?.id !== assignment?.createUser?.id && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>
+                  <span className="text-sm text-green-600">{categorizeStatus(assignment?.submission || null)}</span>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {assignment?.submission ? (
+                    <>
+                      <Button
+                        onClick={() => setIsViewSubmissionModalOpen(true)}
+                        variant="outline"
+                        className="justify-center w-full"
+                      >
+                        Xem bài đã nộp
+                      </Button>
+                      <Button
+                        onClick={() => setIsDeleteSubmissionModalOpen(true)}
+                        disabled={!isSubmissionDeletable}
+                        variant="destructive"
+                        className="justify-center w-full"
+                      >
+                        Hủy nộp bài
+                      </Button>
+                    </>
                   ) : (
-                    <></>
-                  )}
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3 pt-6">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: assignment?.content || '',
-              }}
-              className="pb-4 border-b markdown ql-editor"
-            />
-            <AnnouncementAttachList links={assignment?.attachedLinks || []} files={assignment?.attachments || []} />
-            <CommentList
-              comments={comments}
-              handleRemoveComment={handleRemoveComment}
-              handleUpdateComment={handleUpdateComment}
-            />
-          </CardContent>
-          <CardFooter className="border-t rounded-b-lg bg-muted/50">
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className={`flex gap-3 items-end pt-6 comment w-full ${isFocus ? 'active' : ''}`}
-            >
-              <div className="flex items-start flex-1 gap-3">
-                <Image
-                  src={currentUser?.avatar || '/images/avt.png'}
-                  height={3000}
-                  width={3000}
-                  alt="avatar"
-                  className="w-[35px] h-[35px] rounded-full flex-shrink-0"
-                />
-
-                <Controller
-                  name="content"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <ReactQuill
-                      theme="snow"
-                      placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
-                      className="flex-1 !rounded-full w-full"
-                      value={field.value}
-                      onChange={field.onChange}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                    />
-                  )}
-                />
-              </div>
-              <button disabled={formState.isSubmitting} className="mb-1">
-                <SendHorizontal />
-              </button>
-            </form>
-          </CardFooter>
-        </Card>
-        <div className={`col-span-3 ${currentUser?.id === assignment?.createUser?.id && 'col-span-12'}`}>
-          {currentUser?.id !== assignment?.createUser?.id && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>
-                <span className="text-sm text-green-600">{categorizeStatus(assignment?.submission || null)}</span>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {assignment?.submission ? (
-                  <>
                     <Button
-                      onClick={() => setIsViewSubmissionModalOpen(true)}
                       variant="outline"
                       className="justify-center w-full"
+                      onClick={() => {
+                        if (categorizeStatus(assignment?.submission || null) !== 'Trễ hạn') {
+                          setIsSubmit(true);
+                        }
+                      }}
                     >
-                      Xem bài đã nộp
+                      {categorizeStatus(assignment?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
                     </Button>
-                    <Button
-                      onClick={() => setIsDeleteSubmissionModalOpen(true)}
-                      disabled={!isSubmissionDeletable}
-                      variant="destructive"
-                      className="justify-center w-full"
-                    >
-                      Hủy nộp bài
-                    </Button>
-                  </>
-                ) : (
-                  <Button variant="outline" className="justify-start w-full" onClick={() => setIsSubmit(true)}>
-                    {categorizeStatus(assignment?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )}
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
-      </div>
-      {assignment && (
-        <>
-          <EditAssignmentHmWorkModal onOpenModal={isEdit} setOnOpenModal={setIsEdit} assignment={assignment} />
-          <SubmitAssignmentModal
-            onOpenModal={isSubmit}
-            setOnOpenModal={setIsSubmit}
-            course={assignment.course}
-            assignment={assignment}
-          />
-          <ViewSubmissionModal
-            onOpenModal={isViewSubmissionModalOpen}
-            setOnOpenModal={setIsViewSubmissionModalOpen}
-            course={assignment.course}
-            assignment={assignment}
-            user={currentUser}
-          />
-        </>
-      )}
-      <CommonModal
-        isOpen={isDeleteModalOpen}
-        setIsOpen={setIsDeleteModalOpen}
-        width={500}
-        height={150}
-        title="Bạn có chắc muốn xoá bài tập này không?"
-        acceptTitle="Xoá"
-        acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
-        ocClickAccept={async () => {
-          await handleRemove();
-          setIsDeleteModalOpen(false);
-        }}
-      />
-      <CommonModal
-        isOpen={isDeleteSubmissionModalOpen}
-        setIsOpen={setIsDeleteSubmissionModalOpen}
-        width={500}
-        height={150}
-        title="Bạn có chắc muốn hủy bài đã nộp không?"
-        acceptTitle="Hủy"
-        acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
-        ocClickAccept={async () => {
-          await handleDeleteSubmission();
-          setIsDeleteSubmissionModalOpen(false);
-        }}
-      />
+        {assignment && (
+          <>
+            <EditAssignmentHmWorkModal onOpenModal={isEdit} setOnOpenModal={setIsEdit} assignment={assignment} />
+            <SubmitAssignmentModal
+              onOpenModal={isSubmit}
+              setOnOpenModal={setIsSubmit}
+              course={assignment.course}
+              assignment={assignment}
+            />
+            <ViewSubmissionModal
+              onOpenModal={isViewSubmissionModalOpen}
+              setOnOpenModal={setIsViewSubmissionModalOpen}
+              course={assignment.course}
+              assignment={assignment}
+              user={currentUser}
+            />
+          </>
+        )}
+        <CommonModal
+          isOpen={isDeleteModalOpen}
+          setIsOpen={setIsDeleteModalOpen}
+          width={500}
+          height={150}
+          title="Bạn có chắc muốn xoá bài tập này không?"
+          acceptTitle="Xoá"
+          acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
+          ocClickAccept={async () => {
+            await handleRemove();
+            setIsDeleteModalOpen(false);
+          }}
+        />
+        <CommonModal
+          isOpen={isDeleteSubmissionModalOpen}
+          setIsOpen={setIsDeleteSubmissionModalOpen}
+          width={500}
+          height={150}
+          title="Bạn có chắc muốn hủy bài đã nộp không?"
+          acceptTitle="Hủy"
+          acceptClassName="hover:bg-red-50 text-red-600 transition-all duration-400"
+          ocClickAccept={async () => {
+            await handleDeleteSubmission();
+            setIsDeleteSubmissionModalOpen(false);
+          }}
+        />
+      </TooltipProvider>
     </>
   );
 }

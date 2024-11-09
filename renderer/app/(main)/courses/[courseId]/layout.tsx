@@ -1,4 +1,5 @@
 import React from 'react';
+import { redirect } from 'next/navigation';
 
 import http from '@/libs/http';
 import { API_URL } from '@/constants/endpoints';
@@ -18,6 +19,10 @@ const Layout = async ({ children, params }: { children: React.ReactNode; params:
   const {
     payload: { data: course },
   } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
+
+  if (!course) {
+    redirect('/');
+  }
 
   return (
     <>

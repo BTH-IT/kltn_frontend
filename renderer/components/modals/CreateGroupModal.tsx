@@ -28,6 +28,7 @@ export const CreateGroupModal = ({
   minNumberOfMembers: number;
   maxNumberOfMembers: number;
   setGroupCreated: React.Dispatch<React.SetStateAction<IGroup | null>>;
+  groupType?: string;
 }) => {
   const params = useParams();
 
@@ -65,6 +66,7 @@ export const CreateGroupModal = ({
       const res = await groupService.createGroup({
         ...values,
         courseId: params.courseId as string,
+        groupType: 'Final',
       });
       if (res.data) {
         setGroupCreated(res.data);

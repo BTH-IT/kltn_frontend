@@ -15,6 +15,7 @@ export interface IGroup extends IBaseModel {
   briefs?: IBrief[];
   requests?: IRequest[];
   assignmentId?: string;
+  groupType: string;
 }
 
 export interface IRequest extends IBaseModel {

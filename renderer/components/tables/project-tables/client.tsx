@@ -38,6 +38,8 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
   const { projects } = useContext(CreateProjectContext);
   const { course } = useContext(CourseContext);
   const { groups, setGroups } = useGroupContext();
+
+  console.log(groups);
   const [activeTab, setActiveTab] = useState('projects');
 
   const { setItems } = useContext(BreadcrumbContext);
@@ -78,8 +80,6 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
       currentGroup && setCurrentGroup(currentGroup);
     }
   }, [course, user, groups]);
-
-  console.log(currentGroup);
 
   return (
     <>

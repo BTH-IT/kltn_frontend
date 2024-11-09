@@ -39,6 +39,9 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  const currentYear = new Date().getFullYear();
+  const nextYear = currentYear + 1;
+
   const FormSchema = z.object({
     name: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
@@ -60,13 +63,17 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
       .min(1, { message: 'Nhóm môn học là trường bắt buộc.' })
       .refine(
         (value) => {
-          return !isNaN(Number(value));
+          const numValue = Number(value);
+          return !isNaN(numValue) && numValue >= 0;
         },
-        { message: 'Nhóm môn học phải là số.' },
+        { message: 'Nhóm môn học phải là một số không âm.' },
       ),
-    semester: z.string().min(1, {
-      message: 'Niên khóa là trường bắt buộc.',
-    }),
+    semester: z
+      .string()
+      .min(1, { message: 'Niên khóa là trường bắt buộc.' })
+      .regex(new RegExp(`^HK[1-3] \\| ${currentYear} - ${nextYear}$`), {
+        message: `Niên khóa phải có dạng "HK1 | ${currentYear} - ${nextYear}", "HK2 | ${currentYear} - ${nextYear}", hoặc "HK3 | ${currentYear} - ${nextYear}".`,
+      }),
   });
 
   const form = useForm({
@@ -80,8 +87,6 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    console.log('a');
-
     try {
       const data = {
         name: values.name,
@@ -91,9 +96,11 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
         semester: values.semester,
       };
       const res = await courseService.createCourse(data as any);
+      router.refresh();
       router.push(`${API_URL.COURSES}/${res.data.courseId}`);
       setOpenModal(false);
       form.reset();
+      toast.success('Tạo lớp học thành công');
     } catch (error) {
       const axiousError = error as AxiosError;
       toast.error((axiousError.response?.data as ApiResponse<string>).message as string);

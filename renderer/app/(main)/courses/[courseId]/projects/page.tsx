@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import TeamMembers from '@/components/pages/groups/TeamMembers';
 import RequestList from '@/components/pages/groups/RequestList';
 import StudentGroup from '@/components/common/StudentGroup';
+import { BackButtonV3 } from '@/components/common/BackButtonV3';
 
 const ProjectsPage = async ({ params }: { params: { courseId: string } }) => {
   const {
@@ -52,7 +53,22 @@ const ProjectsPage = async ({ params }: { params: { courseId: string } }) => {
             <div className="mt-4 space-y-6">
               <Card className="text-white bg-gradient-to-r from-blue-500 to-purple-600">
                 <CardHeader>
-                  <CardTitle className="text-3xl font-bold">{group?.groupName}</CardTitle>
+                  <CardTitle className="flex items-center justify-between text-3xl font-bold">
+                    <span>{group.groupName}</span>
+                    <div className="flex items-center gap-2">
+                      <BackButtonV3
+                        url={`/groups/${group?.courseId}/${group?.groupId}/submit`}
+                        icon="Captions"
+                        tooltipText="Nộp đồ án/tiểu luận"
+                      />
+                      <BackButtonV3
+                        url={`/groups/${group?.courseId}/${group?.groupId}/reports`}
+                        icon="NotebookPen"
+                        iconSize={7}
+                        tooltipText="Báo cáo tiến độ"
+                      />
+                    </div>
+                  </CardTitle>
                   <CardDescription className="text-blue-100">
                     Môn học: {group?.course?.subject?.name} - Nhóm: {group?.course?.courseGroup}
                   </CardDescription>
