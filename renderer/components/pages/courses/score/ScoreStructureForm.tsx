@@ -46,7 +46,7 @@ export default function ScoreStructureForm() {
   const addSubColumn = (parentId: string) => {
     const newColumn: IScoreStructure = {
       id: uuidv4(),
-      columnName: 'Cột con mới',
+      columnName: 'Cột điểm mới',
       percent: 0,
       parentId,
       children: [],
@@ -59,12 +59,12 @@ export default function ScoreStructureForm() {
         const defaultChild1 = {
           ...newColumn,
           id: uuidv4(),
-          columnName: 'Cột mặc định 1',
+          columnName: 'Cột điểm 1',
         };
         const defaultChild2 = {
           ...newColumn,
           id: uuidv4(),
-          columnName: 'Cột mặc định 2',
+          columnName: 'Cột điểm 2',
         };
         return { ...col, children: [defaultChild1, defaultChild2] };
       }
@@ -162,9 +162,7 @@ export default function ScoreStructureForm() {
                 value={column.columnName}
                 onChange={(e) => updateColumn(column.id, { columnName: e.target.value })}
                 className="max-w-[150px]"
-                disabled={
-                  column.id === scoreStructure.children?.[1]?.id // Không cho phép chỉnh sửa đối với cột Final Exam
-                }
+                disabled={column.columnName === 'Cuối kì'} // Không cho phép chỉnh sửa đối với cột "Cuối kì"
               />
             </div>
           </TableCell>
@@ -176,13 +174,13 @@ export default function ScoreStructureForm() {
               className="max-w-[80px]"
               disabled={
                 hasChildren ||
-                column.id === scoreStructure.children?.[0]?.id ||
-                column.id === scoreStructure.children?.[1]?.id // Không cho phép chỉnh sửa phần trăm đối với Process và Final Exam
+                column.columnName === 'Quá trình' || // Không cho phép chỉnh sửa phần trăm đối với cột "Quá trình"
+                column.columnName === 'Cuối kì' // Không cho phép chỉnh sửa phần trăm đối với cột "Cuối kì"
               }
             />
           </TableCell>
           <TableCell className="text-right">
-            {column.parentId !== null && column.id !== scoreStructure.children?.[1]?.id && (
+            {column.parentId !== null && column.columnName !== 'Cuối kì' && (
               <Button
                 type="button"
                 onClick={() => addSubColumn(column.id)}
@@ -190,11 +188,11 @@ export default function ScoreStructureForm() {
                 variant="outline"
                 className="mr-2"
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4" />
               </Button>
             )}
-            {column.id !== scoreStructure.children?.[1]?.id && // Chỉ hiển thị các nút này cho các cột không phải Final Exam
-              column.id !== scoreStructure.children?.[0]?.id && ( // Không hiển thị cho cột Process
+            {column.columnName !== 'Cuối kì' && // Chỉ hiển thị các nút này cho các cột không phải "Cuối kì"
+              column.columnName !== 'Quá trình' && ( // Không hiển thị cho cột "Quá trình"
                 <>
                   {depth > 0 && ( // Chỉ cho phép xóa cột con
                     <Button type="button" onClick={() => removeSubColumn(column.id)} size="sm" variant="destructive">
@@ -255,9 +253,9 @@ export default function ScoreStructureForm() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">Tên cột</TableHead>
-            <TableHead>Phần trăm</TableHead>
-            <TableHead className="text-right">Hành động</TableHead>
+            <TableHead className="w-[200px]">Tên cột điểm</TableHead>
+            <TableHead>Phần trăm cột điểm</TableHead>
+            <TableHead className="text-right">Thêm/xóa cột điểm</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>{renderColumns(scoreStructure)}</TableBody>

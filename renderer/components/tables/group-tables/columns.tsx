@@ -6,7 +6,6 @@ import { createColumns } from '@/libs/utils';
 import { IGroup } from '@/types/group';
 
 import { CellAction } from './cell-action';
-import { CellSwitch } from './cell-swtich';
 
 export const columns: ColumnDef<IGroup>[] = createColumns([
   {
@@ -21,7 +20,8 @@ export const columns: ColumnDef<IGroup>[] = createColumns([
   {
     id: 'APPROVED',
     header: 'Trạng thái',
-    cell: ({ row }: any) => <CellSwitch data={row.original} />,
+    sortable: true,
+    cell: ({ row }) => <span>{row.original.isApproved ? 'Đã chấp thuận' : 'Chưa chấp thuận'}</span>,
   },
   {
     id: 'ACTION',

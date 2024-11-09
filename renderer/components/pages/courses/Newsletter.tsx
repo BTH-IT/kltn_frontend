@@ -37,7 +37,7 @@ const Newsletter = ({ course, user }: { course: ICourse; user: IUser }) => {
           </p>
           <p className="text-sm font-normal">Niên khóa: {course.semester}</p>
         </div>
-        {user?.id === course.lecturerId && (
+        {user?.id === course.lecturerId && !course.saveAt && (
           <CoursePersonalizeModal data={course}>
             <Button
               variant="ghost"
@@ -48,25 +48,24 @@ const Newsletter = ({ course, user }: { course: ICourse; user: IUser }) => {
             </Button>
           </CoursePersonalizeModal>
         )}
-        {/* <Info
-      className='absolute right-4 bottom-4 flex-col p-2 text-white rounded-full transition-all hover:bg-[rgba(0, 0, 0, 0.8)] cursor-pointer'
-      width={36}
-      height={36}
-    /> */}
       </div>
-      {user?.id === course.lecturerId ? (
-        <div className="grid grid-cols-12 gap-6 mt-10">
-          <div className="flex flex-col col-span-3 gap-4">
-            <InviteCode course={course} teacherId={course.lecturerId} name={course.name} user={user} />
-          </div>
-          <div className="col-span-9">
-            <AnnouncementInput course={course} />
-          </div>
-        </div>
-      ) : (
-        <div className="w-full mt-10">
-          <AnnouncementInput course={course} />
-        </div>
+      {!course?.saveAt && (
+        <>
+          {user?.id === course.lecturerId && course?.enableInvite ? (
+            <div className="grid grid-cols-12 gap-6 mt-10">
+              <div className="flex flex-col col-span-3 gap-4">
+                <InviteCode course={course} teacherId={course.lecturerId} name={course.name} user={user} />
+              </div>
+              <div className="col-span-9">
+                <AnnouncementInput course={course} />
+              </div>
+            </div>
+          ) : (
+            <div className="w-full mt-10">
+              <AnnouncementInput course={course} />
+            </div>
+          )}
+        </>
       )}
     </section>
   );

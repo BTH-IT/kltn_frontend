@@ -13,7 +13,6 @@ import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AssignmentContext } from '@/contexts/AssignmentContext';
 import CommentList from '@/components/common/CommentList';
 import { IAssignment, IComment, IGroup, ISubmission, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
@@ -26,7 +25,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import CommonModal from '@/components/modals/CommonModal';
-import assignmentService from '@/services/assignmentService';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import { API_URL } from '@/constants/endpoints';
 import SubmitAssignmentModal from '@/components/modals/SubmitAssignmentModal';
@@ -34,6 +32,7 @@ import ViewSubmissionModal from '@/components/modals/ViewSubmissionModal';
 import submissionService from '@/services/submissionService';
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -133,23 +132,6 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
     }
   };
 
-  const handleRemove = async () => {
-    if (!assignment) return;
-    try {
-      const res = await assignmentService.deleteAssignment(assignment[0].assignmentId);
-      if (res) {
-        router.refresh();
-        router.push(`/courses/${assignment[0].courseId}/assignments`);
-        toast.success('Đã xoá bài tập thành công');
-      }
-    } catch (err) {
-      console.error('Failed to delete assignment: ', err);
-      if (err instanceof AxiosError) {
-        toast.error(err?.response?.data?.message || err.message);
-      }
-    }
-  };
-
   const handleUpdateComment = async (id: string, data: any) => {
     if (!assignment) return;
     try {
@@ -225,18 +207,23 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
               </div>
 
               <div>
-                {assignment[0]?.scoreStructure && (
+                <TooltipProvider>
                   <Button variant="ghost" size="icon" className="rounded-full">
-                    <GraduationCap
-                      className="w-6 h-6 mr-2"
-                      onClick={() =>
-                        router.push(
-                          `${API_URL.COURSES}/${assignment[0]?.courseId}${API_URL.ASSIGNMENTS}/${assignment[0]?.assignmentId}/submits`,
-                        )
-                      }
-                    />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <GraduationCap
+                          className="w-6 h-6 mr-2"
+                          onClick={() =>
+                            router.push(
+                              `${API_URL.COURSES}/${assignment[0]?.courseId}${API_URL.ASSIGNMENTS}/${assignment[0]?.assignmentId}/submits`,
+                            )
+                          }
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>Xem và chấm bài</TooltipContent>
+                    </Tooltip>
                   </Button>
-                )}
+                </TooltipProvider>
 
                 <Button variant="ghost" size="icon" className="rounded-full">
                   {assignment[0]?.createUser?.id === currentUser?.id ? (

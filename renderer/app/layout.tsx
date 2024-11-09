@@ -14,7 +14,10 @@ export const metadata: Metadata = {
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
+    <html lang="vi">
+      <head>
+        <link rel="icon" href="/images/logo-2.png" />
+      </head>
       <body>
         <NextTopLoader />
         {children}

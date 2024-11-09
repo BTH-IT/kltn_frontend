@@ -30,15 +30,15 @@ const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) =>
   return (
     <div className="flex flex-col items-center justify-center w-full h-full p-10">
       <div className="max-w-[800px] m-auto rounded-lg border text-primaryGray">
-        <div className="flex flex-col justify-center items-center gap-4 py-8 bg-[#F1F3F4]">
+        <div className="flex flex-col justify-center items-center gap-4 py-8 px-3 bg-[#F1F3F4]">
           <Image
             width={1000}
             height={1000}
             className="w-[100px] h-[100px] object-cover"
-            src="/images/logo_square_rounded.svg"
+            src="/images/logo.png"
             alt="logo"
           />
-          <h2 className="text-3xl font-bold">Classroom</h2>
+          <h2 className="text-3xl font-bold">Courseroom</h2>
           <p className="text-sm text-center">
             Lớp học giúp các lớp học giao tiếp, tiết kiệm thời gian và luôn có tổ chức.
           </p>

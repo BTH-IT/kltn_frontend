@@ -6,16 +6,16 @@ import SettingHeader from '@/components/pages/settings/SettingHeader';
 export const metadata: Metadata = {
   title: {
     template: '%s | User',
-    default: 'User settings',
+    default: 'Cài đặt thông tin người dùng',
   },
-  description: 'Change your user settings',
+  description: 'Cài đặt thông tin người dùng',
 };
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <SettingHeader />
-      <div className="mx-auto w-full">{children}</div>
+      <div className="w-full mx-auto">{children}</div>
     </>
   );
 };

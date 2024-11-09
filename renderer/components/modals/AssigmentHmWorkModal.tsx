@@ -221,30 +221,22 @@ const AssignmentHmWorkModal = ({
                         setIsOpenSelectYoutubeModal={setIsOpenSelectYoutubeModal}
                       />
                     </div>
-                    <div className="flex flex-col col-span-3 gap-7 p-5 border-l">
-                      <div className="px-3 grid grid-cols-12 gap-y-7">
-                        <div className="font-medium col-span-8">Áp dụng cho nhóm?</div>
+                    <div className="flex flex-col col-span-3 p-5 border-l gap-7">
+                      <div className="grid grid-cols-12 px-3 gap-y-7">
+                        <div className="col-span-8 font-medium">Áp dụng cho nhóm?</div>
                         <Switch
                           className="col-span-4"
                           checked={isChooseGroup}
                           onCheckedChange={(value) => setIsChooseGroup(value)}
                         />
-                        {isChooseGroup && !course?.setting.dueDateToJoinGroup ? (
-                          <>
-                            <div className="font-medium col-span-8">Sử dụng lại nhóm đồ án?</div>
-                            <Switch
-                              className="col-span-4"
-                              checked={useFinalGroup}
-                              onCheckedChange={(value) => setUseFinalGroup(value)}
-                            />
-                          </>
-                        ) : (
+                        {isChooseGroup && (
                           <>
                             {isChooseGroup &&
+                              course?.setting.hasFinalScore &&
                               course?.setting.dueDateToJoinGroup &&
-                              course?.setting.dueDateToJoinGroup <= new Date() && (
+                              course?.setting.dueDateToJoinGroup < new Date() && (
                                 <>
-                                  <div className="font-medium col-span-8">Sử dụng lại nhóm đồ án?</div>
+                                  <div className="col-span-8 font-medium">Sử dụng lại nhóm đồ án?</div>
                                   <Switch
                                     className="col-span-4"
                                     checked={useFinalGroup}
@@ -256,7 +248,7 @@ const AssignmentHmWorkModal = ({
                         )}
                       </div>
                       {isChooseGroup && !useFinalGroup && (
-                        <div className="flex flex-col px-3 gap-4">
+                        <div className="flex flex-col gap-4 px-3">
                           <div className="font-medium ">Số lượng nhóm cần tạo:</div>
                           <Input
                             type="number"
@@ -293,18 +285,20 @@ const AssignmentHmWorkModal = ({
                       )}
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Hạn nộp</div>
-                        <DateTimePicker date={dueDate} setDate={setDueDate} />
+                        <DateTimePicker date={dueDate} setDate={setDueDate} minDate={new Date()} />
                       </div>
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Ứng với cột điểm</div>
                         <CreatableSelect
                           isClearable
-                          options={scoreCols.map((item) => {
-                            return {
-                              value: item.id,
-                              label: `${item.columnName} - ${item.percent}%`,
-                            };
-                          })}
+                          options={scoreCols
+                            .filter((item) => item.columnName !== 'Cuối kì')
+                            .map((item) => {
+                              return {
+                                value: item.id,
+                                label: `${item.columnName} - ${item.percent}%`,
+                              };
+                            })}
                           onChange={(selectedOption) => {
                             setScoreSelectedOption(selectedOption);
                           }}

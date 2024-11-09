@@ -38,6 +38,8 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
   const { projects } = useContext(CreateProjectContext);
   const { course } = useContext(CourseContext);
   const { groups, setGroups } = useGroupContext();
+
+  console.log(groups);
   const [activeTab, setActiveTab] = useState('projects');
 
   const { setItems } = useContext(BreadcrumbContext);
@@ -78,8 +80,6 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
       currentGroup && setCurrentGroup(currentGroup);
     }
   }, [course, user, groups]);
-
-  console.log(currentGroup);
 
   return (
     <>
@@ -153,7 +153,7 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
               isProject
               button={
                 <Button className="text-xs md:text-sm" onClick={() => setIsProjectModalOpen(true)}>
-                  <Plus className="w-4 h-4 mr-2" /> Thêm mới
+                  <Plus className="w-4 h-4 mr-2" /> Thêm đồ án mới
                 </Button>
               }
             />
@@ -185,7 +185,7 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
                   isProject
                   button={
                     <Button className="text-xs md:text-sm" onClick={() => setIsGroupModalOpen(true)}>
-                      <Plus className="w-4 h-4 mr-2" /> Thêm mới
+                      <Plus className="w-4 h-4 mr-2" /> Thêm nhóm mới
                     </Button>
                   }
                 />

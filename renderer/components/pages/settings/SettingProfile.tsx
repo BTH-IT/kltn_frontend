@@ -109,7 +109,7 @@ const SettingProfile = () => {
 
       const res = await userService.updateUser(user.id, data);
       if (res) {
-        toast.success('Profile updated successfully.');
+        toast.success('Cập nhật thông tin cá nhân thành công');
         router.refresh();
         localStorage.setItem(KEY_LOCALSTORAGE.CURRENT_USER, JSON.stringify(res.data));
       }
@@ -138,7 +138,7 @@ const SettingProfile = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="flex flex-col">
-              <div className="text-sm pb-4 font-bold">Ảnh đại diện</div>
+              <div className="pb-4 text-sm font-bold">Ảnh đại diện</div>
               <div className="flex items-center gap-8">
                 <Avatar className="w-24 h-24">
                   <AvatarImage
@@ -201,7 +201,7 @@ const SettingProfile = () => {
                     <Input
                       type="date"
                       disabled={form.formState.isSubmitting}
-                      className="focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                      className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
                       {...field}
                       value={field.value instanceof Date ? field.value.toISOString().split('T')[0] : field.value}
                     />

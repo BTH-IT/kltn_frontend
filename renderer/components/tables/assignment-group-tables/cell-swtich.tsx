@@ -18,7 +18,7 @@ export const CellSwitch: React.FC<CellSwitchProps> = ({ data }) => {
 
   useEffect(() => {
     setIsCheckedState(data.isApproved);
-  }, [data.isApproved]);
+  }, [data]);
 
   const handleChange = async (checked: boolean) => {
     try {

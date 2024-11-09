@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { API_URL } from '@/constants/endpoints';
 import http from '@/libs/http';
 import { IGroup } from '@/types/group';
+import { BackButton } from '@/components/common/BackButton';
 
 const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
   const {
@@ -17,7 +18,10 @@ const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId
     <div className="mt-4 space-y-6">
       <Card className="text-white bg-gradient-to-r from-blue-500 to-purple-600">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">{group.groupName}</CardTitle>
+          <CardTitle className="flex items-center justify-between text-3xl font-bold">
+            <span>{group.groupName}</span>
+            <BackButton assignmentId={group?.assignmentId || ''} courseId={group?.courseId || ''} />
+          </CardTitle>
           <CardDescription className="text-blue-100">
             Môn học: {group.course?.subject?.name} - Nhóm: {group.course?.courseGroup}
           </CardDescription>

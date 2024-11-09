@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Menu, Plus } from 'lucide-react';
+import { DoorOpen, Menu, Plus } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -27,6 +27,8 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { CLEAR_LOCALSTORAGE, KEY_LOCALSTORAGE } from '@/utils';
 import { IUser } from '@/types';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
+
+import JoinClassModal from '../modals/JoinClassModal';
 
 const NavigationHeader = () => {
   const { setSidebar, isShow } = useContext(SidebarContext);
@@ -100,6 +102,11 @@ const NavigationHeader = () => {
               <Plus />
             </button>
           </CreateCourseModal>
+          <JoinClassModal>
+            <button className={cn('mr-4 p-3 rounded-full hover:bg-gray-100', path === '' ? '' : 'hidden')}>
+              <DoorOpen />
+            </button>
+          </JoinClassModal>
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Avatar>

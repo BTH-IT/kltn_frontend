@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 
 import Loading from '@/components/loading/loading';
 import CreateCourseModal from '@/components/modals/CreateCourseModal';
@@ -9,6 +10,7 @@ import CourseCard from '@/components/common/CourseCard';
 import JoinClassModal from '@/components/modals/JoinClassModal';
 import { API_URL } from '@/constants/endpoints';
 import http from '@/libs/http';
+import { getUserFromCookie } from '@/libs/actions';
 
 const HomePage = async () => {
   const {
@@ -17,6 +19,12 @@ const HomePage = async () => {
     createdCourses: ICourse[];
     enrolledCourses: ICourse[];
   }>(`${API_URL.ACCOUNTS}${API_URL.COURSES}`);
+
+  const user = getUserFromCookie();
+
+  if (!courses || !user) {
+    return redirect('/login');
+  }
 
   return (
     <>

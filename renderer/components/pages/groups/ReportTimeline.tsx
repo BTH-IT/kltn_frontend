@@ -158,7 +158,9 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
                             onClick={async (e) => {
                               e.stopPropagation();
                               setCurrentReport(report);
-                              await handleGenerateBrief(report);
+                              if (!report.brief) {
+                                await handleGenerateBrief(report);
+                              }
                               setBriefReport(true);
                             }}
                             className="w-4 h-4 text-green-500"

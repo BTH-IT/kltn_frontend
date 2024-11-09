@@ -11,10 +11,10 @@ import { BreadcrumbProvider } from '@/contexts/BreadcrumbContext';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Classroom',
-    default: 'Classroom Application',
+    template: '%s | Courseroom',
+    default: 'Courseroom Application',
   },
-  description: 'This is classroom for SGUer',
+  description: 'This is courseroom for SGUer',
 };
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {

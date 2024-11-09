@@ -14,14 +14,15 @@ export function DateTimePicker({
   date,
   setDate,
   onChange = () => {},
+  minDate, // Thêm minDate prop
 }: {
   date?: Date | null | undefined;
   setDate: React.Dispatch<React.SetStateAction<Date | null | undefined>>;
   onChange?: () => void;
+  minDate?: Date; // Định nghĩa kiểu của minDate
 }) {
   const handleSelect = (newDay: Date | undefined) => {
     if (!newDay) return;
-    // Add 7 hours to match the timezone
     const adjustedDate = addHours(newDay, 7);
     if (!date) {
       setDate(adjustedDate);
@@ -38,7 +39,6 @@ export function DateTimePicker({
 
   const handleSetDate = (date: Date | undefined) => {
     if (date) {
-      // Add 7 hours to match the timezone
       const adjustedDate = addHours(date, 7);
       setDate(adjustedDate);
       onChange();
@@ -71,6 +71,7 @@ export function DateTimePicker({
           onSelect={(d: Date | undefined) => {
             d && handleSelect(d);
           }}
+          disabled={(date) => (minDate ? date < minDate : false)}
           initialFocus
         />
         <div className="p-3 border-t border-border">

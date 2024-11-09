@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { BarChart2, Plus, Users } from 'lucide-react';
+import { ArrowLeftFromLine, BarChart2, Plus, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 
@@ -82,10 +82,16 @@ export const AssignmentGroupList = ({ assignment }: { assignment: IAssignment })
 
   return (
     <>
-      <div className="flex items-start justify-between mb-5">
+      <div className="flex items-center justify-between mb-5">
         <Heading
           title={`Bài tập: ${assignment.title}`}
           description={assignment.createUser?.id === user?.id ? 'Quản lý nhóm bài tập' : 'Đăng kí nhóm bài tập'}
+        />
+        <ArrowLeftFromLine
+          className="w-8 h-8 cursor-pointer text-primaryGray"
+          onClick={() => {
+            router.push(`/courses/${course?.courseId}/assignments/${assignment.assignmentId}`);
+          }}
         />
       </div>
 
@@ -133,7 +139,7 @@ export const AssignmentGroupList = ({ assignment }: { assignment: IAssignment })
                 isProject
                 button={
                   <Button className="text-xs md:text-sm" onClick={() => setIsGroupModalOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" /> Thêm mới
+                    <Plus className="w-4 h-4 mr-2" /> Tạo nhóm bài tập mới
                   </Button>
                 }
               />

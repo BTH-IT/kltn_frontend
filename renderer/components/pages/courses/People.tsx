@@ -79,7 +79,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
           {!isTeacher && (
             <>
               <p className="text-sm font-semibold text-primaryGray">{list.length} sinh viên</p>
-              {user?.id === course.lecturerId && (
+              {user?.id === course.lecturerId && !course.saveAt && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -103,7 +103,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
           )}
         </div>
       </div>
-      {!isTeacher && user?.id === course.lecturerId && (
+      {!isTeacher && user?.id === course.lecturerId && !course.saveAt && (
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-5">
             <Checkbox
@@ -169,7 +169,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
           type={isTeacher ? 'teacher' : 'student'}
           dropdownMenu={
             <>
-              {user?.id === course.lecturerId && user?.id !== d.id && (
+              {user?.id === course.lecturerId && user?.id !== d.id && !course.saveAt && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild className="cursor-pointer">
                     <EllipsisVertical />

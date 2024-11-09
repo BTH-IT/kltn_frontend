@@ -33,6 +33,7 @@ export const EditGroupModal = ({
   maxNumberOfMembers: number;
 }) => {
   const { groups, setGroups } = useGroupContext();
+
   const params = useParams();
   const { projects } = useContext(CreateProjectContext);
 
@@ -71,7 +72,8 @@ export const EditGroupModal = ({
         value: group.projectId || '',
       });
     }
-  }, [group, form, isOpen]);
+  }, [group, isOpen]);
+
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       if (values.numberOfMembers < minNumberOfMembers) {
@@ -95,7 +97,6 @@ export const EditGroupModal = ({
       });
       if (res.data) {
         var updatedGroups = groups.map((item) => (item.groupId == group.groupId ? res.data : item));
-        console.log(updatedGroups);
         setGroups(updatedGroups);
       }
       form.reset();
@@ -163,9 +164,7 @@ export const EditGroupModal = ({
                             id="numberOfMembers"
                             type="number"
                             min={0}
-                            onChange={(e) => {
-                              field.onChange(parseInt(e.target.value));
-                            }}
+                            {...field}
                           />
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                         </>

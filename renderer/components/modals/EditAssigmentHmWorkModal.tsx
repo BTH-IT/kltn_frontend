@@ -229,12 +229,14 @@ const EditAssignmentHmWorkModal = ({
                         <CreatableSelect
                           isClearable
                           defaultValue={selectedScore}
-                          options={scoreCols.map((item) => {
-                            return {
-                              value: item.id,
-                              label: `${item.columnName} - ${item.percent}%`,
-                            };
-                          })}
+                          options={scoreCols
+                            .filter((item) => item.columnName !== 'Cuối kì')
+                            .map((item) => {
+                              return {
+                                value: item.id,
+                                label: `${item.columnName} - ${item.percent}%`,
+                              };
+                            })}
                           onChange={(selectedOption) => {
                             setScoreSelectedOption(selectedOption);
                           }}

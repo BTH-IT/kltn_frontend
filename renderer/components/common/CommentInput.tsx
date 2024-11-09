@@ -50,7 +50,7 @@ const CommentInput = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex gap-3 items-end pt-6 comment w-full ${isFocus ? 'active' : ''}`}
+      className={`flex gap-3 items-end pt-5 comment w-full px-4 pb-4 ${isFocus ? 'active' : ''}`}
     >
       <div className="flex items-start flex-1 gap-3">
         <Image
