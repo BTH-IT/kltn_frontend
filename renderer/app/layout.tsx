@@ -8,7 +8,7 @@ import 'react-quill/dist/quill.snow.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata: Metadata = {
-  title: 'Classroom Application',
+  title: 'Courseroom Application',
   description: 'Based on Google Classroom',
 };
 
