@@ -23,7 +23,7 @@ export const GroupContextProvider = ({ children, groups }: { children: React.Rea
       setData(res.data);
     };
 
-    if (!groups || groups.length === 0) {
+    if ((!groups || groups.length === 0) && params.courseId) {
       fetchData();
     }
   }, [params.courseId]);

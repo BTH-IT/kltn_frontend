@@ -22,7 +22,7 @@ const CreateProjectProvider = ({ children, projects }: { children: React.ReactNo
       setData(res.data);
     };
 
-    if (!projects || projects.length === 0) {
+    if ((!projects || projects.length === 0) && params.courseId) {
       fetchData();
     }
   }, [params.courseId, projects]);

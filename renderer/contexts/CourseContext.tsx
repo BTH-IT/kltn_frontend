@@ -25,9 +25,10 @@ const CourseProvider = ({ children, course }: { children: React.ReactNode; cours
         console.log(error);
       }
     }
+
     if (course) {
       setData(course);
-    } else {
+    } else if (params.courseId) {
       fetchCourse();
     }
   }, [course, params.courseId]);
