@@ -33,11 +33,14 @@ export const handleRefreshToken = async (token: string | undefined, refreshToken
     });
 
     if (!res.ok) {
+      console.error(`Token refresh failed with status: ${res.status}`);
+      console.error(`Response text: ${await res.text()}`);
       throw new Error('Failed to refresh token');
     }
 
     const data = await res.json();
     if (!data.success) {
+      console.error('Token refresh unsuccessful:', data.message);
       redirect('/login');
     }
 

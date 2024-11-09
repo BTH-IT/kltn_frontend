@@ -26,13 +26,17 @@ export async function POST(request: NextRequest) {
 
     return response;
   } else {
+    // Log status and response text for debugging
+    console.error('Token refresh failed with status:', refreshResponse.status);
+    console.error('Error response:', await refreshResponse.text());
+
     const response = NextResponse.json({ success: false }, { status: 401 });
     response.cookies.set(KEY_LOCALSTORAGE.ACCESS_TOKEN, '', {
       httpOnly: true,
       secure: true,
       path: '/',
       sameSite: 'lax',
-      maxAge: 0, // To delete the cookie
+      maxAge: 0,
     });
 
     response.cookies.set(KEY_LOCALSTORAGE.REFRESH_TOKEN, '', {
@@ -40,7 +44,7 @@ export async function POST(request: NextRequest) {
       secure: true,
       path: '/',
       sameSite: 'lax',
-      maxAge: 0, // To delete the cookie
+      maxAge: 0,
     });
 
     response.cookies.set(KEY_LOCALSTORAGE.CURRENT_USER, '', {
@@ -48,7 +52,7 @@ export async function POST(request: NextRequest) {
       secure: true,
       path: '/',
       sameSite: 'lax',
-      maxAge: 0, // To delete the cookie
+      maxAge: 0,
     });
 
     return response;

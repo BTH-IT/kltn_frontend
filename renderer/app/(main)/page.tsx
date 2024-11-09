@@ -22,7 +22,7 @@ const HomePage = async () => {
 
   const user = getUserFromCookie();
 
-  if (!courses || !user) {
+  if (!courses && !user) {
     return redirect('/login');
   }
 
