@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({ success: true });
     response.cookies.set(KEY_LOCALSTORAGE.ACCESS_TOKEN, newAccessToken, {
       httpOnly: true,
-      secure: true,
+      secure: false, // Đặt secure thành false cho HTTP
       path: '/',
       sameSite: 'lax',
     });
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({ success: false }, { status: 401 });
     response.cookies.set(KEY_LOCALSTORAGE.ACCESS_TOKEN, '', {
       httpOnly: true,
-      secure: true,
+      secure: false, // Đặt secure thành false cho HTTP
       path: '/',
       sameSite: 'lax',
       maxAge: 0,
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     response.cookies.set(KEY_LOCALSTORAGE.REFRESH_TOKEN, '', {
       httpOnly: true,
-      secure: true,
+      secure: false, // Đặt secure thành false cho HTTP
       path: '/',
       sameSite: 'lax',
       maxAge: 0,
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     response.cookies.set(KEY_LOCALSTORAGE.CURRENT_USER, '', {
       httpOnly: true,
-      secure: true,
+      secure: false, // Đặt secure thành false cho HTTP
       path: '/',
       sameSite: 'lax',
       maxAge: 0,
