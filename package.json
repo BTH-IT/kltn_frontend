@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "nextron",
     "build": "nextron build",
+    "start": "nextron start",
     "postinstall": "electron-builder install-app-deps",
     "lint": "next lint",
     "lint:css": "stylelint **/*.{scss,css}",
