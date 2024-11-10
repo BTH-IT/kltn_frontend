@@ -51,33 +51,49 @@ export function DateTimePicker({
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant={'outline'}
-          className={cn('w-[280px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
-        >
-          <CalendarIcon className="w-4 h-4 mr-2" />
-          <div className="flex items-center justify-between flex-1 gap-2">
-            {date && !isNaN(date.getTime()) ? formatVNDate(date.toISOString() || '') : <span>Không có ngày hạn</span>}
-            {date && !isNaN(date.getTime()) && <XIcon className="w-4 h-4 ml-2" onClick={handleClear} />}
-          </div>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="left" align="center" className="w-auto p-0">
-        <Calendar
-          mode="single"
-          selected={date || undefined}
-          onSelect={(d: Date | undefined) => {
-            d && handleSelect(d);
-          }}
-          disabled={(date) => (minDate ? date < minDate : false)}
-          initialFocus
-        />
-        <div className="p-3 border-t border-border">
-          <TimePicker setDate={handleSetDate} date={date || undefined} />
-        </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="inline-flex items-center">
+      <div className="relative">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant={'outline'}
+              className={cn('w-[280px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+            >
+              <CalendarIcon className="w-4 h-4 mr-2" />
+              <div className="flex items-center justify-between flex-1 gap-2">
+                {date && !isNaN(date.getTime()) ? (
+                  formatVNDate(date.toISOString() || '')
+                ) : (
+                  <span>Không có ngày hạn</span>
+                )}
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="left" align="center" className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date || undefined}
+              onSelect={(d: Date | undefined) => {
+                d && handleSelect(d);
+              }}
+              disabled={(date) => (minDate ? date < minDate : false)}
+              initialFocus
+            />
+            <div className="p-3 border-t border-border">
+              <TimePicker setDate={handleSetDate} date={date || undefined} />
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {date && !isNaN(date.getTime()) && (
+          <XIcon
+            className="absolute w-4 h-4 ml-2 -translate-y-1/2 cursor-pointer right-2 top-1/2"
+            onClick={(e) => {
+              e.stopPropagation(); // Ngăn sự kiện mở DropdownMenu
+              handleClear();
+            }}
+          />
+        )}
+      </div>
+    </div>
   );
 }
