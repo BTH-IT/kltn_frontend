@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 import CommentList from '@/components/common/CommentList';
@@ -228,38 +229,32 @@ export default function AssignmentDetail() {
                   </div>
                 </div>
                 <div>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <GraduationCap
-                          className="w-6 h-6 mr-2"
-                          onClick={() =>
-                            router.push(
-                              `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`,
-                            )
-                          }
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>Xem và chấm bài</TooltipContent>
-                    </Tooltip>
-                  </Button>
-
-                  {assignment?.isGroupAssigned && (
+                  <Link
+                    href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
+                  >
                     <Button variant="ghost" size="icon" className="rounded-full">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <UsersRound
-                            className="w-6 h-6 mr-2"
-                            onClick={() =>
-                              router.push(
-                                `${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/groups`,
-                              )
-                            }
-                          />
+                          <GraduationCap className="w-6 h-6 mr-2" />
                         </TooltipTrigger>
-                        <TooltipContent>Xem nhóm</TooltipContent>
+                        <TooltipContent>Xem và chấm bài</TooltipContent>
                       </Tooltip>
                     </Button>
+                  </Link>
+
+                  {assignment?.isGroupAssigned && (
+                    <Link
+                      href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/groups`}
+                    >
+                      <Button variant="ghost" size="icon" className="rounded-full">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <UsersRound className="w-6 h-6 mr-2" />
+                          </TooltipTrigger>
+                          <TooltipContent>Xem nhóm</TooltipContent>
+                        </Tooltip>
+                      </Button>
+                    </Link>
                   )}
 
                   <Button variant="ghost" size="icon" className="rounded-full">

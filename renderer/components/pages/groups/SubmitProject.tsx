@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -208,21 +209,18 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
 
               <div>
                 <TooltipProvider>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <GraduationCap
-                          className="w-6 h-6 mr-2"
-                          onClick={() =>
-                            router.push(
-                              `${API_URL.COURSES}/${assignment[0]?.courseId}${API_URL.ASSIGNMENTS}/${assignment[0]?.assignmentId}/submits`,
-                            )
-                          }
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>Xem và chấm bài</TooltipContent>
-                    </Tooltip>
-                  </Button>
+                  <Link
+                    href={`${API_URL.COURSES}/${assignment[0]?.courseId}${API_URL.ASSIGNMENTS}/${assignment[0]?.assignmentId}/submits`}
+                  >
+                    <Button variant="ghost" size="icon" className="rounded-full">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <GraduationCap className="w-6 h-6 mr-2" />
+                        </TooltipTrigger>
+                        <TooltipContent>Xem và chấm bài</TooltipContent>
+                      </Tooltip>
+                    </Button>
+                  </Link>
                 </TooltipProvider>
 
                 <Button variant="ghost" size="icon" className="rounded-full">
