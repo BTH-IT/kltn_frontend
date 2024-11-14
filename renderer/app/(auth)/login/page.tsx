@@ -61,8 +61,8 @@ export default withPermission(() => {
       </div>
       <div className="flex items-center justify-center col-span-6">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-[600px] p-5 mx-auto rounded-md">
-          <h2 className="text-3xl font-bold">Welcome to Back!</h2>
-          <p className="mt-1 mb-5 text-[#919191]">Please log in to your account and start the adventure</p>
+          <h2 className="text-3xl font-bold">Chào mừng bạn!</h2>
+          <p className="mt-1 mb-5 text-[#919191]">Vui lòng đăng nhập để bắt đầu khám phá hệ thống</p>
 
           <div className="flex flex-col gap-5">
             <InputForm
@@ -86,13 +86,13 @@ export default withPermission(() => {
 
             <div className="flex justify-end w-full">
               <Link href={'/forgot-password'} className="text-[#2FB2AC]">
-                Forgot password?
+                Quên mật khẩu?
               </Link>
             </div>
           </div>
 
           <Button type="submit" className="mt-5 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
-            Log in
+            Đăng nhập
           </Button>
 
           <Separator className="my-8" />
@@ -104,13 +104,13 @@ export default withPermission(() => {
             onClick={handleGoogleLogin}
           >
             <Image src="/images/google-logo.png" width={24} height={24} alt="Google" className="mr-2" />
-            Login with Google
+            Đăng nhập với Google
           </Button>
 
           <p className="mt-10 flex gap-2 items-center justify-center text-[#919191]">
-            <span>Don't have any account?</span>
+            <span>Bạn chưa có bất kì tài khoản nào?</span>
             <Link href={'/register'} className="text-[#2FB2AC]">
-              Register
+              Đăng ký
             </Link>
           </p>
         </form>

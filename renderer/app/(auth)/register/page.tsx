@@ -21,12 +21,9 @@ const signUpSchema = z
   .object({
     username: z.string().min(1, 'Username is required'),
     fullname: z.string().min(1, 'Full name is required'),
-    customId: z
-      .string()
-      .min(1, 'Student ID is required')
-      .refine((value) => value.length === 10, {
-        message: 'Student ID must be 10 characters',
-      }),
+    customId: z.string().refine((value) => value.length === 10, {
+      message: 'Student ID must be 10 characters',
+    }),
     email: z.string().email('Invalid email address'),
     password: passwordSchema,
     confirmPassword: z.string().min(8, 'confirmPassword must be at least 8 characters'),
@@ -52,6 +49,10 @@ export default function Page() {
     resolver: zodResolver(signUpSchema),
   });
   const router = useRouter();
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/accounts/login-google`;
+  };
 
   const onSubmit = async (data: SignUpFormInputs) => {
     try {
@@ -80,8 +81,8 @@ export default function Page() {
       </div>
       <div className="flex items-center justify-center col-span-6">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-[600px] p-5 mx-auto rounded-md">
-          <h2 className="text-3xl font-bold">Sign Up</h2>
-          <p className="mt-1 mb-5 text-[#919191]">Please sign up to your account and start the adventure</p>
+          <h2 className="text-3xl font-bold">Đăng ký</h2>
+          <p className="mt-1 mb-5 text-[#919191]">Vui lòng đăng ký tài khoản để bắt đầu hành trình</p>
 
           <div className="flex flex-col gap-5">
             <InputForm
@@ -97,7 +98,7 @@ export default function Page() {
               name={'fullname'}
               error={errors.fullname?.message}
               control={control}
-              placeholder="Full Name"
+              placeholder="Họ tên"
               type="text"
               iconStart={<User />}
             />
@@ -106,7 +107,7 @@ export default function Page() {
               name={'customId'}
               error={errors.customId?.message}
               control={control}
-              placeholder="Student ID"
+              placeholder="Mã sinh viên (nếu có)"
               type="text"
               iconStart={<IdCard />}
             />
@@ -124,7 +125,7 @@ export default function Page() {
               name={'password'}
               error={errors.password?.message}
               control={control}
-              placeholder="Password"
+              placeholder="Mật khẩu"
               type="password"
               iconStart={<Lock />}
               iconEnd
@@ -134,7 +135,7 @@ export default function Page() {
               name={'confirmPassword'}
               error={errors.confirmPassword?.message}
               control={control}
-              placeholder="Confirm Password"
+              placeholder="Xác nhận mật khẩu"
               iconStart={<LockKeyhole />}
               type="password"
               iconEnd
@@ -142,13 +143,23 @@ export default function Page() {
           </div>
 
           <Button type="submit" className="mt-10 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
-            Sign Up
+            Đăng ký
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full text-xs font-medium rounded-2xl"
+            onClick={handleGoogleLogin}
+          >
+            <Image src="/images/google-logo.png" width={24} height={24} alt="Google" className="mr-2" />
+            Đăng nhập với Google
           </Button>
 
           <p className="mt-10 flex gap-2 items-center justify-center text-[#919191]">
-            <span>Already have an account?</span>
+            <span>Bạn đã có tài khoản?</span>
             <Link href={'/login'} className="text-[#2FB2AC]">
-              Log in
+              Đăng nhập
             </Link>
           </p>
         </form>
