@@ -86,6 +86,9 @@ const courseService = {
   unarchive(courseId: string): Promise<ApiResponse<IAssignment>> {
     return configService.post(`${API_URL.COURSES}/${courseId}/cancel-saved`);
   },
+  importStudents(courseId: string, data: any): Promise<ApiResponse<boolean>> {
+    return configService.post(`${API_URL.COURSES}/${courseId}/import-student`, data);
+  },
 };
 
 export default courseService;

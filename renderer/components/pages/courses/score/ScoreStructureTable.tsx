@@ -5,6 +5,7 @@ import { useReactToPrint } from 'react-to-print';
 import { ClipboardList, Printer } from 'lucide-react';
 import { utils, writeFile } from 'xlsx';
 import { motion } from 'framer-motion';
+import ReactSelect from 'react-select';
 
 import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
 import { CourseContext } from '@/contexts/CourseContext';
@@ -13,6 +14,7 @@ import scoreStructureService from '@/services/scoreStructureService';
 import { ITranscript } from '@/types/transcript';
 import { ICourse, IScoreStructure } from '@/types';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -28,6 +30,8 @@ const ScoreStructureTable: React.FC = () => {
   };
   const { course } = useContext(CourseContext) as { course: ICourse };
   const [transcripts, setTranscripts] = useState<ITranscript[]>([]);
+  const [exportOption, setExportOption] = useState<'full' | 'scoresOnly' | 'namesOnly'>('full');
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchTranscripts = async () => {
@@ -59,16 +63,25 @@ const ScoreStructureTable: React.FC = () => {
     const data = course.students?.map((student) => {
       const studentScores: any = getStudentScores(student.id);
       const score = getLeafColumns(studentScores);
-      const row: Record<string, any> = {
-        'Tên sinh viên': student.userName,
-      };
+      const row: Record<string, any> = {};
 
-      leafColumns.forEach((leaf: any) => {
-        row[`${leaf.columnName} (${leaf.percent}%)`] =
-          score.find((x: any) => x.scoreStructureId === leaf.id)?.value ?? '-';
-      });
+      row['Tên sinh viên'] = student.userName;
 
-      row['Tổng điểm'] = studentScores.value ?? '-';
+      if (exportOption === 'namesOnly') {
+        return row; // Chỉ export tên sinh viên
+      } else if (exportOption === 'scoresOnly' || exportOption === 'full') {
+        leafColumns.forEach((leaf: any) => {
+          if (exportOption === 'full' || selectedColumns.includes(leaf.id)) {
+            row[`${leaf.columnName} (${leaf.percent}%)`] =
+              score.find((x: any) => x.scoreStructureId === leaf.id)?.value ?? '-';
+          }
+        });
+
+        if (exportOption === 'full') {
+          row['Tổng điểm'] = studentScores.value ?? '-';
+        }
+      }
+
       return row;
     });
 
@@ -87,7 +100,60 @@ const ScoreStructureTable: React.FC = () => {
       {course.students && course.students.length > 0 ? (
         <>
           <div className="p-3" ref={contentRef}>
-            <h2 className="mb-4 text-2xl font-bold">Bảng điểm</h2>
+            <div className="flex items-center justify-between gap-2 mb-6">
+              <h2 className="mb-4 text-2xl font-bold">Bảng điểm</h2>
+              <div className="flex items-start gap-3">
+                <Select
+                  onValueChange={(value) => setExportOption(value as 'full' | 'scoresOnly' | 'namesOnly')}
+                  value={exportOption}
+                >
+                  <SelectTrigger className="w-40 mr-4">
+                    <SelectValue placeholder="Chọn chế độ xuất" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="full">Toàn bộ bảng</SelectItem>
+                    <SelectItem value="scoresOnly">Chỉ cột điểm</SelectItem>
+                    <SelectItem value="namesOnly">Chỉ tên sinh viên</SelectItem>
+                  </SelectContent>
+                </Select>
+                {exportOption === 'scoresOnly' && (
+                  <ReactSelect
+                    options={[
+                      {
+                        value: 'all',
+                        label: 'Chọn tất cả các cột',
+                      },
+                      ...leafColumns.map((leaf: any) => ({
+                        value: leaf.id,
+                        label: `${leaf.columnName} (${leaf.percent}%)`,
+                      })),
+                    ]}
+                    isMulti
+                    onChange={(selectedOptions) => {
+                      const selectedValues = selectedOptions.map((option) => option.value);
+                      if (selectedValues.includes('all')) {
+                        setSelectedColumns(leafColumns.map((leaf: any) => leaf.id));
+                      } else {
+                        setSelectedColumns(selectedValues);
+                      }
+                    }}
+                    value={[
+                      ...(selectedColumns.length === leafColumns.length
+                        ? [{ value: 'all', label: 'Chọn tất cả các cột' }]
+                        : []),
+                      ...leafColumns
+                        .filter((leaf: any) => selectedColumns.includes(leaf.id))
+                        .map((leaf: any) => ({
+                          value: leaf.id,
+                          label: `${leaf.columnName} (${leaf.percent}%)`,
+                        })),
+                    ]}
+                    className="mr-4"
+                    placeholder="Chọn các cột điểm"
+                  />
+                )}
+              </div>
+            </div>
             <table className="w-full border border-collapse border-gray-300">
               <thead>
                 <tr>
@@ -96,12 +162,15 @@ const ScoreStructureTable: React.FC = () => {
                   </th>
                 </tr>
                 <tr>
-                  {leafColumns.map((leaf: any) => (
-                    <th key={leaf.id} className="px-4 py-2 text-center bg-gray-200 border">
-                      {leaf.columnName} ({leaf.percent}%)
-                    </th>
-                  ))}
-                  <th className="px-4 py-2 text-center bg-gray-200 border">Tổng điểm</th>
+                  {leafColumns.map(
+                    (leaf: any) =>
+                      (exportOption === 'full' || selectedColumns.includes(leaf.id)) && (
+                        <th key={leaf.id} className="px-4 py-2 text-center bg-gray-200 border">
+                          {leaf.columnName} ({leaf.percent}%)
+                        </th>
+                      ),
+                  )}
+                  {exportOption === 'full' && <th className="px-4 py-2 text-center bg-gray-200 border">Tổng điểm</th>}
                 </tr>
               </thead>
               <tbody>
@@ -112,12 +181,17 @@ const ScoreStructureTable: React.FC = () => {
                   return (
                     <tr key={student.id} className="hover:bg-gray-50">
                       <td className="px-4 py-2 border">{student.userName}</td>
-                      {leafColumns.map((leaf: any) => (
-                        <td key={`${student.id}-${leaf.id}`} className="px-4 py-2 text-center border">
-                          {score.find((x: any) => x.scoreStructureId === leaf.id)?.value ?? '-'}
-                        </td>
-                      ))}
-                      <td className="px-4 py-2 text-center border">{studentScores.value}</td>
+                      {leafColumns.map(
+                        (leaf: any) =>
+                          (exportOption === 'full' || selectedColumns.includes(leaf.id)) && (
+                            <td key={`${student.id}-${leaf.id}`} className="px-4 py-2 text-center border">
+                              {score.find((x: any) => x.scoreStructureId === leaf.id)?.value ?? '-'}
+                            </td>
+                          ),
+                      )}
+                      {exportOption === 'full' && (
+                        <td className="px-4 py-2 text-center border">{studentScores.value}</td>
+                      )}
                     </tr>
                   );
                 })}

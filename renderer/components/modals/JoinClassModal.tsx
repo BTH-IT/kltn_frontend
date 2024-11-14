@@ -73,7 +73,7 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
 
       if (res.data?.courseId && user?.email) {
         setEnrolledCourses([...enrolledCourses, res.data]);
-        router.push(`/course/${res.data.courseId}`);
+        router.push(`/courses/${res.data.courseId}`);
 
         setHasSubmitted(false);
       } else {

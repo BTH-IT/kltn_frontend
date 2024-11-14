@@ -16,6 +16,7 @@ import authService from '@/services/authService';
 import { SET_LOCALSTORAGE } from '@/utils';
 import withPermission from '@/libs/hoc/withPermission';
 import { signUpSchema, SignUpFormInputs } from '@/utils/schemas';
+import { Separator } from '@/components/ui/separator';
 
 import InputForm from '../_components/InputForm';
 
@@ -47,6 +48,10 @@ export default withPermission(() => {
         toast.error(error?.response?.data?.message || error.message);
       }
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/accounts/login-google`;
   };
 
   return (
@@ -88,6 +93,18 @@ export default withPermission(() => {
 
           <Button type="submit" className="mt-5 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
             Log in
+          </Button>
+
+          <Separator className="my-8" />
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full text-xs font-medium rounded-2xl"
+            onClick={handleGoogleLogin}
+          >
+            <Image src="/images/google-logo.png" width={24} height={24} alt="Google" className="mr-2" />
+            Login with Google
           </Button>
 
           <p className="mt-10 flex gap-2 items-center justify-center text-[#919191]">

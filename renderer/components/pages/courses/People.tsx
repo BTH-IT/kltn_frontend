@@ -1,6 +1,6 @@
 'use client';
 
-import { EllipsisVertical, UserRoundPlus, ChevronDown, ArrowDownAZ } from 'lucide-react';
+import { EllipsisVertical, UserRoundPlus, ChevronDown, ArrowDownAZ, BookUser } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -23,11 +23,13 @@ import { cn, sortUsersByName } from '@/libs/utils';
 import { useCheckedState, PersonState } from '@/libs/hooks/useCheckState';
 import courseService from '@/services/courseService';
 import { KEY_LOCALSTORAGE } from '@/utils';
+import ImportStudentModal from '@/components/modals/ImportStudentModal';
 
 const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data: IUser[]; course: ICourse }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleteManyModalOpen, setIsDeleteManyModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [list, setList] = useState<IUser[]>([]);
   const [selectedRemove, setSelectedRemove] = useState<IUser | null>(null);
   const [selectedRemoveMany, setSelectedRemoveMany] = useState<IUser[]>([]);
@@ -80,24 +82,45 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
             <>
               <p className="text-sm font-semibold text-primaryGray">{list.length} sinh viên</p>
               {user?.id === course.lecturerId && !course.saveAt && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        onClick={() => {
-                          setIsInviteModalOpen(true);
-                        }}
-                        variant="outline"
-                        className="rounded-full border-none flex justify-center items-center !w-[48px] !h-[48px] !p-1"
-                      >
-                        <UserRoundPlus />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <p>Thêm sinh viên</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() => {
+                            setIsInviteModalOpen(true);
+                          }}
+                          variant="outline"
+                          className="rounded-full border-none flex justify-center items-center !w-[48px] !h-[48px] !p-1"
+                        >
+                          <UserRoundPlus />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Thêm sinh viên thủ công</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() => {
+                            setIsImportModalOpen(true);
+                          }}
+                          variant="outline"
+                          className="rounded-full border-none flex justify-center items-center !w-[48px] !h-[48px] !p-1"
+                        >
+                          <BookUser />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Thêm sinh viên qua excel</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </>
               )}
             </>
           )}
@@ -201,6 +224,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
         />
       ))}
       <InviteStudentModal isOpen={isInviteModalOpen} setIsOpen={setIsInviteModalOpen} course={course} />
+      <ImportStudentModal isOpen={isImportModalOpen} setIsOpen={setIsImportModalOpen} course={course} />
       <CommonModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
