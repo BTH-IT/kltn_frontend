@@ -102,3 +102,23 @@ export const generateParagraphs = (reports: IReport[]) => {
     })
     .join('\n');
 };
+
+const toCamelCase = (str: string) => {
+  return str.replace(/(?:^[A-Z])/g, (match) => match.toLowerCase());
+};
+
+export const convertKeysToCamelCase = (obj: { [key: string]: any }): any => {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => convertKeysToCamelCase(item));
+  } else if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).reduce(
+      (acc, key) => {
+        const camelKey = toCamelCase(key);
+        acc[camelKey] = convertKeysToCamelCase(obj[key]);
+        return acc;
+      },
+      {} as { [key: string]: any },
+    );
+  }
+  return obj;
+};

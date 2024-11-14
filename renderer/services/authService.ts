@@ -7,6 +7,10 @@ const authService = {
     const url = `${PREFIX}/login`;
     return axiosClient.post(url, data);
   },
+  loginWithGoogle() {
+    const url = `${PREFIX}/google-callback`;
+    return axiosClient.get(url);
+  },
   register(data: any) {
     const url = `${PREFIX}/register`;
     return axiosClient.post(url, data);
