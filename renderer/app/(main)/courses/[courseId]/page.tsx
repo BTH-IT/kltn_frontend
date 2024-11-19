@@ -1,21 +1,27 @@
 import { Suspense } from 'react';
-import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 import Loading from '@/components/loading/loading';
 import { API_URL } from '@/constants/endpoints';
 import { ICourse } from '@/types';
 import http from '@/libs/http';
-import { KEY_LOCALSTORAGE } from '@/utils';
 import Newsletter from '@/components/pages/courses/Newsletter';
+import { getUserFromCookie } from '@/libs/actions';
+import { revalidate } from '@/libs/utils';
 
 export default async function CoursePage({ params }: { params: { courseId: string } }) {
-  const {
-    payload: { data: course },
-  } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
+  const [user, courseData] = await Promise.all([
+    getUserFromCookie(),
+    http.get<ICourse | null>(`${API_URL.COURSES}/${params.courseId}`, {
+      next: { revalidate: revalidate },
+    }),
+  ]);
 
-  const cookieStore = cookies();
-  const userCookie = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_USER)?.value;
-  const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
+  const course = courseData.payload?.data;
+
+  if (!course) {
+    redirect('/');
+  }
 
   return (
     <Suspense fallback={<Loading />}>

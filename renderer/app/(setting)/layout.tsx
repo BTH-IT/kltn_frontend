@@ -6,6 +6,7 @@ import NavigationHeader from '@/components/navigations/NavigationHeader';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 import { CoursesProvider } from '@/contexts/CoursesContext';
 import { BreadcrumbProvider } from '@/contexts/BreadcrumbContext';
+import { getUserFromCookie } from '@/libs/actions';
 
 export const metadata: Metadata = {
   title: {
@@ -16,8 +17,10 @@ export const metadata: Metadata = {
 };
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
+  const user = getUserFromCookie();
+
   return (
-    <CoursesProvider>
+    <CoursesProvider user={user}>
       <SidebarProvider isShow={true}>
         <div className="h-full">
           <BreadcrumbProvider>

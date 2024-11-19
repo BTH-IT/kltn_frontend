@@ -19,6 +19,8 @@ import { Button } from '@/components/ui/button';
 import { useGroupContext } from '@/contexts/GroupContext';
 import { CreateProjectContext } from '@/contexts/CreateProjectContext';
 
+import { Switch } from '../ui/switch';
+
 export const EditGroupModal = ({
   isOpen,
   setIsOpen,
@@ -42,6 +44,7 @@ export const EditGroupModal = ({
     numberOfMembers: z.coerce.number({
       invalid_type_error: 'Số lượng thành viên phải là số.',
     }),
+    isApproved: z.boolean(),
     projectId: z
       .object({
         label: z.string(),
@@ -60,12 +63,14 @@ export const EditGroupModal = ({
       groupName: '',
       numberOfMembers: minNumberOfMembers,
       projectId: { label: '', value: '' },
+      isApproved: false,
     },
   });
 
   useEffect(() => {
     if (group) {
       form.setValue('groupName', String(group.groupName));
+      form.setValue('isApproved', Boolean(group.isApproved));
       form.setValue('numberOfMembers', group.numberOfMembers);
       form.setValue('projectId', {
         label: group.project?.title || '',
@@ -190,6 +195,21 @@ export const EditGroupModal = ({
                           })}
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="isApproved"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between my-3">
+                        <FormLabel className="font-medium text-md">Trạng thái</FormLabel>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}

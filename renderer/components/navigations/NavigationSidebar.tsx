@@ -76,12 +76,12 @@ const NavigationSidebar = () => {
                 )}
               </>
             ) : (
-              <Loading containerClassName="max-h-24" spinnerClassName="max-w-14 max-h-14 !border-8" />
+              <Loading />
             )}
           </ul>
           <div>
             <Separator className="my-2" />
-            <ul className="flex flex-col gap-3 mb-2 mt-4">
+            <ul className="flex flex-col gap-3 mt-4 mb-2">
               <SidebarItem
                 label="Lớp học đã lưu trữ"
                 icon={<Pocket size={20} />}

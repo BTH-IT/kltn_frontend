@@ -3,7 +3,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import Markdown from 'react-markdown';
 import { CalendarIcon, FileTextIcon } from 'lucide-react';
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { IReport } from '@/types';
 import { formatVNDate } from '@/utils';
 
@@ -22,10 +22,9 @@ const BriefGroupReportModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] h-[95vh] overflow-y-auto overflow-x-hidden">
+      <DialogContent className="sm:max-w-[800px] max-h-[95vh] h-auto overflow-y-auto overflow-x-hidden">
         <DialogHeader className="h-fit">
-          <DialogTitle>Chỉnh sửa mục mới</DialogTitle>
-          <DialogDescription>Chỉnh sửa thông tin ở đây.</DialogDescription>
+          <DialogTitle>Xem tóm tắt báo cáo tiến độ</DialogTitle>
         </DialogHeader>
         <div
           key={report?.brief?.id}
