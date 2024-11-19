@@ -6,6 +6,8 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { IReport, IScoreStructure, IUser } from '@/types';
 
+export const revalidate = 180;
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

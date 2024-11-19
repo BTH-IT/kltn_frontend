@@ -4,11 +4,14 @@ import http from '@/libs/http';
 import { API_URL } from '@/constants/endpoints';
 import ReportHistory from '@/components/pages/groups/ReportHistory';
 import { IBrief } from '@/types';
+import { revalidate } from '@/libs/utils';
 
 const GroupReportPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
   const {
     payload: { data: briefs },
-  } = await http.get<IBrief[]>(`${API_URL.BRIEFS}/${params.groupId}/brief`);
+  } = await http.get<IBrief[]>(`${API_URL.BRIEFS}/${params.groupId}/brief`, {
+    next: { revalidate: revalidate },
+  });
 
   return <ReportHistory briefs={briefs} />;
 };

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Users as TeamIcon } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { API_URL } from '@/constants/endpoints';
@@ -9,13 +10,25 @@ import TeamMembers from '@/components/pages/groups/TeamMembers';
 import RequestList from '@/components/pages/groups/RequestList';
 import { BackButtonV2 } from '@/components/common/BackButtonV2';
 import { getUserFromCookie } from '@/libs/actions';
+import { revalidate } from '@/libs/utils';
 
 const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
-  const {
-    payload: { data: group },
-  } = await http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`);
+  const [user, data] = await Promise.all([
+    getUserFromCookie(),
+    http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`, {
+      next: { revalidate: revalidate },
+    }) as Promise<any>,
+  ]);
 
-  const user = getUserFromCookie();
+  const group = data.payload?.data;
+
+  if (!user) {
+    return redirect('/login');
+  }
+
+  if (!group) {
+    return redirect('/');
+  }
 
   return (
     <div className="mt-4 space-y-6">

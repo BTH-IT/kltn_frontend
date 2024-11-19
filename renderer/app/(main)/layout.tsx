@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import React from 'react';
 import { Metadata } from 'next';
 
@@ -10,13 +11,12 @@ import { CreateSubjectProvider } from '@/contexts/CreateSubjectContext';
 import { BreadcrumbProvider } from '@/contexts/BreadcrumbContext';
 import { getUserFromCookie } from '@/libs/actions';
 
-export const metadata: Metadata = {
-  title: {
-    template: '%s | Courseroom',
-    default: 'Courseroom Application',
-  },
-  description: 'This is courseroom for SGUer',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Courseroom's Dashboard | Courseroom",
+    description: 'This is courseroom for SGUer',
+  };
+}
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getUserFromCookie();

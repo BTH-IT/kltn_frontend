@@ -1,5 +1,4 @@
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
 import { Users } from 'lucide-react';
 
 import { IProject } from '@/types/project';
@@ -8,18 +7,21 @@ import { API_URL } from '@/constants/endpoints';
 import { ProjectClient } from '@/components/tables/project-tables/client';
 import { CreateProjectProvider } from '@/contexts/CreateProjectContext';
 import { ICourse, IGroup } from '@/types';
-import { KEY_LOCALSTORAGE } from '@/utils';
 import { GroupContextProvider } from '@/contexts/GroupContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import TeamMembers from '@/components/pages/groups/TeamMembers';
 import RequestList from '@/components/pages/groups/RequestList';
 import StudentGroup from '@/components/common/StudentGroup';
 import { BackButtonV3 } from '@/components/common/BackButtonV3';
+import { getUserFromCookie } from '@/libs/actions';
+import { revalidate } from '@/libs/utils';
 
 const ProjectsPage = async ({ params }: { params: { courseId: string } }) => {
   const {
     payload: { data: course },
-  } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
+  } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`, {
+    next: { revalidate: revalidate },
+  });
 
   if (!course) {
     return redirect('/');
@@ -29,17 +31,26 @@ const ProjectsPage = async ({ params }: { params: { courseId: string } }) => {
     return redirect(`/courses/${params.courseId}`);
   }
 
-  const {
-    payload: { data: projects },
-  } = await http.get<IProject[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.PROJECTS}`);
+  const [user, groupsData, projectsData] = await Promise.all([
+    getUserFromCookie(),
+    http.get<IGroup[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.GROUPS}`, {
+      next: { revalidate: revalidate },
+    }),
+    http.get<IProject[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.PROJECTS}`, {
+      next: { revalidate: revalidate },
+    }),
+  ]);
 
-  const {
-    payload: { data: groups },
-  } = await http.get<IGroup[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.GROUPS}`);
+  const groups = groupsData.payload?.data;
+  const projects = projectsData.payload?.data;
 
-  const cookieStore = cookies();
-  const userCookie = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_USER)?.value;
-  const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
+  if (!user) {
+    redirect('/login');
+  }
+
+  if (!groups || !projects) {
+    redirect('/');
+  }
 
   const group = groups.find((group) => group?.groupMembers?.some((member) => member.studentId === user.id));
 

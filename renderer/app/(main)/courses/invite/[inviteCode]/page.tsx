@@ -1,27 +1,28 @@
 import Image from 'next/image';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/constants/endpoints';
 import InviteButton from '@/components/pages/courses/invite/InviteButton';
 import http from '@/libs/http';
 import { ICourse } from '@/types';
-import { KEY_LOCALSTORAGE } from '@/utils';
+import { getUserFromCookie } from '@/libs/actions';
+import { revalidate } from '@/libs/utils';
 
 const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) => {
   const { inviteCode } = params;
 
-  const cookieStore = cookies();
-  const userCookie = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_USER)?.value;
-  const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
+  const [user, courseData] = await Promise.all([
+    getUserFromCookie(),
+    http.get<ICourse | null>(`${API_URL.COURSES}/invite/${inviteCode}`, {
+      next: { revalidate: revalidate },
+    }),
+  ]);
+
+  const course = courseData.payload?.data;
 
   if (!user) {
     return redirect('/login');
   }
-
-  const {
-    payload: { data: course },
-  } = await http.get<ICourse | null>(`${API_URL.COURSES}/invite/${inviteCode}`);
 
   if (!course) {
     return redirect('/');
