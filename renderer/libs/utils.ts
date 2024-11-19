@@ -70,31 +70,38 @@ export const formatDateTime = (isoString: string) => {
 export const generateParagraphs = (reports: IReport[]) => {
   return reports
     .map((report: IReport) => {
-      const { title, content, attachedLinks, attachments, createUser, comments } = report;
+      const { title, content, attachedLinks, attachments, createUser, comments, createdAt } = report;
+
       const userName = createUser?.fullName || createUser?.userName || 'Người tạo không rõ';
 
-      const linksInfo = attachedLinks
-        .map((link: any) => `- Liên kết: ${link.title} (${link.description}). URL: ${link.url}`)
+      const linksInfo = (attachedLinks ?? [])
+        .map(
+          (link: any) =>
+            `- Liên kết: ${link.title || 'Không có tiêu đề'} (${link.description || 'Không có mô tả'}). URL: ${link.url || 'Không có URL'}`,
+        )
         .join('\n');
 
-      const attachmentsInfo = attachments
-        .map((attachment: any) => `- Tệp tin: ${attachment.title}. URL: ${attachment.url}`)
+      const attachmentsInfo = (attachments ?? [])
+        .map(
+          (attachment: any) =>
+            `- Tệp tin: ${attachment.title || 'Không có tiêu đề'}. URL: ${attachment.url || 'Không có URL'}`,
+        )
         .join('\n');
 
-      const commentsInfo = comments
+      const commentsInfo = (comments ?? [])
         .map((comment: any) => {
-          const commenterName = comment.user?.fullName || comment.user?.userName || 'Người bình luận không rõ';
-          return `- ${commenterName}: ${comment.content.replace(/<\/?[^>]+(>|$)/g, ' ') || 'Không có nội dung'} (Ngày bình luận: ${formatDateTime(comment.createdAt)})`;
+          const commenterName = comment?.user?.fullName || comment?.user?.userName || 'Người bình luận không rõ';
+          return `- ${commenterName}: ${comment?.content?.replace(/<\/?[^>]+(>|$)/g, ' ') || 'Không có nội dung'} (Ngày bình luận: ${formatDateTime(comment?.createdAt) || 'Không rõ'})`;
         })
         .join('\n');
 
-      const plainContent = content.replace(/<\/?[^>]+(>|$)/g, ' ');
+      const plainContent = content?.replace(/<\/?[^>]+(>|$)/g, ' ') || 'Không có nội dung';
 
       return `
       Báo cáo: ${title || 'Không có tiêu đề'}
-      Nội dung: ${plainContent || 'Không có nội dung'}
-      Người tạo: ${userName || 'Không rõ'}
-      Ngày tạo: ${formatDateTime(report.createdAt)}
+      Nội dung: ${plainContent}
+      Người tạo: ${userName}
+      Ngày tạo: ${formatDateTime(createdAt) || 'Không rõ'}
       ${linksInfo ? `Liên kết đính kèm: \n${linksInfo}` : 'Không có liên kết đính kèm'}
       ${attachmentsInfo ? `Tệp tin đính kèm: \n${attachmentsInfo}` : 'Không có tệp tin đính kèm'}
       ${commentsInfo ? `Bình luận: \n${commentsInfo}` : 'Không có bình luận'}

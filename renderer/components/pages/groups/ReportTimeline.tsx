@@ -90,25 +90,39 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
   };
 
   const handleGenerateBrief = async (report: IReport) => {
-    const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_KEY || '');
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-pro-002',
-    });
+    try {
+      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_KEY || '');
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-1.5-pro-002',
+      });
+      const prompt =
+        'Tôi muốn một bản tóm tắt chi tiết về tiến độ của phần viết báo cáo, bao gồm cả những thông tin về cấu trúc và nội dung của báo cáo sau (chỉ lấy nội dung tóm tắt): ';
 
-    const prompt =
-      'Tôi muốn một bản tóm tắt chi tiết về tiến độ của phần viết báo cáo, bao gồm cả những thông tin về cấu trúc và nội dung của báo cáo sau (chỉ lấy nội dung tóm tắt): ';
+      const fullPrompt = prompt + generateParagraphs([report]);
 
-    const fullPrompt = prompt + generateParagraphs([report]);
+      const result = await model.generateContent(fullPrompt);
+      const content = result.response.text();
 
-    const result = await model.generateContent(fullPrompt);
+      // Create a new brief
+      const res = await briefService.createBrief(group.groupId, {
+        title: 'Tóm tắt báo cáo lúc ' + formatVNDate(new Date().toString()),
+        content,
+        reportId: report.reportId,
+      });
 
-    const content = result.response.text();
+      // Update current report state
+      setCurrentReport({ ...report, brief: res.data });
+      setReports((prevReports: IReport[]) =>
+        prevReports.map((r) => (r.reportId === report.reportId ? { ...report, brief: res.data } : r)),
+      );
 
-    await briefService.createBrief(group.groupId, {
-      title: 'Tóm tắt báo cáo lúc ' + formatVNDate(new Date().toString()),
-      content,
-      reportId: report.reportId,
-    });
+      // Set brief report flag
+      setBriefReport(true);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message || error.message);
+      }
+    }
   };
 
   return (
@@ -160,8 +174,9 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
                               setCurrentReport(report);
                               if (!report.brief) {
                                 await handleGenerateBrief(report);
+                              } else {
+                                setBriefReport(true);
                               }
-                              setBriefReport(true);
                             }}
                             className="w-4 h-4 text-green-500"
                           />

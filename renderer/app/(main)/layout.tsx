@@ -8,6 +8,7 @@ import { CourseProvider } from '@/contexts/CourseContext';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 import { CreateSubjectProvider } from '@/contexts/CreateSubjectContext';
 import { BreadcrumbProvider } from '@/contexts/BreadcrumbContext';
+import { getUserFromCookie } from '@/libs/actions';
 
 export const metadata: Metadata = {
   title: {
@@ -18,8 +19,9 @@ export const metadata: Metadata = {
 };
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
+  const user = await getUserFromCookie();
   return (
-    <CoursesProvider>
+    <CoursesProvider user={user}>
       <CourseProvider course={null}>
         <CreateSubjectProvider>
           <SidebarProvider isShow={true}>

@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { ICourse } from '@/types';
+import { ICourse, IUser } from '@/types';
 import courseService from '@/services/courseService';
 
 const CoursesContext = React.createContext({
@@ -14,7 +14,7 @@ const CoursesContext = React.createContext({
   isLoading: true,
 });
 
-const CoursesProvider = ({ children }: { children: React.ReactNode }) => {
+const CoursesProvider = ({ children, user }: { children: React.ReactNode; user: IUser | null }) => {
   const [createdCourses, setCreatedCourses] = useState<ICourse[]>([]);
   const [enrolledCourses, setEnrolledCourses] = useState<ICourse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +34,7 @@ const CoursesProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     getCourse();
-  }, []);
+  }, [user]);
 
   return (
     <CoursesContext.Provider
