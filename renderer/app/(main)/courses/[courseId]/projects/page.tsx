@@ -14,14 +14,11 @@ import RequestList from '@/components/pages/groups/RequestList';
 import StudentGroup from '@/components/common/StudentGroup';
 import { BackButtonV3 } from '@/components/common/BackButtonV3';
 import { getUserFromCookie } from '@/libs/actions';
-import { revalidate } from '@/libs/utils';
 
 const ProjectsPage = async ({ params }: { params: { courseId: string } }) => {
   const {
     payload: { data: course },
-  } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`, {
-    next: { revalidate: revalidate },
-  });
+  } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
 
   if (!course) {
     return redirect('/');
@@ -33,12 +30,8 @@ const ProjectsPage = async ({ params }: { params: { courseId: string } }) => {
 
   const [user, groupsData, projectsData] = await Promise.all([
     getUserFromCookie(),
-    http.get<IGroup[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.GROUPS}`, {
-      next: { revalidate: revalidate },
-    }),
-    http.get<IProject[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.PROJECTS}`, {
-      next: { revalidate: revalidate },
-    }),
+    http.get<IGroup[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.GROUPS}`),
+    http.get<IProject[]>(`${API_URL.COURSES}/${params.courseId}${API_URL.PROJECTS}`),
   ]);
 
   const groups = groupsData.payload?.data;

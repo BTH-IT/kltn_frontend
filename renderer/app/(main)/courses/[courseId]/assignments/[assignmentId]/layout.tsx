@@ -5,14 +5,11 @@ import { AssignmentProvider } from '@/contexts/AssignmentContext';
 import { GroupContextProvider } from '@/contexts/GroupContext';
 import http from '@/libs/http';
 import { IAssignment } from '@/types';
-import { revalidate } from '@/libs/utils';
 
 export async function generateMetadata({ params }: { params: { courseId: string; assignmentId: string } }) {
   const {
     payload: { data },
-  } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`, {
-    next: { revalidate: revalidate },
-  });
+  } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`);
 
   return {
     title: `Assignment: ${data?.title}`,
@@ -29,9 +26,7 @@ const Layout = async ({
 }) => {
   const {
     payload: { data: assignement },
-  } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`, {
-    next: { revalidate: revalidate },
-  });
+  } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`);
 
   return (
     <GroupContextProvider groups={assignement.groups}>

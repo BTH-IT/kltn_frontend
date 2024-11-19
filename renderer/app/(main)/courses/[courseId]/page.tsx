@@ -7,14 +7,11 @@ import { ICourse } from '@/types';
 import http from '@/libs/http';
 import Newsletter from '@/components/pages/courses/Newsletter';
 import { getUserFromCookie } from '@/libs/actions';
-import { revalidate } from '@/libs/utils';
 
 export default async function CoursePage({ params }: { params: { courseId: string } }) {
   const [user, courseData] = await Promise.all([
     getUserFromCookie(),
-    http.get<ICourse | null>(`${API_URL.COURSES}/${params.courseId}`, {
-      next: { revalidate: revalidate },
-    }),
+    http.get<ICourse | null>(`${API_URL.COURSES}/${params.courseId}`),
   ]);
 
   const course = courseData.payload?.data;

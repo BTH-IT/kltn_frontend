@@ -5,12 +5,9 @@ import http from '@/libs/http';
 import { API_URL } from '@/constants/endpoints';
 import { ICourse, IGroup } from '@/types';
 import GroupHeader from '@/components/common/GroupHeader';
-import { revalidate } from '@/libs/utils';
 
 export async function generateMetadata({ params }: { params: { courseId: string; groupId: string } }) {
-  const { payload } = await http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`, {
-    next: { revalidate: revalidate },
-  });
+  const { payload } = await http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`);
 
   return {
     title: payload.data.groupName + ' - Group detail',
@@ -27,9 +24,7 @@ const Layout = async ({
 }) => {
   const [groupData, courseData] = await Promise.all([
     http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`),
-    http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`, {
-      next: { revalidate: revalidate },
-    }) as Promise<any>,
+    http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`) as Promise<any>,
   ]);
 
   const group = groupData.payload?.data;
