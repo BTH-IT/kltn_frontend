@@ -6,7 +6,6 @@ import { ICourse } from '@/types';
 import CourseCard from '@/components/common/CourseCard';
 import { API_URL } from '@/constants/endpoints';
 import http from '@/libs/http';
-import { revalidate } from '@/libs/utils';
 
 const ArchivesPage = async () => {
   const {
@@ -15,9 +14,7 @@ const ArchivesPage = async () => {
     },
   } = await http.get<{
     archivedCourses: ICourse[];
-  }>(`${API_URL.ACCOUNTS}${API_URL.COURSES}/saved`, {
-    next: { revalidate: revalidate },
-  });
+  }>(`${API_URL.ACCOUNTS}${API_URL.COURSES}/saved`);
 
   return (
     <>

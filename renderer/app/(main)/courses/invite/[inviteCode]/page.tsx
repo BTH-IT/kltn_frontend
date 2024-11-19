@@ -6,16 +6,13 @@ import InviteButton from '@/components/pages/courses/invite/InviteButton';
 import http from '@/libs/http';
 import { ICourse } from '@/types';
 import { getUserFromCookie } from '@/libs/actions';
-import { revalidate } from '@/libs/utils';
 
 const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) => {
   const { inviteCode } = params;
 
   const [user, courseData] = await Promise.all([
     getUserFromCookie(),
-    http.get<ICourse | null>(`${API_URL.COURSES}/invite/${inviteCode}`, {
-      next: { revalidate: revalidate },
-    }),
+    http.get<ICourse | null>(`${API_URL.COURSES}/invite/${inviteCode}`),
   ]);
 
   const course = courseData.payload?.data;

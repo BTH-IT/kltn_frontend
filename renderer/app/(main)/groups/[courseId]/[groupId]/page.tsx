@@ -10,14 +10,11 @@ import TeamMembers from '@/components/pages/groups/TeamMembers';
 import RequestList from '@/components/pages/groups/RequestList';
 import { BackButtonV2 } from '@/components/common/BackButtonV2';
 import { getUserFromCookie } from '@/libs/actions';
-import { revalidate } from '@/libs/utils';
 
 const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
   const [user, data] = await Promise.all([
     getUserFromCookie(),
-    http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`, {
-      next: { revalidate: revalidate },
-    }) as Promise<any>,
+    http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`) as Promise<any>,
   ]);
 
   const group = data.payload?.data;

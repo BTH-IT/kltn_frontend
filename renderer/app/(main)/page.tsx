@@ -11,7 +11,6 @@ import { API_URL } from '@/constants/endpoints';
 import { getUserFromCookie } from '@/libs/actions';
 import http from '@/libs/http';
 import { ICourse } from '@/types';
-import { revalidate } from '@/libs/utils';
 
 const HomePage = async () => {
   const [user, coursesResponse] = await Promise.all([
@@ -19,9 +18,7 @@ const HomePage = async () => {
     http.get<{
       createdCourses: ICourse[];
       enrolledCourses: ICourse[];
-    }>(`${API_URL.ACCOUNTS}${API_URL.COURSES}`, {
-      next: { revalidate: revalidate },
-    }) as Promise<any>,
+    }>(`${API_URL.ACCOUNTS}${API_URL.COURSES}`),
   ]);
 
   const courses = coursesResponse.payload?.data;

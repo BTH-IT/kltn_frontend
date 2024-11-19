@@ -5,14 +5,11 @@ import http from '@/libs/http';
 import { ISubmissionList } from '@/types';
 import { API_URL } from '@/constants/endpoints';
 import FinalAssigmentSubmited from '@/components/pages/courses/assignment/FinalAssignmentSubmited';
-import { revalidate } from '@/libs/utils';
 
 const AssignmentSubmitPage = async ({ params }: { params: { courseId: string; assignmentId: string } }) => {
   const {
     payload: { data: submissions },
-  } = await http.get<ISubmissionList[]>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}${API_URL.SUBMISSIONS}`, {
-    next: { revalidate: revalidate },
-  });
+  } = await http.get<ISubmissionList[]>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}${API_URL.SUBMISSIONS}`);
 
   return (
     <>
