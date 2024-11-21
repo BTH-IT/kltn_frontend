@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ColumnDef } from '@tanstack/react-table';
@@ -131,3 +133,11 @@ export const convertKeysToCamelCase = (obj: { [key: string]: any }): any => {
   }
   return obj;
 };
+
+export function logError(error: any) {
+  console.error(error);
+  if (error instanceof AxiosError) {
+    console.log(error);
+    toast.error(error.response?.data.message || error.message);
+  }
+}

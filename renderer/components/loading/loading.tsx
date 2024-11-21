@@ -16,8 +16,8 @@ export default function Loading({ size = 'small', className }: LoadingProps) {
   };
 
   return (
-    <div className={cn('relative flex items-center justify-center !w-full', sizeClasses[size], className)}>
-      <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <div className={cn('relative flex items-center justify-center !w-full !h-full', '', className)}>
+      <svg className={cn('', sizeClasses[size], '')} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="dynamicGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#3b82f6">

@@ -22,15 +22,13 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <CoursesProvider user={user}>
       <SidebarProvider isShow={true}>
-        <div className="h-full">
-          <BreadcrumbProvider>
-            <NavigationHeader />
-            <div className="flex">
-              <NavigationSidebar />
-              <main className="flex-1 h-[calc(100vh-70px)] mt-[70px] overflow-y-auto">{children}</main>
-            </div>
-          </BreadcrumbProvider>
-        </div>
+        <BreadcrumbProvider>
+          <NavigationHeader />
+          <div className="flex">
+            <NavigationSidebar />
+            <main className="flex-1 h-[calc(100vh-70px)] mt-[70px] overflow-y-auto">{children}</main>
+          </div>
+        </BreadcrumbProvider>
       </SidebarProvider>
     </CoursesProvider>
   );

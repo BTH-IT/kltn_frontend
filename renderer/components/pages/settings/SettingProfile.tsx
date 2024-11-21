@@ -32,6 +32,8 @@ const formSchema = z.object({
   gender: z.string().min(1, {
     message: 'Hãy chọn giới tính.',
   }),
+  email: z.string(),
+  userName: z.string(),
 });
 
 const SettingProfile = () => {
@@ -75,6 +77,8 @@ const SettingProfile = () => {
   useEffect(() => {
     if (user) {
       form.setValue('phone', user.phoneNumber);
+      form.setValue('userName', user.userName);
+      form.setValue('email', user.email);
       form.setValue('fullName', user.fullName);
       form.setValue('dateOfBirth', new Date(user.doB));
       form.setValue('gender', user.gender);
@@ -167,12 +171,12 @@ const SettingProfile = () => {
             </div>
             <FormField
               control={form.control}
-              name="phone"
+              name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Số điện thoại</FormLabel>
+                  <FormLabel className="font-bold">Họ và tên</FormLabel>
                   <FormControl>
-                    <Input type="tel" {...field} />
+                    <Input disabled={true} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -180,12 +184,38 @@ const SettingProfile = () => {
             />
             <FormField
               control={form.control}
-              name="fullName"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Họ và tên</FormLabel>
+                  <FormLabel className="font-bold">Email</FormLabel>
                   <FormControl>
-                    <Input disabled={form.formState.isSubmitting} {...field} />
+                    <Input disabled={true} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="userName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-bold">Username</FormLabel>
+                  <FormControl>
+                    <Input disabled={true} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-bold">Số điện thoại</FormLabel>
+                  <FormControl>
+                    <Input type="tel" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

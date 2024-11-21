@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { ICourse } from '@/types';
 import courseService from '@/services/courseService';
+import { logError } from '@/libs/utils';
 
 export default function ImportStudentModal({
   isOpen,
@@ -38,15 +39,26 @@ export default function ImportStudentModal({
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    try {
       setFileName(file.name);
       const data = await file.arrayBuffer();
       const workbook = XLSX.read(data);
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      setData(jsonData);
 
       const header = jsonData[0] as string[];
+      const mandatoryColumns = ['customId', 'name', 'birthDay', 'phoneNumber', 'email'];
+
+      const hasMandatoryColumns = mandatoryColumns.every((col) => header.includes(col));
+      if (!hasMandatoryColumns) {
+        toast.error('File không đúng định dạng. Vui lòng tải lên file đúng cấu trúc!');
+        return;
+      }
+
+      setData(jsonData);
+
       const mandatoryColumnIndices = header.reduce((acc: string[], col: string, index: number) => {
         if (mandatoryColumns.includes(col)) {
           acc.push(index.toString());
@@ -54,6 +66,8 @@ export default function ImportStudentModal({
         return acc;
       }, []);
       setSelectedColumns(mandatoryColumnIndices);
+    } catch (error) {
+      toast.error('Đã xảy ra lỗi khi đọc file. Vui lòng thử lại!');
     }
   };
 
@@ -127,18 +141,14 @@ export default function ImportStudentModal({
           };
         });
 
-      const formattedData = {
-        students: selectedData,
-      };
-
-      await courseService.importStudents(course.courseId, formattedData);
-      toast.success('Import successful');
+      await courseService.importStudents(course.courseId, selectedData);
+      toast.success('Thêm sinh viên thành công');
       setIsOpen(false);
       router.refresh();
     } catch (error) {
-      toast.error('Import failed');
+      logError(error);
     } finally {
-      setLoading(false); // Dừng loading sau khi API phản hồi
+      setLoading(false);
     }
   };
 

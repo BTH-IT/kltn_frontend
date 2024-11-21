@@ -3,6 +3,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-toastify';
 import { Copy } from 'lucide-react';
 import React from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -14,6 +15,7 @@ import { Dialog, DialogContent2, DialogFooter, DialogHeader, DialogTitle } from 
 import { FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ICourse } from '@/types';
 import courseService from '@/services/courseService';
+import { logError } from '@/libs/utils';
 
 import { MultiValueInput } from '../common/MultiValueInput';
 
@@ -45,9 +47,10 @@ const InviteStudentModal = ({
       console.log(values.emails);
       await courseService.addStudents(course.courseId, values.emails);
       setIsOpen(false);
+      toast.success('Mời sinh viên thành công');
       router.refresh();
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 
