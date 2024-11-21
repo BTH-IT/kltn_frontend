@@ -21,7 +21,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <meta property="og:title" content="Courseroom Application" />
         <meta property="og:description" content="Based on Google Classroom" />
       </head>
-      <body>
+      <body className="overflow-y-hidden">
         <NextTopLoader />
         {children}
         <ToastContainer />

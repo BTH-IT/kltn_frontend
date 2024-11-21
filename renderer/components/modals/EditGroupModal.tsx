@@ -96,6 +96,7 @@ export const EditGroupModal = ({
       }
 
       const res = await groupService.updateGroup(group.groupId, {
+        ...group,
         ...values,
         projectId: values.projectId.value,
         courseId: params.courseId as string,
