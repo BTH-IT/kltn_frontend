@@ -24,6 +24,9 @@ const nextConfig = {
     };
     return config;
   },
+  experimental: {
+    turbo: {},
+  },
 };
 
 if (process.env.NODE_ENV === 'production') {

@@ -18,6 +18,8 @@ import type { ICourse } from '@/types';
 import courseService from '@/services/courseService';
 import { logError } from '@/libs/utils';
 
+const mandatoryColumns = ['customId', 'name', 'email'];
+
 export default function ImportStudentModal({
   isOpen,
   setIsOpen,
@@ -34,8 +36,6 @@ export default function ImportStudentModal({
   const [fileName, setFileName] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false); // Trạng thái loading
-
-  const mandatoryColumns = ['customId', 'name', 'email'];
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -57,15 +57,64 @@ export default function ImportStudentModal({
         return;
       }
 
-      setData(jsonData);
+      const dataRows = jsonData.slice(1); // Bỏ qua tiêu đề
+      const invalidRows: any[] = [];
 
-      const mandatoryColumnIndices = header.reduce((acc: string[], col: string, index: number) => {
-        if (mandatoryColumns.includes(col)) {
-          acc.push(index.toString());
+      dataRows.forEach((row: any, index: number) => {
+        const [customId, name, birthDay, phoneNumber, email] = row;
+
+        // Kiểm tra customId (phải là số và không rỗng)
+        if (!customId || isNaN(Number(customId))) {
+          invalidRows.push({
+            rowIndex: index + 2,
+            field: 'customId',
+            value: customId,
+          });
         }
-        return acc;
-      }, []);
-      setSelectedColumns(mandatoryColumnIndices);
+
+        // Kiểm tra name (không rỗng và phải là chuỗi)
+        if (!name || typeof name !== 'string') {
+          invalidRows.push({ rowIndex: index + 2, field: 'name', value: name });
+        }
+
+        // Kiểm tra birthDay (định dạng dd/MM/yyyy)
+        const birthDayRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+        if (!birthDay || !birthDayRegex.test(birthDay)) {
+          invalidRows.push({
+            rowIndex: index + 2,
+            field: 'birthDay',
+            value: birthDay,
+          });
+        }
+
+        // Kiểm tra phoneNumber (chỉ chứa số, tối thiểu 10 chữ số)
+        const phoneRegex = /^\d{10,15}$/;
+        if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+          invalidRows.push({
+            rowIndex: index + 2,
+            field: 'phoneNumber',
+            value: phoneNumber,
+          });
+        }
+
+        // Kiểm tra email (định dạng email hợp lệ)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          invalidRows.push({
+            rowIndex: index + 2,
+            field: 'email',
+            value: email,
+          });
+        }
+      });
+
+      if (invalidRows.length > 0) {
+        toast.error(`File chứa ${invalidRows.length} dòng lỗi. Vui lòng kiểm tra lại toàn bộ dữ liệu trong file!`);
+        return;
+      }
+
+      setData(jsonData);
+      toast.success('File tải lên thành công và hợp lệ!');
     } catch (error) {
       toast.error('Đã xảy ra lỗi khi đọc file. Vui lòng thử lại!');
     }

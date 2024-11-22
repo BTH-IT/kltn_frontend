@@ -9,16 +9,30 @@ export type CustomOptions = Omit<RequestInit, 'method'> & {
 
 const http = {
   get<Response>(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
-    return request<Response>('GET', url, options);
+    return request<Response>('GET', url, {
+      ...options,
+      next: { revalidate: 10 },
+    });
   },
   post<Response>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-    return request<Response>('POST', url, { ...options, body });
+    return request<Response>('POST', url, {
+      ...options,
+      body,
+      next: { revalidate: 10 },
+    });
   },
   put<Response>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-    return request<Response>('PUT', url, { ...options, body });
+    return request<Response>('PUT', url, {
+      ...options,
+      body,
+      next: { revalidate: 10 },
+    });
   },
   delete<Response>(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
-    return request<Response>('DELETE', url, { ...options });
+    return request<Response>('DELETE', url, {
+      ...options,
+      next: { revalidate: 10 },
+    });
   },
 };
 
