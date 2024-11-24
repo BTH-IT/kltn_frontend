@@ -1,15 +1,11 @@
+/* eslint-disable no-unused-vars */
 'use client';
 
 import { useState, useEffect } from 'react';
-import { format, subDays } from 'date-fns';
 import dynamic from 'next/dynamic';
-import { Book, Users, Layers, Calendar } from 'lucide-react';
-import { DateRange } from 'react-day-picker';
+import { Book, Users, Layers } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -26,10 +22,6 @@ const initialData = [
 export default function DashboardPage() {
   const [data, setData] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 30),
-    to: new Date(),
-  });
 
   const [chartOptions, setChartOptions] = useState({
     chart: {
@@ -104,78 +96,10 @@ export default function DashboardPage() {
     },
   ]);
 
-  const filterData = (from: Date, to: Date) => {
-    setIsLoading(true);
-    const filteredData = initialData.filter((item) => {
-      const date = new Date(item.month);
-      return date >= from && date <= to;
-    });
-    setData(filteredData.length > 0 ? filteredData : initialData);
-    setChartOptions((prevOptions) => ({
-      ...prevOptions,
-      xaxis: {
-        ...prevOptions.xaxis,
-        categories: (filteredData.length > 0 ? filteredData : initialData).map((item) => item.month),
-      },
-    }));
-    setChartSeries([
-      {
-        name: 'Courses',
-        data: (filteredData.length > 0 ? filteredData : initialData).map((item) => item.courses),
-      },
-      {
-        name: 'Subjects',
-        data: (filteredData.length > 0 ? filteredData : initialData).map((item) => item.subjects),
-      },
-      {
-        name: 'Users',
-        data: (filteredData.length > 0 ? filteredData : initialData).map((item) => item.users),
-      },
-    ]);
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    if (dateRange?.from && dateRange?.to) {
-      filterData(dateRange.from, dateRange.to);
-    }
-  }, [dateRange]);
-
   return (
     <div className="flex-1 p-8 pt-6 space-y-4">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[280px] justify-start text-left font-normal">
-              <Calendar className="w-4 h-4 mr-2" />
-              {dateRange?.from ? (
-                dateRange?.to ? (
-                  <>
-                    {format(dateRange?.from ?? new Date(), 'LLL dd, y')} -{' '}
-                    {format(dateRange?.to ?? new Date(), 'LLL dd, y')}
-                  </>
-                ) : (
-                  format(dateRange?.from ?? new Date(), 'LLL dd, y')
-                )
-              ) : (
-                <span>Pick a date range</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <CalendarComponent
-              initialFocus
-              mode="range"
-              defaultMonth={dateRange?.from ?? new Date()}
-              selected={dateRange}
-              onSelect={(newDateRange: DateRange | undefined) => {
-                setDateRange(newDateRange);
-              }}
-              numberOfMonths={2}
-            />
-          </PopoverContent>
-        </Popover>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
@@ -228,7 +152,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <p>Loading chart...</p>
+              <p>Đang tải...</p>
             ) : (
               <div className="h-[400px]">
                 <ReactApexChart options={chartOptions as any} series={chartSeries} type="area" height="100%" />
