@@ -97,7 +97,9 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
     graded: studentSubmissions.filter((student) => categorizeStudentStatus(student) === 'Đã chấm bài').length,
     notSubmit: studentSubmissions.filter(
       (student) =>
-        categorizeStudentStatus(student) === 'Chưa nộp bài' || categorizeStudentStatus(student) === 'Trễ hạn',
+        categorizeStudentStatus(student) === 'Chưa nộp bài' ||
+        categorizeStudentStatus(student) === 'Trễ hạn' ||
+        categorizeStudentStatus(student) === 'Đã giao',
     ).length,
   };
 
@@ -264,7 +266,7 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
                     <Avatar className="w-8 h-8 mr-2">
                       <Image src={'/images/avt.png'} alt={student.user.userName} width={1000} height={1000} />
                     </Avatar>
-                    {student.user.userName}
+                    {student.user.userName} - {student.user.fullName || 'N/A'}
                   </div>
                 </TableCell>
                 <TableCell>

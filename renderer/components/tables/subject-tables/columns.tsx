@@ -10,11 +10,11 @@ import { CellAction } from './cell-action';
 export const columns: ColumnDef<ISubject>[] = createColumns([
   {
     accessorKey: 'subjectCode',
-    header: 'SUBJECT CODE',
+    header: 'Mã môn học',
   },
   {
     accessorKey: 'name',
-    header: 'SUBJECT NAME',
+    header: 'Tên môn học',
     sortable: true,
   },
   {
@@ -25,7 +25,7 @@ export const columns: ColumnDef<ISubject>[] = createColumns([
   },
   {
     id: 'ACTION',
-    header: 'ACTION',
+    header: 'Hành động',
     cell: ({ row }: any) => <CellAction data={row.original} />,
   },
 ]);

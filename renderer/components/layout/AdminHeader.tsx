@@ -2,8 +2,11 @@
 
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { MenuIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
+import { CLEAR_LOCALSTORAGE } from '@/utils';
 import { cn } from '@/libs/utils';
 
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
@@ -14,10 +17,20 @@ import { NavigationDashboard } from './NavigationDashboard';
 const AdminHeader = () => {
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const handleLogout = async () => {
+    CLEAR_LOCALSTORAGE();
+    await fetch('/api/logout', {
+      method: 'POST',
+    });
+    router.refresh();
+    router.replace('/login');
+  };
 
   return (
     <>
@@ -26,18 +39,13 @@ const AdminHeader = () => {
           <nav className="flex items-center justify-between px-4 h-14">
             <div className="hidden lg:block">
               <Link href={'/'} target="_blank">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6 mr-2"
-                >
-                  <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-                </svg>
+                <Image
+                  width={1000}
+                  height={1000}
+                  className="w-[50px] h-[50px] object-cover"
+                  src="/images/logo.png"
+                  alt="logo"
+                />
               </Link>
             </div>
             <div className={cn('block lg:!hidden')}>
@@ -59,7 +67,7 @@ const AdminHeader = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button></Button>
+              <Button onClick={handleLogout}>Logout</Button>
             </div>
           </nav>
         </div>

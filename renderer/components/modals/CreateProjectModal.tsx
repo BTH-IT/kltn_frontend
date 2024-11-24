@@ -45,7 +45,7 @@ const CreateProjectModal = ({
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    const userId = (JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser).id;
+    const userId = (JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null') as IUser).id;
 
     if (!userId) {
       toast.error('Đã xảy ra lỗi');

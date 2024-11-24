@@ -12,6 +12,7 @@ export async function POST(request: Request) {
           'access_token=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax',
           'refresh_token=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax',
           'current_user=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax',
+          'current_role=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax',
         ].join(', '),
       },
     },

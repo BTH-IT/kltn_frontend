@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,8 +13,9 @@ import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
-import { SET_LOCALSTORAGE } from '@/utils';
+import { KEY_LOCALSTORAGE, SET_LOCALSTORAGE } from '@/utils';
 import { passwordSchema } from '@/utils/schemas';
+import { Separator } from '@/components/ui/separator';
 
 import InputForm from '../_components/InputForm';
 
@@ -49,6 +51,20 @@ export default function Page() {
     resolver: zodResolver(signUpSchema),
   });
   const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
+
+    const isAdmin = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE) || 'user';
+
+    if (storedUser) {
+      if (isAdmin.toLowerCase() === 'admin') {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/');
+      }
+    }
+  }, []);
 
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/accounts/login-google`;
@@ -145,6 +161,8 @@ export default function Page() {
           <Button type="submit" className="mt-10 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
             Đăng ký
           </Button>
+
+          <Separator className="my-8" />
 
           <Button
             type="button"

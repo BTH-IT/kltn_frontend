@@ -30,7 +30,7 @@ const ScoreStructureTable: React.FC = () => {
   };
   const { course } = useContext(CourseContext) as { course: ICourse };
   const [transcripts, setTranscripts] = useState<ITranscript[]>([]);
-  const [exportOption, setExportOption] = useState<'full' | 'scoresOnly' | 'namesOnly'>('full');
+  const [exportOption, setExportOption] = useState<'full' | 'scoresOnly' | 'infosOnly'>('full');
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
 
   useEffect(() => {
@@ -65,9 +65,11 @@ const ScoreStructureTable: React.FC = () => {
       const score = getLeafColumns(studentScores);
       const row: Record<string, any> = {};
 
-      row['Tên sinh viên'] = student.userName;
+      row['MSSV'] = student.customId;
+      row['Họ tên'] = student.fullName || 'N/A';
+      row['Email'] = student.email;
 
-      if (exportOption === 'namesOnly') {
+      if (exportOption === 'infosOnly') {
         return row; // Chỉ export tên sinh viên
       } else if (exportOption === 'scoresOnly' || exportOption === 'full') {
         leafColumns.forEach((leaf: any) => {
@@ -104,7 +106,7 @@ const ScoreStructureTable: React.FC = () => {
               <h2 className="mb-4 text-2xl font-bold">Bảng điểm</h2>
               <div className="flex items-start gap-3">
                 <Select
-                  onValueChange={(value) => setExportOption(value as 'full' | 'scoresOnly' | 'namesOnly')}
+                  onValueChange={(value) => setExportOption(value as 'full' | 'scoresOnly' | 'infosOnly')}
                   value={exportOption}
                 >
                   <SelectTrigger className="w-40 mr-4">
@@ -113,7 +115,7 @@ const ScoreStructureTable: React.FC = () => {
                   <SelectContent>
                     <SelectItem value="full">Toàn bộ bảng</SelectItem>
                     <SelectItem value="scoresOnly">Chỉ cột điểm</SelectItem>
-                    <SelectItem value="namesOnly">Chỉ tên sinh viên</SelectItem>
+                    <SelectItem value="infosOnly">Chỉ thông tin sinh viên</SelectItem>
                   </SelectContent>
                 </Select>
                 {exportOption === 'scoresOnly' && (
@@ -158,7 +160,13 @@ const ScoreStructureTable: React.FC = () => {
               <thead>
                 <tr>
                   <th rowSpan={2} className="px-4 py-2 text-center bg-gray-200 border">
-                    Tên sinh viên
+                    MSSV
+                  </th>
+                  <th rowSpan={2} className="px-4 py-2 text-center bg-gray-200 border">
+                    Họ tên
+                  </th>
+                  <th rowSpan={2} className="px-4 py-2 text-center bg-gray-200 border">
+                    Email
                   </th>
                 </tr>
                 <tr>
@@ -180,7 +188,9 @@ const ScoreStructureTable: React.FC = () => {
 
                   return (
                     <tr key={student.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border">{student.userName}</td>
+                      <td className="px-4 py-2 border">{student.customId}</td>
+                      <td className="px-4 py-2 border">{student.fullName || 'N/A'}</td>
+                      <td className="px-4 py-2 border">{student.email}</td>
                       {leafColumns.map(
                         (leaf: any) =>
                           (exportOption === 'full' || selectedColumns.includes(leaf.id)) && (

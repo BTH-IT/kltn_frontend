@@ -152,4 +152,11 @@ export const getUserFromCookie = () => {
   return user;
 };
 
+export const getRoleFromCookie = () => {
+  const cookieStore = cookies();
+  const role = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_ROLE)?.value;
+
+  return role;
+};
+
 export default request;

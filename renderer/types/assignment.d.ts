@@ -18,6 +18,7 @@ export interface IAssignment {
   course: ICourse;
   createUser: IUser | null;
   isGroupAssigned: boolean;
+  IsIndividualSubmissionRequired: boolean;
   scoreStructureId: string;
   scoreStructure: any;
   comments: IComment[];

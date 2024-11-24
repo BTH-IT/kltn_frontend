@@ -20,7 +20,7 @@ const BulletinInput = ({
   const [isPost, setIsPost] = useState(false);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null') as IUser;
     setUser(user);
   }, []);
 
