@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     httpOnly: true,
     expires: refreshExpiresDate,
     sameSite: 'lax',
-    secure: false, // Đặt là false khi không có HTTPS
+    secure: true,
   });
 
   response.cookies.set('refresh_token', refreshToken, {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     httpOnly: true,
     expires: refreshExpiresDate,
     sameSite: 'lax',
-    secure: false, // Đặt là false khi không có HTTPS
+    secure: true,
   });
 
   response.cookies.set('current_role', role, {
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     httpOnly: true,
     expires: refreshExpiresDate,
     sameSite: 'lax',
-    secure: false, // Đặt là false khi không có HTTPS
+    secure: true,
   });
 
   response.cookies.set('current_user', userSerialized, {
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     httpOnly: true,
     expires: refreshExpiresDate,
     sameSite: 'lax',
-    secure: false, // Đặt là false khi không có HTTPS
+    secure: true,
   });
 
   return response;
