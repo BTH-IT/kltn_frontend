@@ -1,17 +1,19 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ArrowLeft, Lock, LockKeyhole } from 'lucide-react';
 import Link from 'next/link';
-import { redirect, useSearchParams } from 'next/navigation';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 import InputForm from '../_components/InputForm';
 
@@ -30,6 +32,21 @@ export default function Page() {
   } = useForm<ResetPasswordFormInputs>({
     resolver: zodResolver(resetPasswordSchema),
   });
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
+
+    const isAdmin = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE) || 'user';
+
+    if (storedUser) {
+      if (isAdmin.toLowerCase() === 'admin') {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/');
+      }
+    }
+  }, []);
 
   const params = useSearchParams();
 

@@ -58,7 +58,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
       })),
     );
 
-    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null') as IUser;
 
     setUser(user);
   }, [data, setCheckedState]);

@@ -57,7 +57,7 @@ export default function ImportStudentModal({
         return;
       }
 
-      const dataRows = jsonData.slice(1); // Bỏ qua tiêu đề
+      const dataRows = jsonData.slice(1);
       const invalidRows: any[] = [];
 
       dataRows.forEach((row: any, index: number) => {
@@ -114,6 +114,13 @@ export default function ImportStudentModal({
       }
 
       setData(jsonData);
+
+      // Tự động chọn các cột mandatory
+      const mandatoryColumnIndices = mandatoryColumns
+        .map((col) => header.findIndex((headerItem) => headerItem.toLowerCase() === col.toLowerCase()))
+        .filter((index) => index !== -1); // Lọc ra các cột hợp lệ
+      setSelectedColumns(mandatoryColumnIndices.map(String));
+
       toast.success('File tải lên thành công và hợp lệ!');
     } catch (error) {
       toast.error('Đã xảy ra lỗi khi đọc file. Vui lòng thử lại!');

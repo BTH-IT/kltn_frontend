@@ -37,7 +37,7 @@ const ArchivesPage = async () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-4 p-6">
+          <div className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2 xl:grid-cols-3">
             {archivedCourses.map((item) => (
               <CourseCard key={item.courseId} item={item} />
             ))}

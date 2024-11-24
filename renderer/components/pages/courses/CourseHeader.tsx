@@ -36,7 +36,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
     if (data) {
       setCourse(data);
     }
-    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null') as IUser;
     setUser(user);
   }, [data, setCourse]);
 

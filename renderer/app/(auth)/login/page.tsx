@@ -3,6 +3,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, User } from 'lucide-react';
@@ -13,7 +14,7 @@ import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
-import { SET_LOCALSTORAGE } from '@/utils';
+import { KEY_LOCALSTORAGE, SET_LOCALSTORAGE } from '@/utils';
 import withPermission from '@/libs/hoc/withPermission';
 import { signUpSchema, SignUpFormInputs } from '@/utils/schemas';
 import { Separator } from '@/components/ui/separator';
@@ -30,6 +31,20 @@ export default withPermission(() => {
     resolver: zodResolver(signUpSchema),
   });
 
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
+
+    const isAdmin = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE) || 'user';
+
+    if (storedUser) {
+      if (isAdmin.toLowerCase() === 'admin') {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/');
+      }
+    }
+  }, []);
+
   const onSubmit = async (values: SignUpFormInputs) => {
     try {
       const res: any = await authService.login(values);
@@ -41,7 +56,11 @@ export default withPermission(() => {
         },
         body: JSON.stringify(res.data),
       });
-      router.push('/');
+      if (res.data.role === 'admin') {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/');
+      }
       toast.success('Success: login');
     } catch (error) {
       if (error instanceof AxiosError) {

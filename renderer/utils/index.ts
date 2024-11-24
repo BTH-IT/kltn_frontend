@@ -282,12 +282,14 @@ export const KEY_LOCALSTORAGE = {
   CURRENT_ACCOUNT: 'current_account',
   CURRENT_USER: 'current_user',
   REFRESH_TOKEN: 'refresh_token',
+  CURRENT_ROLE: 'current_role',
 };
 
 export const CLEAR_LOCALSTORAGE = () => {
   localStorage.removeItem(KEY_LOCALSTORAGE.ACCESS_TOKEN);
   localStorage.removeItem(KEY_LOCALSTORAGE.REFRESH_TOKEN);
   localStorage.removeItem(KEY_LOCALSTORAGE.CURRENT_USER);
+  localStorage.removeItem(KEY_LOCALSTORAGE.CURRENT_ROLE);
 };
 
 export const SET_LOCALSTORAGE = (data: any) => {
@@ -301,5 +303,9 @@ export const SET_LOCALSTORAGE = (data: any) => {
 
   if (data.refreshToken) {
     localStorage.setItem(KEY_LOCALSTORAGE.REFRESH_TOKEN, data.refreshToken);
+  }
+
+  if (data.role) {
+    localStorage.setItem(KEY_LOCALSTORAGE.CURRENT_ROLE, data.role);
   }
 };

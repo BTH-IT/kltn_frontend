@@ -34,13 +34,16 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
     setItems([
       { label: 'Lớp học', href: '/' },
       { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
-      { label: 'Đồ án / Tiểu luận', href: `/courses/${group.course.courseId}/projects` },
+      {
+        label: 'Đồ án / Tiểu luận',
+        href: `/courses/${group.course.courseId}/projects`,
+      },
       { label: breadcrumbLabel2 },
     ]);
   }, [group, setItems]);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
     console.log(group);
 
     if (storedUser) {

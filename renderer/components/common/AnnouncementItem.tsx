@@ -39,7 +39,7 @@ const AnnouncementItem = ({
   handleRemove: (id: string) => void;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const currentUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}') as IUser;
+  const currentUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null') as IUser;
 
   const [isFocus, setIsFocus] = useState(false);
 

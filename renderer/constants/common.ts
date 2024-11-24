@@ -1,4 +1,4 @@
-import { BookOpen, FolderOpen, LayoutDashboard, Settings, UsersRound, Calendar } from 'lucide-react';
+import { BookOpen, FolderOpen, LayoutDashboard, Settings, UsersRound, School } from 'lucide-react';
 import React from 'react';
 
 export const ROLE = {
@@ -75,11 +75,11 @@ export const ADMIN_NAVIGATION = [
     label: 'Subjects',
   },
   {
-    title: 'Semesters',
-    href: '/dashboard/semesters',
-    icon: React.createElement(Calendar, { className: 'flex-shrink-0 ml-3' }),
+    title: 'Courses',
+    href: '/dashboard/courses',
+    icon: React.createElement(School, { className: 'flex-shrink-0 ml-3' }),
 
-    label: 'Semesters',
+    label: 'Courses',
   },
 ];
 

@@ -42,7 +42,7 @@ const CommentItem = ({
   const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
 
     if (storedUser) {
       setUser(storedUser);

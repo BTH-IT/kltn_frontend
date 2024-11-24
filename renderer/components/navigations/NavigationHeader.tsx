@@ -116,6 +116,13 @@ const NavigationHeader = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>{user?.fullName || user?.userName || 'Anonymous'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  router.push('/dashboard');
+                }}
+              >
+                Dashboard
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

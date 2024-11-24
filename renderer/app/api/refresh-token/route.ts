@@ -55,6 +55,14 @@ export async function POST(request: NextRequest) {
       maxAge: 0,
     });
 
+    response.cookies.set(KEY_LOCALSTORAGE.CURRENT_ROLE, '', {
+      httpOnly: true,
+      secure: false, // Đặt secure thành false cho HTTP
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 0,
+    });
+
     return response;
   }
 }

@@ -6,6 +6,7 @@ export async function POST(request: Request) {
   const refreshToken = body.refreshToken as string;
   const refreshExpiresAt = body.refreshTokenExpiresAt as string;
   const user = body.user as any;
+  const role = body.role as string;
 
   const userSerialized = JSON.stringify(user);
 
@@ -26,6 +27,14 @@ export async function POST(request: Request) {
   });
 
   response.cookies.set('refresh_token', refreshToken, {
+    path: '/',
+    httpOnly: true,
+    expires: refreshExpiresDate,
+    sameSite: 'lax',
+    secure: false, // Đặt là false khi không có HTTPS
+  });
+
+  response.cookies.set('current_role', role, {
     path: '/',
     httpOnly: true,
     expires: refreshExpiresDate,

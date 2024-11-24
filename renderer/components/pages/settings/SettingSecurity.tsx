@@ -50,7 +50,7 @@ const SettingSecurity = () => {
     setItems([{ label: 'Lớp học', href: '/' }, { label: 'Cài đặt', href: '/settings' }, { label: 'Bảo mật' }]);
   }, [setItems]);
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
 
     if (storedUser) {
       setUser(storedUser);

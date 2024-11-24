@@ -30,7 +30,7 @@ export const AssignmentGroupList = ({ assignment }: { assignment: IAssignment })
   const { course } = useContext(CourseContext);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || '{}');
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
 
     if (storedUser) {
       setUser(storedUser);

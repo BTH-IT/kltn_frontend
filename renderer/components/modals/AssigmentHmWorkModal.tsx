@@ -48,6 +48,7 @@ const AssignmentHmWorkModal = ({
   const [scoreSelectedOption, setScoreSelectedOption] = useState<any>(null);
   const [isChooseGroup, setIsChooseGroup] = useState<boolean>(false);
   const [useFinalGroup, setUseFinalGroup] = useState<boolean>(false);
+  const [isInvidual, setIsInvidual] = useState<boolean>(false);
   const [autoGenerateCount, setAutoGenerateCount] = useState('1');
   const [dueDate, setDueDate] = useState<Date | undefined | null>(undefined);
   const [registerExpiryDate, setRegisterExpiryDate] = useState<Date | undefined | null>(undefined);
@@ -82,6 +83,7 @@ const AssignmentHmWorkModal = ({
     setType(null);
     setIsChooseGroup(false);
     setUseFinalGroup(false);
+    setIsInvidual(false);
     setAutoGenerateCount('1');
     setDueDate(undefined);
     setRegisterExpiryDate(undefined);
@@ -127,6 +129,7 @@ const AssignmentHmWorkModal = ({
       scoreStructureId: scoreSelectedOption?.value,
       type: type.value,
       isGroupAssigned: isChooseGroup,
+      IsIndividualSubmissionRequired: isInvidual,
       dueDate: formattedDueDate,
       attachedLinks: links,
       attachments: resAttachments,
@@ -231,8 +234,7 @@ const AssignmentHmWorkModal = ({
                         />
                         {isChooseGroup && (
                           <>
-                            {isChooseGroup &&
-                              course?.setting.hasFinalScore &&
+                            {course?.setting.hasFinalScore &&
                               course?.setting.dueDateToJoinGroup &&
                               course?.setting.dueDateToJoinGroup < new Date() && (
                                 <>
@@ -244,6 +246,12 @@ const AssignmentHmWorkModal = ({
                                   />
                                 </>
                               )}
+                            <div className="col-span-8 font-medium">Chấm điểm cá nhân?</div>
+                            <Switch
+                              className="col-span-4"
+                              checked={isInvidual}
+                              onCheckedChange={(value) => setIsInvidual(value)}
+                            />
                           </>
                         )}
                       </div>

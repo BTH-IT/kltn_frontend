@@ -8,9 +8,12 @@ import { ArrowLeft, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
+import { KEY_LOCALSTORAGE } from '@/utils';
 
 import InputForm from '../_components/InputForm';
 
@@ -28,6 +31,21 @@ export default function Page() {
   } = useForm<ForgotPasswordFormInputs>({
     resolver: zodResolver(forgotPasswordSchema),
   });
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
+
+    const isAdmin = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE) || 'user';
+
+    if (storedUser) {
+      if (isAdmin.toLowerCase() === 'admin') {
+        router.replace('/dashboard');
+      } else {
+        router.replace('/');
+      }
+    }
+  }, []);
 
   const onSubmit = async (values: ForgotPasswordFormInputs) => {
     try {
