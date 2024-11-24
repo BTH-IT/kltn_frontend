@@ -5,8 +5,8 @@ import AdminHeader from '@/components/layout/AdminHeader';
 import AdminSidebar from '@/components/layout/AdminSidebar';
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn Dashboard Starter',
-  description: 'Basic dashboard with Next.js and Shadcn',
+  title: 'Dashboard | Courseroom',
+  description: 'Based on Google Classroom',
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
