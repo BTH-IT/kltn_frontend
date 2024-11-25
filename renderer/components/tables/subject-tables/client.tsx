@@ -29,9 +29,9 @@ export const SubjectClient = ({ data }: { data: ISubject[] }) => {
     <>
       <CreateSubjectProvider>
         <div className="flex items-start justify-between">
-          <Heading title={`Subjects (${subjects.length})`} description="Manage subjects" />
+          <Heading title={`Môn học (${subjects.length})`} description="Quản lý môn học" />
           <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Add New
+            <Plus className="w-4 h-4 mr-2" /> Thêm mới
           </Button>
         </div>
         <Separator />

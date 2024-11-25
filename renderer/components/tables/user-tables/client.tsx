@@ -10,8 +10,8 @@ import { columns } from './columns';
 export const UserClient = ({ data }: { data: IUser[] }) => {
   return (
     <>
-      <div className="flex justify-between items-start">
-        <Heading title={`Users (${data.length})`} description="Manage users" />
+      <div className="flex items-start justify-between">
+        <Heading title={`Người dùng (${data.length})`} description="Quản lý người dùng" />
       </div>
       <Separator />
       <DataTable columns={columns} data={data} />
