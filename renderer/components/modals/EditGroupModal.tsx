@@ -39,23 +39,33 @@ export const EditGroupModal = ({
   const params = useParams();
   const { projects } = useContext(CreateProjectContext);
 
-  const FormSchema = z.object({
-    groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
-    numberOfMembers: z.coerce.number({
-      invalid_type_error: 'Số lượng thành viên phải là số.',
-    }),
-    isApproved: z.boolean(),
-    projectId: z
-      .object({
-        label: z.string(),
-        value: z.string().min(1, {
-          message: 'đồ án là trường bắt buộc.',
-        }),
-      })
-      .refine((projectId) => projects.find((project) => project.projectId === projectId.value), {
-        message: 'đồ án không hợp lệ.',
-      }),
-  });
+  const FormSchema = z.object(
+    group.groupType !== 'Normal'
+      ? {
+          groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
+          numberOfMembers: z.coerce.number({
+            invalid_type_error: 'Số lượng thành viên phải là số.',
+          }),
+          isApproved: z.boolean(),
+          projectId: z
+            .object({
+              label: z.string(),
+              value: z.string().min(1, {
+                message: 'đồ án là trường bắt buộc.',
+              }),
+            })
+            .refine((projectId) => projects.find((project) => project.projectId === projectId.value), {
+              message: 'đồ án không hợp lệ.',
+            }),
+        }
+      : {
+          groupName: z.string().min(1, { message: 'Tên nhóm là trường bắt buộc.' }),
+          numberOfMembers: z.coerce.number({
+            invalid_type_error: 'Số lượng thành viên phải là số.',
+          }),
+          isApproved: z.boolean(),
+        },
+  );
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -98,7 +108,7 @@ export const EditGroupModal = ({
       const res = await groupService.updateGroup(group.groupId, {
         ...group,
         ...values,
-        projectId: values.projectId.value,
+        projectId: values?.projectId?.value,
         courseId: params.courseId as string,
       });
       if (res.data) {
@@ -107,6 +117,7 @@ export const EditGroupModal = ({
       }
       form.reset();
       setIsOpen(false);
+      toast.success('Chỉnh sửa nhóm thành công');
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -179,27 +190,29 @@ export const EditGroupModal = ({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="projectId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs font-bold uppercase">đồ án</FormLabel>
-                      <FormControl>
-                        <ReactSelect
-                          {...field}
-                          options={projects?.map((p) => {
-                            return {
-                              label: p.title,
-                              value: p.projectId,
-                            };
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {group.groupType !== 'Normal' && (
+                  <FormField
+                    control={form.control}
+                    name="projectId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold uppercase">đồ án</FormLabel>
+                        <FormControl>
+                          <ReactSelect
+                            {...field}
+                            options={projects?.map((p) => {
+                              return {
+                                label: p.title,
+                                value: p.projectId,
+                              };
+                            })}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 <FormField
                   control={form.control}
                   name="isApproved"

@@ -119,7 +119,7 @@ const NavigationHeader = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>{user?.fullName || user?.userName || 'Anonymous'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {role === 'admin' && (
+              {role.toLowerCase() === 'admin' && (
                 <DropdownMenuItem
                   onClick={() => {
                     router.push('/dashboard');
