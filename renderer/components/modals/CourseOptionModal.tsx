@@ -39,7 +39,7 @@ const CourseOptionModal = ({
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
-  const { course } = useContext(CourseContext);
+  const { course, setCourse } = useContext(CourseContext);
 
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -49,9 +49,19 @@ const CourseOptionModal = ({
   const [user, setUser] = useState<IUser | null>(null);
 
   const FormSchema = z.object({
-    courseGroup: z.string().min(1, {
+    name: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
     }),
+    courseGroup: z
+      .string()
+      .min(1, { message: 'Nhóm môn học là trường bắt buộc.' })
+      .refine(
+        (value) => {
+          const numValue = Number(value);
+          return !isNaN(numValue) && numValue >= 0;
+        },
+        { message: 'Nhóm môn học phải là một số không âm.' },
+      ),
     subjectId: z
       .object({
         label: z.string(),
@@ -71,6 +81,7 @@ const CourseOptionModal = ({
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      name: '',
       courseGroup: '',
       subjectId: { label: '', value: '' },
       allowStudentCreateProject: false,
@@ -95,6 +106,7 @@ const CourseOptionModal = ({
 
   useEffect(() => {
     if (course && course.subjectId) {
+      form.setValue('name', course.name);
       form.setValue('courseGroup', course.courseGroup);
       form.setValue('subjectId', {
         label: `${course.subject?.subjectCode} - ${course.subject?.name}`,
@@ -104,9 +116,9 @@ const CourseOptionModal = ({
       form.setValue('enableInvite', course.enableInvite);
       form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);
       form.setValue('groupSizeRange', [course.setting?.minGroupSize || 1, course.setting?.maxGroupSize || 15]);
-      form.setValue('hasFinalScore', course.setting?.hasFinalScore || false);
+      form.setValue('hasFinalScore', course.setting?.hasFinalScore);
     }
-  }, [course, onOpenModal, form]);
+  }, [onOpenModal]);
 
   const isLoading = hasSubmitted;
 
@@ -118,6 +130,7 @@ const CourseOptionModal = ({
 
       const infoData = {
         ...course,
+        name: values.name,
         courseGroup: values.courseGroup,
         subjectId: values.subjectId.value,
         enableInvite: values.enableInvite,
@@ -148,6 +161,11 @@ const CourseOptionModal = ({
 
       if (infoRes.data && settingRes.data) {
         toast.success('Cập nhật lớp học thành công');
+
+        setCourse({
+          ...course,
+          setting: settingRes.data,
+        });
       }
 
       setHasSubmitted(false);
@@ -202,12 +220,12 @@ const CourseOptionModal = ({
                   </div>
                 </div>
                 <div className="!my-0 overflow-auto w-full h-[92vh] grid grid-cols-12 gap-2 px-3">
-                  <div className="col-span-6 p-5 my-8 border-2 rounded-lg">
+                  <div className="col-span-12 p-5 border-2 rounded-lg xl:col-span-6">
                     <div className="mt-2 text-2xl font-medium">Thông tin chi tiết về lớp học</div>
                     <div className="grid gap-4 py-4">
                       <FormField
                         control={form.control}
-                        name="courseGroup"
+                        name="name"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-xs font-bold uppercase">Tên lớp học</FormLabel>
@@ -220,6 +238,30 @@ const CourseOptionModal = ({
                                     isLoading && 'hidden',
                                   )}
                                   placeholder="Nhập tên lớp học ..."
+                                  {...field}
+                                />
+                                <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
+                              </>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="courseGroup"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs font-bold uppercase">Nhóm môn học</FormLabel>
+                            <FormControl>
+                              <>
+                                <Input
+                                  disabled={isLoading}
+                                  className={cn(
+                                    'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                                    isLoading && 'hidden',
+                                  )}
+                                  placeholder="Nhập nhóm môn học ..."
                                   {...field}
                                 />
                                 <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
@@ -349,7 +391,7 @@ const CourseOptionModal = ({
                       </div>
                     </div>
                   </div>
-                  <div className="border-2 rounded-lg p-5 !my-8 col-span-6">
+                  <div className="col-span-12 p-5 border-2 rounded-lg xl:col-span-6">
                     <div className="mt-2 text-2xl font-medium">Cài đặt thông tin khác</div>
                     <div className="grid gap-4 py-4">
                       <ScoreStructureProvider scoreStructure={course?.scoreStructure || null}>

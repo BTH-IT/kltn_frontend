@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
     return new NextResponse(JSON.stringify({ title, description, image: image || og || ogUrl, url }));
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: 'Failed to fetch URL' }), {
+    return new NextResponse(JSON.stringify({ message: 'Failed to fetch URL' }), {
       status: 500,
     });
   }

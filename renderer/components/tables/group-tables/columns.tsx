@@ -14,7 +14,7 @@ export const columns: ColumnDef<IGroup>[] = createColumns([
   },
   {
     accessorKey: 'numberOfMembers',
-    header: 'Tổng số thành viên',
+    header: 'Tổng số thành viên tối đa',
     sortable: true,
   },
   {

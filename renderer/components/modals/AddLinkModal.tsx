@@ -12,6 +12,7 @@ import { Dialog, DialogContent2, DialogFooter, DialogHeader, DialogTitle } from 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MetaLinkData } from '@/types';
+import { logError } from '@/libs/utils';
 
 const AddLinkModal = ({
   isOpen,
@@ -54,13 +55,16 @@ const AddLinkModal = ({
 
       setIsOpen(false);
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent2 className="w-[300px] gap-0 duration-0 transition-all p-5 text-gray-700 font-sans">
+      <DialogContent2
+        className="w-[300px] !z-50 gap-0 duration-0 transition-all p-5 text-gray-700 font-sans"
+        classOverlay="!z-50"
+      >
         <DialogHeader>
           <DialogTitle className="text-md">Thêm đường liên kết</DialogTitle>
         </DialogHeader>
@@ -103,7 +107,7 @@ const AddLinkModal = ({
                   variant="primaryGhost"
                 >
                   {form.formState.isSubmitting && (
-                    <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                    <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
                   Lưu
                 </Button>

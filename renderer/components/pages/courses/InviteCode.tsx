@@ -83,7 +83,7 @@ const InviteCode = ({
   };
 
   return teacherId === user?.id ? (
-    <div className="p-4 border rounded-md">
+    <div className="w-full p-4 border rounded-md">
       <div className="flex items-center justify-between gap-3 mb-3">
         <h2>Mã lớp</h2>
         <DropdownMenu>

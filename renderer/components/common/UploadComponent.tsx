@@ -11,9 +11,13 @@ import { Button } from '../ui/button';
 const UploadComponent = ({
   setFile,
   selectedImageUrl,
+  setUploadedImageUrl,
+  setSelectedImageUrl,
 }: {
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   selectedImageUrl: string;
+  setUploadedImageUrl: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedImageUrl: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,6 +48,8 @@ const UploadComponent = ({
             className="w-[34px] h-[34px] rounded-full p-2 absolute opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300  bg-red-100 text-red-700 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
             onClick={() => {
               setFile(null);
+              setUploadedImageUrl('');
+              setSelectedImageUrl('');
               if (fileInputRef.current) {
                 fileInputRef.current.value = '';
               }

@@ -5,6 +5,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -22,9 +24,7 @@ import { cn } from '@/libs/utils';
 import semesterService from '@/services/semesterService';
 import { ApiResponse } from '@/types';
 import { CreateSemesterContext } from '@/contexts/CreateSemesterContext';
-import { AxiosError } from 'axios';
 import { ISemester } from '@/types/semester';
-import { useRouter } from 'next/navigation';
 
 const EditSemesterModal = ({
   isOpen,
@@ -56,7 +56,6 @@ const EditSemesterModal = ({
     })
     .refine(
       (ctx) => {
-        console.log('kk');
         return ctx.endDate > ctx.startDate;
       },
       {
@@ -102,7 +101,7 @@ const EditSemesterModal = ({
       form.reset();
       setIsOpen(false);
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       const axiousError = error as AxiosError;
       setErrorMessages((axiousError.response?.data as ApiResponse<string>).message as string);
       setSubmitError(true);
@@ -204,7 +203,7 @@ const EditSemesterModal = ({
               <DialogFooter>
                 <Button disabled={form.formState.isSubmitting} className="px-3 py-2" variant="primary" type="submit">
                   {form.formState.isSubmitting && (
-                    <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+                    <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
                   )}
                   Tạo học kì
                 </Button>

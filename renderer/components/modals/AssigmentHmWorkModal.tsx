@@ -213,7 +213,7 @@ const AssignmentHmWorkModal = ({
                 </div>
                 <div className="!my-0 overflow-auto w-full h-[92vh]">
                   <div className="grid h-full grid-cols-12">
-                    <div className="col-span-9 bg-[#F8F9FA]">
+                    <div className="col-span-6 md:col-span-9 bg-[#F8F9FA]">
                       <AssignmentForm
                         form={form}
                         files={files}
@@ -224,7 +224,7 @@ const AssignmentHmWorkModal = ({
                         setIsOpenSelectYoutubeModal={setIsOpenSelectYoutubeModal}
                       />
                     </div>
-                    <div className="flex flex-col col-span-3 p-5 border-l gap-7">
+                    <div className="flex flex-col col-span-6 p-5 border-l md:col-span-3 gap-7">
                       <div className="grid grid-cols-12 px-3 gap-y-7">
                         <div className="col-span-8 font-medium">Áp dụng cho nhóm?</div>
                         <Switch

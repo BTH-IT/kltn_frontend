@@ -80,8 +80,8 @@ const RequestList = ({ group }: { group: IGroup }) => {
               <CardTitle className="text-2xl font-bold">Yêu cầu tham gia</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto min-h-[100px]">
-                {requests.length > 0 && (
+              <div className="overflow-x-auto">
+                {requests.length > 0 ? (
                   <ScrollArea>
                     <Table className="text-md">
                       <TableHeader>
@@ -140,6 +140,8 @@ const RequestList = ({ group }: { group: IGroup }) => {
                       </TableBody>
                     </Table>
                   </ScrollArea>
+                ) : (
+                  <p className="px-4 mt-2 text-sm text-center text-gray-500">Không có yêu cầu nào!!</p>
                 )}
               </div>
             </CardContent>

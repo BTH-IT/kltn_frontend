@@ -49,7 +49,10 @@ const AddYoutubeLinkModal = ({
         }
       }}
     >
-      <DialogContent2 className="flex flex-col max-w-[1200px] h-[620px] w-full gap-0 duration-0 transition-all p-0 text-gray-700 overflow-x-hidden font-sans">
+      <DialogContent2
+        className="flex flex-col !z-50 max-w-[1200px] h-[620px] w-full gap-0 duration-0 transition-all p-0 text-gray-700 overflow-x-hidden font-sans"
+        classOverlay="!z-50"
+      >
         <DialogHeader className="fixed w-full h-fit justify-between items-center !flex-row border-b-2 px-6 py-4">
           <DialogTitle className="flex items-center">
             <Image width={100} height={80} src="/images/youtube-logo-png.png" alt="Youtube Lolo" />

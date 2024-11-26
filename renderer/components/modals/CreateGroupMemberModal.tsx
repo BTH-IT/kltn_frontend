@@ -89,8 +89,6 @@ const CreateGroupMemberModal = ({
     }
   };
 
-  console.log(generateOptions());
-
   const onClose = () => {
     form.reset();
     setIsOpen(!isOpen);

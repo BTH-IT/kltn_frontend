@@ -51,13 +51,16 @@ export function DateTimePicker({
   };
 
   return (
-    <div className="inline-flex items-center">
-      <div className="relative">
+    <div className="inline-flex items-center w-full">
+      <div className="relative flex-1 w-full">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant={'outline'}
-              className={cn('w-[280px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+              className={cn(
+                '!max-w-[280px] w-full justify-start text-left font-normal',
+                !date && 'text-muted-foreground',
+              )}
             >
               <CalendarIcon className="w-4 h-4 mr-2" />
               <div className="flex items-center justify-between flex-1 gap-2">

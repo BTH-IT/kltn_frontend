@@ -1,46 +1,49 @@
-/* eslint-disable max-len */
 'use client';
 
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useContext, useEffect, useState } from 'react';
-import { ArchiveRestore, ArchiveX, Settings, Trash2 } from 'lucide-react';
+import { ArchiveRestore, ArchiveX, Settings, Trash2, Menu } from 'lucide-react';
 
 import { CourseContext } from '@/contexts/CourseContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import CourseOptionModal from '@/components/modals/CourseOptionModal';
-import { KEY_LOCALSTORAGE } from '@/utils';
-import { ICourse, IUser } from '@/types';
 import CommonModal from '@/components/modals/CommonModal';
 import courseService from '@/services/courseService';
+import { KEY_LOCALSTORAGE } from '@/utils';
+import { ICourse, IUser } from '@/types';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const CourseHeader = ({ data }: { data: ICourse }) => {
   const pathname = usePathname().replace(/\/$/, '');
-
   const router = useRouter();
-
   const newPath = pathname.slice(pathname.lastIndexOf('/'));
 
   const [user, setUser] = useState<IUser | null>(null);
-
   const [onOpenModal, setOnOpenModal] = useState(false);
-
-  const { setCourse } = useContext(CourseContext);
+  const { setCourse, course } = useContext(CourseContext);
 
   const [isArchiveModalOpen, setArchiveModalOpen] = useState(false);
   const [isUnarchiveModalOpen, setUnarchiveModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
-    if (data) {
+    if (!course && data) {
       setCourse(data);
     }
-    const user = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null') as IUser;
-    setUser(user);
-  }, [data, setCourse]);
 
-  const handleArchiveCourse = async () => {
+    const currentUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null') as IUser;
+
+    setUser(currentUser);
+  }, [course]);
+
+  const handleArchiveCourse = useCallback(async () => {
     try {
       await courseService.archive(data.courseId);
       setArchiveModalOpen(false);
@@ -49,9 +52,9 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
     } catch (error) {
       toast.error('Không thể lưu trữ lớp học.');
     }
-  };
+  }, [data.courseId, router]);
 
-  const handleUnarchiveCourse = async () => {
+  const handleUnarchiveCourse = useCallback(async () => {
     try {
       await courseService.unarchive(data.courseId);
       setUnarchiveModalOpen(false);
@@ -60,9 +63,9 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
     } catch (error) {
       toast.error('Không thể bỏ lưu trữ lớp học.');
     }
-  };
+  }, [data.courseId, router]);
 
-  const handleDeleteCourse = async () => {
+  const handleDeleteCourse = useCallback(async () => {
     try {
       await courseService.deleteCourse(data.courseId);
       setDeleteModalOpen(false);
@@ -71,72 +74,148 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
     } catch (error) {
       toast.error('Không thể xóa lớp học.');
     }
-  };
+  }, [data.courseId, router]);
 
   return (
     <>
-      <div className="sticky top-0 right-0 bg-white z-10 border-t-[1px] flex gap-3 justify-between items-center px-6 border-b">
-        <div className="flex items-center">
+      <div className="sticky top-0 right-0 bg-white z-10 border-t-[1px] flex items-center justify-between px-6 border-b w-full">
+        {/* Dropdown Menu for Mobile */}
+        <div className="lg:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="p-2 text-primaryGray hover:bg-slate-100">
+              <Menu size={24} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/courses/${course?.courseId}`}
+                  className={`${
+                    newPath === `/${course?.courseId}` ? 'text-blue-600' : ''
+                  } block px-2 py-1 text-sm text-primaryGray font-medium`}
+                >
+                  Bảng tin
+                </Link>
+              </DropdownMenuItem>
+              {user?.id === course?.lecturerId && (
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/courses/${course?.courseId}/people`}
+                    className={`${
+                      newPath === '/people'
+                        ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                        : ''
+                    } block px-2 py-1 text-sm text-primaryGray font-medium`}
+                  >
+                    Danh sách sinh viên
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/courses/${course?.courseId}/assignments`}
+                  className={`${
+                    newPath === '/assignments'
+                      ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                      : ''
+                  } block px-2 py-1 text-sm text-primaryGray font-medium`}
+                >
+                  Bài tập
+                </Link>
+              </DropdownMenuItem>
+              {course?.setting.hasFinalScore && (
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/courses/${course?.courseId}/projects`}
+                    className={`${
+                      newPath === '/projects'
+                        ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                        : ''
+                    } block px-2 py-1 text-sm text-primaryGray font-medium`}
+                  >
+                    Đồ án / tiểu luận
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`/courses/${course?.courseId}/scores`}
+                  className={`${
+                    newPath === '/scores'
+                      ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                      : ''
+                  } block px-2 py-1 text-sm text-primaryGray font-medium hover:bg-slate-100`}
+                >
+                  Điểm
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Full Links for Desktop */}
+        <div className="items-center hidden lg:flex">
           <Link
-            href={`/courses/${data.courseId}`}
+            href={`/courses/${course?.courseId}`}
             className={`${
-              newPath === `/${data.courseId}`
-                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                : ''
-            } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+              newPath === `/${course?.courseId}`
+                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                : 'text-primaryGray border-transparent'
+            } px-6 py-3 text-sm  font-medium hover:bg-slate-50 transition-all duration-200`}
           >
             Bảng tin
           </Link>
-          {user?.id === data.lecturerId && (
+          {user?.id === course?.lecturerId && (
             <Link
-              href={`/courses/${data.courseId}/people`}
+              href={`/courses/${course?.courseId}/people`}
               className={`${
                 newPath === '/people'
-                  ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                  : ''
-              } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+                  ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                  : 'text-primaryGray border-transparent'
+              } px-6 py-3 text-sm text-primaryGray font-medium hover:bg-slate-50 transition-all duration-200`}
             >
               Danh sách sinh viên
             </Link>
           )}
           <Link
-            href={`/courses/${data.courseId}/assignments`}
+            href={`/courses/${course?.courseId}/assignments`}
             className={`${
               newPath === '/assignments'
-                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                : ''
-            } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                : 'text-primaryGray border-transparent'
+            } px-6 py-3 text-sm text-primaryGray font-medium hover:bg-slate-50 transition-all duration-200`}
           >
             Bài tập
           </Link>
-          {data.setting.hasFinalScore && (
+          {course?.setting.hasFinalScore && (
             <Link
-              href={`/courses/${data.courseId}/projects`}
+              href={`/courses/${course?.courseId}/projects`}
               className={`${
                 newPath === '/projects'
-                  ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                  : ''
-              } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+                  ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                  : 'text-primaryGray border-transparent'
+              } px-6 py-3 text-sm text-primaryGray font-medium hover:bg-slate-50 transition-all duration-200`}
             >
               Đồ án / tiểu luận
             </Link>
           )}
           <Link
-            href={`/courses/${data.courseId}/scores`}
+            href={`/courses/${course?.courseId}/scores`}
             className={`${
               newPath === '/scores'
-                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0'
-                : ''
-            } px-6 h-12 leading-[48px] text-sm relative text-primaryGray font-medium hover:bg-slate-100`}
+                ? 'after:border-t-4 after:rounded-t-md after:bottom-0 after:h-0 after:left-0 after:absolute after:border-blue-600 !text-blue-600 after:right-0 relative'
+                : 'text-primaryGray border-transparent'
+            } px-6 py-3 text-sm text-primaryGray font-medium hover:bg-slate-50 transition-all duration-200`}
           >
             Điểm
           </Link>
         </div>
+
+        {/* Action Buttons */}
         <TooltipProvider>
           <div className="flex items-center gap-4">
-            {user?.id === data.lecturerId && (
+            {user?.id === course?.lecturerId && (
               <>
-                {!data.saveAt ? (
+                {!course?.saveAt ? (
                   <>
                     <Tooltip>
                       <TooltipTrigger>

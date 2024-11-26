@@ -132,7 +132,6 @@ const BulletForm = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
     const existingFiles = files;
-    console.log(existingFiles);
 
     const updatedFiles = [...existingFiles, ...newFiles].reduce((acc: File[], fl) => {
       if (!acc.find((f) => f.name === fl.name)) {
@@ -202,7 +201,6 @@ const BulletForm = ({
       if (courseOptionSelected) {
         await Promise.all(
           courseOptionSelected.map(async (opt) => {
-            console.log(opt.value);
             if (opt.value !== course.courseId) {
               const res = await announcementService.createAnnouncement({
                 content: values.content,

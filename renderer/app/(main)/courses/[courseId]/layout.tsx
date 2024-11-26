@@ -5,23 +5,20 @@ import http from '@/libs/http';
 import { API_URL } from '@/constants/endpoints';
 import { ICourse } from '@/types';
 import CourseHeader from '@/components/pages/courses/CourseHeader';
-import { revalidate } from '@/libs/utils';
 
 export async function generateMetadata({ params }: { params: { courseId: string } }) {
   const { payload } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
 
   return {
     title: payload.data.name,
-    description: 'Class detail',
+    description: 'Course detail',
   };
 }
 
 const Layout = async ({ children, params }: { children: React.ReactNode; params: { courseId: string } }) => {
   const {
     payload: { data: course },
-  } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`, {
-    next: { revalidate: revalidate },
-  });
+  } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
 
   if (!course) {
     redirect('/');

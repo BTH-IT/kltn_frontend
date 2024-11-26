@@ -34,7 +34,6 @@ function useDashboardData() {
           ...item,
           month: formatToDate(item.month),
         }));
-        console.log(processedData);
 
         // Update state
         setData(processedData);
