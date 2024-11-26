@@ -32,14 +32,6 @@ const CoursePersonalizeModal = ({ children, data }: { children: React.ReactNode;
     setSelectedImageUrl(data.background || '');
   }, [data]);
 
-  const handleImageUpload = (url: string) => {
-    setUploadedImageUrl(url);
-    toast({
-      title: 'Image Uploaded Successfully',
-      description: 'Your image has been uploaded and set as the cover image.',
-    });
-  };
-
   const handleUpload = async () => {
     if (!file) return;
 
@@ -73,7 +65,7 @@ const CoursePersonalizeModal = ({ children, data }: { children: React.ReactNode;
       <DialogContent className="sm:max-w-[800px] h-auto gap-0 transition-all text-black/85 font-sans">
         <DialogTitle className="font-medium h-fit">Tuỳ chỉnh giao diện</DialogTitle>
 
-        <UploadComponent onUpload={handleImageUpload} selectedImageUrl={selectedImageUrl} setFile={setFile} />
+        <UploadComponent selectedImageUrl={selectedImageUrl} setFile={setFile} />
         <div className="flex justify-end mt-4">
           <Button variant="primary" onClick={handleUpload}>
             Cập nhật

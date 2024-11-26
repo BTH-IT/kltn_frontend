@@ -146,7 +146,7 @@ const AddGroupReportModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] h-[95vh] overflow-y-auto overflow-x-hidden">
+      <DialogContent className="sm:max-w-[800px] h-[95vh] overflow-y-auto overflow-x-hidden !z-51">
         <DialogHeader className="h-fit">
           <DialogTitle>Thêm mục mới</DialogTitle>
           <DialogDescription>Điền thông tin mục mới ở đây.</DialogDescription>

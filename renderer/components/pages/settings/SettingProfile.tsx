@@ -176,7 +176,7 @@ const SettingProfile = () => {
                 <FormItem>
                   <FormLabel className="font-bold">Họ và tên</FormLabel>
                   <FormControl>
-                    <Input disabled={true} {...field} />
+                    <Input disabled={field.value ? true : false} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -189,7 +189,7 @@ const SettingProfile = () => {
                 <FormItem>
                   <FormLabel className="font-bold">Email</FormLabel>
                   <FormControl>
-                    <Input disabled={true} {...field} />
+                    <Input disabled={field.value ? true : false} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -202,7 +202,7 @@ const SettingProfile = () => {
                 <FormItem>
                   <FormLabel className="font-bold">Username</FormLabel>
                   <FormControl>
-                    <Input disabled={true} {...field} />
+                    <Input disabled={field.value ? true : false} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

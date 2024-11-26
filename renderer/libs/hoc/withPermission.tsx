@@ -32,13 +32,15 @@ function withPermission(WrappedComponent: ElementType) {
           const token = searchParams.get('token');
           const refreshToken = searchParams.get('refreshToken');
           const user = searchParams.get('user');
+          const role = searchParams.get('role');
 
-          if (token && refreshToken && user) {
+          if (token && refreshToken && user && role) {
             try {
               SET_LOCALSTORAGE({
                 token,
                 refreshToken,
                 user: convertKeysToCamelCase(JSON.parse(user)),
+                role: role,
               });
 
               await fetch('/api/login', {
@@ -50,6 +52,7 @@ function withPermission(WrappedComponent: ElementType) {
                   token,
                   refreshToken,
                   user: convertKeysToCamelCase(JSON.parse(user)),
+                  role,
                 }),
               });
 

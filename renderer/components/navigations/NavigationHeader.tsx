@@ -37,6 +37,7 @@ const NavigationHeader = () => {
   const pathname = usePathname() ?? '';
   const path = pathname?.slice(1, pathname.length - 1);
   const [user, setUser] = useState<IUser | null>(null);
+  const [role, setRole] = useState<any>(null);
   const router = useRouter();
 
   const handleMenuClick = () => {
@@ -53,7 +54,9 @@ const NavigationHeader = () => {
     setIsMounted(true);
 
     const user = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER);
+    const role = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE);
     setUser(user ? JSON.parse(user) : null);
+    setRole(role);
   }, []);
 
   const handleLogout = async () => {
@@ -116,13 +119,15 @@ const NavigationHeader = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>{user?.fullName || user?.userName || 'Anonymous'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  router.push('/dashboard');
-                }}
-              >
-                Dashboard
-              </DropdownMenuItem>
+              {role === 'admin' && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push('/dashboard');
+                  }}
+                >
+                  Dashboard
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
