@@ -92,8 +92,6 @@ const EditAssignmentHmWorkModal = ({
     }
   }, [assignment, onOpenModal, course, form]);
 
-  console.log(selectedScore);
-
   const handleAddYoutubeLink = (selectedVideo: YoutubeCardProps | null) => {
     if (selectedVideo) {
       setLinks((prev) => [
@@ -208,7 +206,7 @@ const EditAssignmentHmWorkModal = ({
                 </div>
                 <div className="!my-0 overflow-auto w-full h-[92vh]">
                   <div className="grid h-full grid-cols-12">
-                    <div className="col-span-9 bg-[#F8F9FA]">
+                    <div className="col-span-6 md:col-span-9 bg-[#F8F9FA]">
                       <AssignmentForm
                         form={form}
                         files={files}
@@ -219,7 +217,7 @@ const EditAssignmentHmWorkModal = ({
                         setIsOpenSelectYoutubeModal={setIsOpenSelectYoutubeModal}
                       />
                     </div>
-                    <div className="flex flex-col col-span-3 gap-5 p-5 border-l">
+                    <div className="flex flex-col col-span-6 gap-5 p-5 border-l md:col-span-3">
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Hạn nộp</div>
                         <DateTimePicker date={dueDate} setDate={setDueDate} />

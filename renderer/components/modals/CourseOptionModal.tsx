@@ -26,7 +26,6 @@ import { IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 
 import { DateTimePicker } from '../common/DatetimePicker';
-import { Slider } from '../common/SliderRange';
 import ScoreStructureForm from '../pages/courses/score/ScoreStructureForm';
 import { Switch } from '../ui/switch';
 
@@ -40,21 +39,29 @@ const CourseOptionModal = ({
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
-  const { course } = useContext(CourseContext);
+  const { course, setCourse } = useContext(CourseContext);
 
   const [canSubmit, setCanSubmit] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const { createdCourses, setCreatedCourses } = useContext(CoursesContext);
-  const [startCreateGroup, setStartCreateGroup] = useState<Date | null | undefined>(null);
   const [dueDateToJoinGroup, setDueDateToJoinGroup] = useState<Date | null | undefined>(null);
-  const [endCreateGroup, setEndCreateGroup] = useState<Date | null | undefined>(null);
   const { subjects } = useContext(CreateSubjectContext);
   const [user, setUser] = useState<IUser | null>(null);
 
   const FormSchema = z.object({
-    courseGroup: z.string().min(1, {
+    name: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
     }),
+    courseGroup: z
+      .string()
+      .min(1, { message: 'Nhóm môn học là trường bắt buộc.' })
+      .refine(
+        (value) => {
+          const numValue = Number(value);
+          return !isNaN(numValue) && numValue >= 0;
+        },
+        { message: 'Nhóm môn học phải là một số không âm.' },
+      ),
     subjectId: z
       .object({
         label: z.string(),
@@ -66,7 +73,6 @@ const CourseOptionModal = ({
         message: 'Mã học phần không hợp lệ.',
       }),
     allowStudentCreateProject: z.boolean(),
-    allowGroupRegistration: z.boolean(),
     groupSizeRange: z.array(z.number()).nullable(),
     hasFinalScore: z.boolean(),
     enableInvite: z.boolean(),
@@ -75,10 +81,10 @@ const CourseOptionModal = ({
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      name: '',
       courseGroup: '',
       subjectId: { label: '', value: '' },
       allowStudentCreateProject: false,
-      allowGroupRegistration: false,
       enableInvite: false,
       groupSizeRange: [0, 10],
       hasFinalScore: false,
@@ -96,28 +102,23 @@ const CourseOptionModal = ({
   }, []);
 
   const hasFinalScoreValue = form.watch('hasFinalScore');
-  const allowGroupRegistration = form.watch('allowGroupRegistration');
   const enableInvite = form.watch('enableInvite');
 
   useEffect(() => {
     if (course && course.subjectId) {
+      form.setValue('name', course.name);
       form.setValue('courseGroup', course.courseGroup);
       form.setValue('subjectId', {
         label: `${course.subject?.subjectCode} - ${course.subject?.name}`,
         value: course.subjectId,
       });
 
-      setStartCreateGroup(course.setting?.startGroupCreation ? new Date(course.setting.startGroupCreation) : null);
-      setEndCreateGroup(course.setting?.endGroupCreation ? new Date(course.setting.endGroupCreation) : null);
-      setDueDateToJoinGroup(course.setting?.dueDateToJoinGroup ? new Date(course.setting.dueDateToJoinGroup) : null);
-
-      form.setValue('allowGroupRegistration', course.setting?.allowGroupRegistration);
       form.setValue('enableInvite', course.enableInvite);
       form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);
       form.setValue('groupSizeRange', [course.setting?.minGroupSize || 1, course.setting?.maxGroupSize || 15]);
-      form.setValue('hasFinalScore', course.setting?.hasFinalScore || false);
+      form.setValue('hasFinalScore', course.setting?.hasFinalScore);
     }
-  }, [course, onOpenModal, form]);
+  }, [onOpenModal]);
 
   const isLoading = hasSubmitted;
 
@@ -127,16 +128,9 @@ const CourseOptionModal = ({
     try {
       setHasSubmitted(true);
 
-      if (startCreateGroup && endCreateGroup) {
-        if (startCreateGroup > endCreateGroup) {
-          toast.error('Thời gian bắt đầu không được lớn hơn thời gian kết thúc.');
-          setHasSubmitted(false);
-          return;
-        }
-      }
-
       const infoData = {
         ...course,
+        name: values.name,
         courseGroup: values.courseGroup,
         subjectId: values.subjectId.value,
         enableInvite: values.enableInvite,
@@ -145,11 +139,8 @@ const CourseOptionModal = ({
       const settingData = {
         settingId: course.setting?.settingId,
         courseId: course.courseId,
-        startGroupCreation: startCreateGroup,
         dueDateToJoinGroup: dueDateToJoinGroup,
-        endGroupCreation: endCreateGroup,
         allowStudentCreateProject: values.allowStudentCreateProject,
-        allowGroupRegistration: values.allowGroupRegistration,
         minGroupSize: values.groupSizeRange?.[0],
         maxGroupSize: values.groupSizeRange?.[1],
         hasFinalScore: values.hasFinalScore,
@@ -170,6 +161,11 @@ const CourseOptionModal = ({
 
       if (infoRes.data && settingRes.data) {
         toast.success('Cập nhật lớp học thành công');
+
+        setCourse({
+          ...course,
+          setting: settingRes.data,
+        });
       }
 
       setHasSubmitted(false);
@@ -224,12 +220,12 @@ const CourseOptionModal = ({
                   </div>
                 </div>
                 <div className="!my-0 overflow-auto w-full h-[92vh] grid grid-cols-12 gap-2 px-3">
-                  <div className="col-span-6 p-5 my-8 border-2 rounded-lg">
+                  <div className="col-span-12 p-5 border-2 rounded-lg xl:col-span-6">
                     <div className="mt-2 text-2xl font-medium">Thông tin chi tiết về lớp học</div>
                     <div className="grid gap-4 py-4">
                       <FormField
                         control={form.control}
-                        name="courseGroup"
+                        name="name"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-xs font-bold uppercase">Tên lớp học</FormLabel>
@@ -242,6 +238,30 @@ const CourseOptionModal = ({
                                     isLoading && 'hidden',
                                   )}
                                   placeholder="Nhập tên lớp học ..."
+                                  {...field}
+                                />
+                                <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
+                              </>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="courseGroup"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs font-bold uppercase">Nhóm môn học</FormLabel>
+                            <FormControl>
+                              <>
+                                <Input
+                                  disabled={isLoading}
+                                  className={cn(
+                                    'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                                    isLoading && 'hidden',
+                                  )}
+                                  placeholder="Nhập nhóm môn học ..."
                                   {...field}
                                 />
                                 <Skeleton className={cn('h-10 w-full', !isLoading && 'hidden')} />
@@ -348,70 +368,6 @@ const CourseOptionModal = ({
                       )}
                       <FormField
                         control={form.control}
-                        name="allowGroupRegistration"
-                        render={({ field }) => (
-                          <FormItem>
-                            <div className="flex items-center justify-between my-3">
-                              <FormLabel className="font-medium text-md">Cho phép nhóm đăng kí nhóm</FormLabel>
-                              <FormControl>
-                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                              </FormControl>
-                            </div>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      {hasFinalScoreValue && allowGroupRegistration && (
-                        <div className="flex flex-col gap-4 px-3 mb-2">
-                          <div className="font-medium">Thời hạn đăng kí</div>
-                          <div className="flex items-center justify-between gap-2">
-                            <DateTimePicker
-                              date={startCreateGroup}
-                              setDate={setStartCreateGroup}
-                              onChange={() => {
-                                setCanSubmit(true);
-                              }}
-                            />
-                            <DateTimePicker
-                              date={endCreateGroup}
-                              setDate={setEndCreateGroup}
-                              onChange={() => {
-                                setCanSubmit(true);
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {allowGroupRegistration && (
-                        <div className="flex flex-col gap-4 px-3">
-                          <div className="font-medium">Số lượng người tối thiểu / tối đa</div>
-
-                          <FormField
-                            control={form.control}
-                            name="groupSizeRange"
-                            render={({ field }) => (
-                              <FormItem className="flex flex-col gap-2">
-                                <Slider
-                                  defaultValue={field.value}
-                                  minStepsBetweenThumbs={1}
-                                  max={15}
-                                  min={1}
-                                  step={1}
-                                  onValueChange={field.onChange}
-                                  className={cn('w-full')}
-                                />
-                                <div className="flex justify-between text-sm">
-                                  <span>Tối thiểu: {field.value?.[0] || 1}</span>
-                                  <span>Tối đa: {field.value?.[1] || 15}</span>
-                                </div>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      )}
-                      <FormField
-                        control={form.control}
                         name="allowStudentCreateProject"
                         render={({ field }) => (
                           <FormItem>
@@ -435,7 +391,7 @@ const CourseOptionModal = ({
                       </div>
                     </div>
                   </div>
-                  <div className="border-2 rounded-lg p-5 !my-8 col-span-6">
+                  <div className="col-span-12 p-5 border-2 rounded-lg xl:col-span-6">
                     <div className="mt-2 text-2xl font-medium">Cài đặt thông tin khác</div>
                     <div className="grid gap-4 py-4">
                       <ScoreStructureProvider scoreStructure={course?.scoreStructure || null}>

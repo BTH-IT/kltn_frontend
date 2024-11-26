@@ -82,8 +82,6 @@ export default function AssignmentDetail() {
 
   useEffect(() => {
     if (assignment) {
-      console.log(assignment);
-
       setComments(assignment.comments);
 
       const isSubmissionDeletable = () => {
@@ -215,7 +213,7 @@ export default function AssignmentDetail() {
                   </div>
                   <div>
                     <CardTitle className="text-2xl font-bold text-primary">{assignment?.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground line-clamp-2">
                       {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
                       {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
                     </p>
@@ -228,7 +226,7 @@ export default function AssignmentDetail() {
                     )}
                   </div>
                 </div>
-                <div>
+                <div className="flex items-center gap-1">
                   <Link
                     href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
                   >

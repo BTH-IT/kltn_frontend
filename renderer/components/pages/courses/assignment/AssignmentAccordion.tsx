@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { BookText, EllipsisVertical, NotebookText } from 'lucide-react';
+import { BookText, EllipsisVertical, GraduationCap, NotebookText } from 'lucide-react';
 import moment from 'moment';
 import Link from 'next/link';
 import { AxiosError } from 'axios';
@@ -22,6 +22,8 @@ import { IAssignment } from '@/types/assignment';
 import assignmentService from '@/services/assignmentService';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import CommonModal from '@/components/modals/CommonModal';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { API_URL } from '@/constants/endpoints';
 
 const AssignmentAccordion = ({
   assignment,
@@ -98,14 +100,32 @@ const AssignmentAccordion = ({
               <div className="p-2 bg-blue-500 rounded-full">{icon}</div>
               <div>{assignment.title}</div>
             </div>
-            <div className="flex items-center">
-              <div className="text-sm text-gray-500">
-                {assignment.dueDate
-                  ? `Đến hạn vào ${formatVNDate(assignment.dueDate)}`
-                  : isTeacher
-                    ? `Đã đăng ${moment(assignment.createdAt).fromNow()}`
-                    : 'Không có ngày đến hạn'}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center">
+                <div className="text-sm text-gray-500">
+                  {assignment.dueDate
+                    ? `Đến hạn vào ${formatVNDate(assignment.dueDate)}`
+                    : isTeacher
+                      ? `Đã đăng ${moment(assignment.createdAt).fromNow()}`
+                      : 'Không có ngày đến hạn'}
+                </div>
               </div>
+              {isTeacher && (
+                <TooltipProvider>
+                  <Link
+                    href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
+                  >
+                    <Button variant="ghost" size="icon" className="rounded-full">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <GraduationCap className="w-6 h-6 mr-2" />
+                        </TooltipTrigger>
+                        <TooltipContent>Xem và chấm bài</TooltipContent>
+                      </Tooltip>
+                    </Button>
+                  </Link>
+                </TooltipProvider>
+              )}
             </div>
             {!assignment.course?.saveAt && (
               <div

@@ -44,7 +44,6 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
-    console.log(group);
 
     if (storedUser) {
       setUser(storedUser);
@@ -76,9 +75,10 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
     const data = {
       studentId,
     };
-    const res = await groupService.setLeader(group.groupId, data);
-    console.log(res);
+    await groupService.setLeader(group.groupId, data);
+
     toast.success('Đặt trưởng nhóm thành công');
+
     setMembers(
       members
         .map((member) =>
@@ -103,55 +103,61 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
           </div>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[400px] pr-4">
-            <div className="space-y-4">
-              {members.map((member) => (
-                <div
-                  key={member.studentId}
-                  className="flex items-center justify-between p-4 space-x-4 rounded-lg shadow-sm bg-gray-50"
-                >
-                  <div className="flex items-center space-x-4">
-                    <Avatar>
-                      <AvatarImage
-                        src={member?.studentObj?.avatar || '/images/avt.png'}
-                        alt={member?.studentObj?.userName || member?.studentObj?.fullName}
-                      />
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{member?.studentObj?.userName || member?.studentObj?.fullName}</div>
-                      {/* <div className="text-sm text-gray-500">{member.studentObj.role}</div> */}
+          {members.length > 0 ? (
+            <ScrollArea className="h-[400px] pr-4">
+              <div className="space-y-4">
+                {members.map((member) => (
+                  <div
+                    key={member.studentId}
+                    className="flex items-center justify-between p-4 space-x-4 rounded-lg shadow-sm bg-gray-50"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <Avatar>
+                        <AvatarImage
+                          src={member?.studentObj?.avatar || '/images/avt.png'}
+                          alt={member?.studentObj?.userName || member?.studentObj?.fullName}
+                        />
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">
+                          {member?.studentObj?.userName || member?.studentObj?.fullName}
+                        </div>
+                        {/* <div className="text-sm text-gray-500">{member.studentObj.role}</div> */}
+                      </div>
+                      {member.isLeader && (
+                        <Badge variant="secondary" className="text-red-500">
+                          <Crown className="w-3 h-3 mr-1" />
+                          Trưởng nhóm
+                        </Badge>
+                      )}
                     </div>
-                    {member.isLeader && (
-                      <Badge variant="secondary" className="text-red-500">
-                        <Crown className="w-3 h-3 mr-1" />
-                        Trưởng nhóm
-                      </Badge>
-                    )}
-                  </div>
 
-                  <div className="flex items-center space-x-2">
-                    {user?.id === group?.course?.lecturerId || (member.isLeader && user?.id === member.studentId) ? (
-                      <>
-                        {!member.isLeader && (
-                          <>
-                            <Button variant="outline" size="sm" onClick={() => setLeader(member.studentId)}>
-                              Đặt làm trưởng nhóm
-                            </Button>
-                            <Button variant="ghost" size="icon" onClick={() => removeMember(member)}>
-                              <X className="w-4 h-4" />
-                              <span className="sr-only">Xóa</span>
-                            </Button>
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <></>
-                    )}
+                    <div className="flex items-center space-x-2">
+                      {user?.id === group?.course?.lecturerId || (member.isLeader && user?.id === member.studentId) ? (
+                        <>
+                          {!member.isLeader && (
+                            <>
+                              <Button variant="outline" size="sm" onClick={() => setLeader(member.studentId)}>
+                                Đặt làm trưởng nhóm
+                              </Button>
+                              <Button variant="ghost" size="icon" onClick={() => removeMember(member)}>
+                                <X className="w-4 h-4" />
+                                <span className="sr-only">Xóa</span>
+                              </Button>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+                ))}
+              </div>
+            </ScrollArea>
+          ) : (
+            <p className="px-4 mt-2 text-sm text-center text-gray-500">Không có thành viên nào!!</p>
+          )}
         </CardContent>
       </Card>
       <CreateGroupMemberModal isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} group={group} setMembers={setMembers} />

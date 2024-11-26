@@ -1,8 +1,9 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 'use client';
 
 import { useContext, useEffect, useState } from 'react';
-import { Plus, Edit, Trash, ScrollText } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
@@ -10,19 +11,19 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Accordion } from '@/components/ui/accordion';
 const AddGroupReportModal = dynamic(() => import('@/components/modals/AddGroupReportModal'), { ssr: false });
 const EditGroupReportModal = dynamic(() => import('@/components/modals/EditGroupReportModal'), { ssr: false });
 import CommonModal from '@/components/modals/CommonModal';
 import reportService from '@/services/reportService';
 import { IGroup, IReport, IUser } from '@/types';
 import { formatVNDate, KEY_LOCALSTORAGE } from '@/utils';
-import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
-import ReportCommentList from '@/components/common/ReportCommentList';
 import { generateParagraphs } from '@/libs/utils';
 import briefService from '@/services/briefService';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 import BriefGroupReportModal from '@/components/modals/BriefGroupReportModal';
+
+import ReportAccordionItem from './ReportAccordionItem';
 
 const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -103,12 +104,20 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
       const result = await model.generateContent(fullPrompt);
       const content = result.response.text();
 
-      // Create a new brief
-      const res = await briefService.createBrief(group.groupId, {
+      let res;
+      const data = {
         title: 'Tóm tắt báo cáo lúc ' + formatVNDate(new Date().toString()),
         content,
         reportId: report.reportId,
-      });
+      };
+
+      // Create a new brief
+      console.log(report.brief);
+      if (report.brief) {
+        res = await briefService.updateBrief(group.groupId, report.brief.id, data);
+      } else {
+        res = await briefService.createBrief(group.groupId, data);
+      }
 
       // Update current report state
       setCurrentReport({ ...report, brief: res.data });
@@ -151,68 +160,17 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
                 className="w-full"
               >
                 {reports.map((report, idx) => (
-                  <AccordionItem
+                  <ReportAccordionItem
+                    report={report}
+                    idx={idx}
                     key={report.reportId}
-                    value={report.reportId.toString()}
-                    className="pr-4 border-b last:border-b-0"
-                  >
-                    <AccordionTrigger className="hover:no-underline">
-                      <div className="flex items-center justify-between w-full p-4">
-                        <div className="flex items-center space-x-4">
-                          <div className="flex items-center justify-center w-10 h-10 text-lg font-bold text-white bg-blue-500 rounded-full">
-                            {idx + 1}
-                          </div>
-                          <div className="flex flex-col items-start justify-start">
-                            <h3 className="text-lg font-semibold text-gray-800">{report.title}</h3>
-                            <p className="text-sm text-gray-500">{formatVNDate(report.createdAt)}</p>
-                          </div>
-                        </div>
-                        <div className="flex space-x-4">
-                          <ScrollText
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              setCurrentReport(report);
-                              if (!report.brief) {
-                                await handleGenerateBrief(report);
-                              } else {
-                                setBriefReport(true);
-                              }
-                            }}
-                            className="w-4 h-4 text-green-500"
-                          />
-
-                          <Edit
-                            className="w-4 h-4 text-blue-500"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingReport(true);
-                              setCurrentReport(report);
-                            }}
-                          />
-                          <Trash
-                            className="w-4 h-4 text-red-500"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeletingReport(true);
-                              setCurrentReport(report);
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="px-6 py-4">
-                        <div className="pl-6 border-l-2 border-blue-200">
-                          <div
-                            className="mb-4 prose text-gray-700 max-w-none ql-editor"
-                            dangerouslySetInnerHTML={{ __html: report.content }}
-                          />
-                          <AnnouncementAttachList links={report.attachedLinks || []} files={report.attachments || []} />
-                          <ReportCommentList report={report} currentUser={currentUser} />
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                    setCurrentReport={setCurrentReport}
+                    handleGenerateBrief={handleGenerateBrief}
+                    currentUser={currentUser}
+                    setBriefReport={setBriefReport}
+                    setEditingReport={setEditingReport}
+                    setDeletingReport={setDeletingReport}
+                  />
                 ))}
               </Accordion>
             </CardContent>
@@ -231,7 +189,13 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
             setReports={setReports}
             report={currentReport}
           />
-          <BriefGroupReportModal isOpen={briefReport} setIsOpen={setBriefReport} report={currentReport} />
+          <BriefGroupReportModal
+            isOpen={briefReport}
+            setIsOpen={setBriefReport}
+            report={currentReport}
+            setCurrentReport={setCurrentReport}
+            setReports={setReports}
+          />
           <CommonModal
             isOpen={deletingReport}
             setIsOpen={setDeletingReport}

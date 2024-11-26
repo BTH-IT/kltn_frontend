@@ -44,7 +44,6 @@ const InviteStudentModal = ({
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      console.log(values.emails);
       await courseService.addStudents(course.courseId, values.emails);
       setIsOpen(false);
       toast.success('Mời sinh viên thành công');

@@ -48,7 +48,6 @@ const CreateSemesterModal = ({
     })
     .refine(
       (ctx) => {
-        console.log('kk');
         return ctx.endDate > ctx.startDate;
       },
       {

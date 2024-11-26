@@ -53,10 +53,10 @@ const Newsletter = ({ course, user }: { course: ICourse; user: IUser }) => {
         <>
           {user?.id === course.lecturerId && course?.enableInvite ? (
             <div className="grid grid-cols-12 gap-6 mt-10">
-              <div className="flex flex-col col-span-3 gap-4">
+              <div className="flex flex-col w-full col-span-12 gap-4 xl:col-span-3">
                 <InviteCode course={course} teacherId={course.lecturerId} name={course.name} user={user} />
               </div>
-              <div className="col-span-9">
+              <div className="col-span-12 xl:col-span-9">
                 <AnnouncementInput course={course} />
               </div>
             </div>

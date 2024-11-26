@@ -1,20 +1,23 @@
+/* eslint-disable max-len */
 // components/UploadComponent.tsx
 'use client';
 
 import React, { useRef } from 'react';
-
+import { Upload, X } from 'lucide-react'; // Assuming these icons are from lucide-react
 import Image from 'next/image';
-import { Upload, LucideImage, X } from 'lucide-react'; // Assuming these icons are from lucide-react
+
 import { Button } from '../ui/button';
 
 const UploadComponent = ({
-  onUpload,
   setFile,
   selectedImageUrl,
+  setUploadedImageUrl,
+  setSelectedImageUrl,
 }: {
-  onUpload: (url: string) => void;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   selectedImageUrl: string;
+  setUploadedImageUrl: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedImageUrl: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +34,7 @@ const UploadComponent = ({
 
   return (
     <div className="mt-5">
-      <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{ display: 'none' }} />
+      <input type="file" onChange={handleFileChange} ref={fileInputRef} accept="image/*" style={{ display: 'none' }} />
       {selectedImageUrl ? (
         <div className="relative group">
           <Image
@@ -43,7 +46,14 @@ const UploadComponent = ({
           />
           <X
             className="w-[34px] h-[34px] rounded-full p-2 absolute opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300  bg-red-100 text-red-700 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-            onClick={() => setFile(null)}
+            onClick={() => {
+              setFile(null);
+              setUploadedImageUrl('');
+              setSelectedImageUrl('');
+              if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+              }
+            }}
           />
         </div>
       ) : (
@@ -55,7 +65,7 @@ const UploadComponent = ({
           className="rounded-lg max-h-[250px] object-cover"
         />
       )}
-      <div className="flex justify-between items-center mt-10 h-fit">
+      <div className="flex items-center justify-between mt-10 h-fit">
         <div className="font-medium">Chọn hình ảnh tiêu đề cho bảng tin</div>
         <div className="flex gap-4">
           <Button variant="primaryReverge" className="w-[135px]" onClick={handleSelectImage}>

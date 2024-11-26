@@ -110,8 +110,6 @@ const AddGroupReportModal = ({
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      console.log(files);
-
       const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
       const data = {
@@ -146,7 +144,7 @@ const AddGroupReportModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] h-[95vh] overflow-y-auto overflow-x-hidden">
+      <DialogContent className="sm:max-w-[800px] !z-31 h-[95vh] overflow-y-auto overflow-x-hidden" classOverlay="!z-31">
         <DialogHeader className="h-fit">
           <DialogTitle>Thêm mục mới</DialogTitle>
           <DialogDescription>Điền thông tin mục mới ở đây.</DialogDescription>
