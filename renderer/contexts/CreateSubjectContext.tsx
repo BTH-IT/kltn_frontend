@@ -16,8 +16,12 @@ const CreateSubjectProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await subjectService.getSubjects();
-      setData(res.data);
+      try {
+        const res = await subjectService.getSubjects();
+        setData(res.data);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     fetchData();

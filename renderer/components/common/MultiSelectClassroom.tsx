@@ -86,7 +86,7 @@ const MultiSelectClassroom = (props: any) => {
       return props.onChange(selected);
     } else {
       return props.onChange([
-        ...props.value?.filter(({ label }: Option) => !label.toLowerCase().includes(selectInput?.toLowerCase())),
+        ...props.value?.filter(({ label }: Option) => !label?.toLowerCase().includes(selectInput?.toLowerCase())),
       ]);
     }
   };

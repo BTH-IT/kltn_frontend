@@ -1,8 +1,5 @@
-'use client';
-
 import React, { ElementType, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { toast } from 'react-toastify';
 
 import Loading from '@/components/loading/loading';
 import { KEY_LOCALSTORAGE, SET_LOCALSTORAGE } from '@/utils';
@@ -27,7 +24,7 @@ function withPermission(WrappedComponent: ElementType) {
 
       const token = cookies[KEY_LOCALSTORAGE.ACCESS_TOKEN];
 
-      if (!token) {
+      if (!token && !mounted) {
         const handleLoginWithGg = async () => {
           const token = searchParams.get('token');
           const refreshToken = searchParams.get('refreshToken');
@@ -56,12 +53,9 @@ function withPermission(WrappedComponent: ElementType) {
                 }),
               });
 
-              toast.success('Đăng nhập thành công!!');
-
               router.replace('/');
             } catch (error) {
               router.replace('/login');
-              toast.error('Đăng nhập không thành công');
             } finally {
               setMounted(true);
             }
@@ -72,7 +66,7 @@ function withPermission(WrappedComponent: ElementType) {
         };
 
         handleLoginWithGg();
-      } else {
+      } else if (token) {
         router.replace('/');
       }
     }, []);

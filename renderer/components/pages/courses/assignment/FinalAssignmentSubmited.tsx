@@ -45,8 +45,6 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
   const { assignment } = useContext(AssignmentContext);
   const { setItems } = useContext(BreadcrumbContext);
 
-  console.log(assignment);
-
   useEffect(() => {
     if (!assignment || !assignment.course) return;
 
@@ -55,8 +53,14 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
 
     setItems([
       { label: 'Lớp học', href: '/' },
-      { label: breadcrumbLabel1, href: `/courses/${assignment.course.courseId}` },
-      { label: 'Bài tập', href: `/courses/${assignment.course.courseId}/assignments` },
+      {
+        label: breadcrumbLabel1,
+        href: `/courses/${assignment.course.courseId}`,
+      },
+      {
+        label: 'Bài tập',
+        href: `/courses/${assignment.course.courseId}/assignments`,
+      },
       { label: breadcrumbLabel2 },
     ]);
   }, [assignment, setItems]);
@@ -369,8 +373,8 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                       />
                       <span className="sr-only">{expandedRows.has(gs.group.groupId) ? 'Collapse' : 'Expand'} row</span>
                     </Button>
-                    <span className="ml-2 inline-flex items-center">
-                      <User className="h-4 w-4 mr-2" />
+                    <span className="inline-flex items-center ml-2">
+                      <User className="w-4 h-4 mr-2" />
                       {gs.submittedMember
                         ? gs.submittedMember.studentObj.fullName
                         : gs.groupLeader?.studentObj?.fullName}
@@ -410,7 +414,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                 {expandedRows.has(gs.group.groupId) && (
                   <TableRow>
                     <TableCell colSpan={5} className="p-0">
-                      <div className="bg-muted/50 p-4">
+                      <div className="p-4 bg-muted/50">
                         <Table>
                           <TableHeader>
                             <TableRow>
@@ -447,7 +451,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
         </Table>
       </div>
 
-      <div className="w-full flex justify-end mt-5">
+      <div className="flex justify-end w-full mt-5">
         <Button className="flex gap-2" onClick={handlePrintClick}>
           <Printer className="w-4 h-4" />
           In bảng điểm

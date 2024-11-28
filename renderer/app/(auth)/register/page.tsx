@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -23,9 +23,7 @@ const signUpSchema = z
   .object({
     username: z.string().min(1, 'Username is required'),
     fullname: z.string().min(1, 'Full name is required'),
-    customId: z.string().refine((value) => value.length === 10, {
-      message: 'Student ID must be 10 characters',
-    }),
+    customId: z.string(),
     email: z.string().email('Invalid email address'),
     password: passwordSchema,
     confirmPassword: z.string().min(8, 'confirmPassword must be at least 8 characters'),
@@ -43,6 +41,8 @@ const signUpSchema = z
 type SignUpFormInputs = z.infer<typeof signUpSchema>;
 
 export default function Page() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -58,7 +58,7 @@ export default function Page() {
     const isAdmin = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE) || 'user';
 
     if (storedUser) {
-      if (isAdmin.toLowerCase() === 'admin') {
+      if (isAdmin?.toLowerCase() === 'admin') {
         router.replace('/dashboard');
       } else {
         router.replace('/');
@@ -72,6 +72,7 @@ export default function Page() {
 
   const onSubmit = async (data: SignUpFormInputs) => {
     try {
+      setIsLoading(true);
       const res: any = await authService.register(data);
       SET_LOCALSTORAGE(res.data);
       await fetch('/api/login', {
@@ -87,6 +88,8 @@ export default function Page() {
       if (error instanceof AxiosError) {
         toast.error(error?.response?.data?.message || error.message);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -158,7 +161,11 @@ export default function Page() {
             />
           </div>
 
-          <Button type="submit" className="mt-10 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
+          <Button
+            type="submit"
+            className="mt-10 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl"
+            disabled={isLoading}
+          >
             Đăng ký
           </Button>
 

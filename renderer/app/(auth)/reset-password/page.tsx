@@ -40,7 +40,7 @@ export default function Page() {
     const isAdmin = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE) || 'user';
 
     if (storedUser) {
-      if (isAdmin.toLowerCase() === 'admin') {
+      if (isAdmin?.toLowerCase() === 'admin') {
         router.replace('/dashboard');
       } else {
         router.replace('/');

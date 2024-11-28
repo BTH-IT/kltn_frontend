@@ -162,7 +162,6 @@ export default function ImportStudentModal({
   const handleImport = async () => {
     try {
       setLoading(true); // Bắt đầu loading khi gọi API
-      console.log(selectedColumns);
       const selectedData = data
         .filter((_, rowIndex) => selectedRows.includes(rowIndex - 1))
         .map((row) => {

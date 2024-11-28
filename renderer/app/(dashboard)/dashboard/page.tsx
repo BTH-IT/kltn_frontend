@@ -2,16 +2,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import ReactApexChart from 'react-apexcharts';
 import { Book, Users, Layers } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import dashboardService from '@/services/dashboardService';
-
-// Lazy load ApexCharts
-const ReactApexChart = dynamic(() => import('react-apexcharts'), {
-  ssr: false,
-});
 
 const formatToDate = (month: string) => {
   const year = new Date().getFullYear(); // Lấy năm hiện tại
