@@ -37,7 +37,7 @@ const NavigationHeader = () => {
   const pathname = usePathname() ?? '';
   const path = pathname?.slice(1, pathname.length - 1);
   const [user, setUser] = useState<IUser | null>(null);
-  const [role, setRole] = useState<any>(null);
+  const [role, setRole] = useState<string>('user');
   const router = useRouter();
 
   const handleMenuClick = () => {
@@ -56,8 +56,8 @@ const NavigationHeader = () => {
     const user = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER);
     const role = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE);
     setUser(user ? JSON.parse(user) : null);
-    setRole(role);
-  }, []);
+    setRole(role || 'user');
+  }, [pathname]);
 
   const handleLogout = async () => {
     CLEAR_LOCALSTORAGE();
@@ -119,7 +119,7 @@ const NavigationHeader = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>{user?.fullName || user?.userName || 'Anonymous'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {role.toLowerCase() === 'admin' && (
+              {role?.toLowerCase() === 'admin' && (
                 <DropdownMenuItem
                   onClick={() => {
                     router.push('/dashboard');

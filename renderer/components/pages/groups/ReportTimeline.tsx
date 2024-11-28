@@ -111,8 +111,6 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
         reportId: report.reportId,
       };
 
-      // Create a new brief
-      console.log(report.brief);
       if (report.brief) {
         res = await briefService.updateBrief(group.groupId, report.brief.id, data);
       } else {

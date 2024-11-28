@@ -35,13 +35,13 @@ const NavigationSidebar = () => {
 
   useEffect(() => {
     setFilteredCreatedCourses(
-      createdCourses.filter((course) => course.name.toLowerCase().includes(searchCreatedCourse.toLowerCase())),
+      createdCourses.filter((course) => course.name?.toLowerCase().includes(searchCreatedCourse.toLowerCase())),
     );
   }, [searchCreatedCourse, createdCourses]);
 
   useEffect(() => {
     setFilteredEnrolledCourses(
-      enrolledCourses.filter((course) => course.name.toLowerCase().includes(searchEnrolledCourse.toLowerCase())),
+      enrolledCourses.filter((course) => course.name?.toLowerCase().includes(searchEnrolledCourse.toLowerCase())),
     );
   }, [searchEnrolledCourse, enrolledCourses]);
 

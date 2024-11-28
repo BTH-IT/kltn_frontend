@@ -3,14 +3,13 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, User } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
-import { AxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import authService from '@/services/authService';
@@ -18,10 +17,12 @@ import { KEY_LOCALSTORAGE, SET_LOCALSTORAGE } from '@/utils';
 import withPermission from '@/libs/hoc/withPermission';
 import { signUpSchema, SignUpFormInputs } from '@/utils/schemas';
 import { Separator } from '@/components/ui/separator';
+import { logError } from '@/libs/utils';
 
 import InputForm from '../_components/InputForm';
 
 export default withPermission(() => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const {
     control,
@@ -37,7 +38,7 @@ export default withPermission(() => {
     const isAdmin = localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_ROLE) || 'user';
 
     if (storedUser) {
-      if (isAdmin.toLowerCase() === 'admin') {
+      if (isAdmin?.toLowerCase() === 'admin') {
         router.replace('/dashboard');
       } else {
         router.replace('/');
@@ -47,6 +48,7 @@ export default withPermission(() => {
 
   const onSubmit = async (values: SignUpFormInputs) => {
     try {
+      setIsLoading(true);
       const res: any = await authService.login(values);
       SET_LOCALSTORAGE(res.data);
       await fetch('/api/login', {
@@ -61,11 +63,11 @@ export default withPermission(() => {
       } else {
         router.replace('/');
       }
-      toast.success('Success: login');
+      toast.success('Đăng nhập thành công');
     } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || error.message);
-      }
+      logError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -110,7 +112,11 @@ export default withPermission(() => {
             </div>
           </div>
 
-          <Button type="submit" className="mt-5 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl">
+          <Button
+            type="submit"
+            className="mt-5 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl"
+            disabled={isLoading}
+          >
             Đăng nhập
           </Button>
 
