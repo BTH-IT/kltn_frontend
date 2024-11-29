@@ -22,8 +22,6 @@ import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 import { ScoreStructureProvider } from '@/contexts/ScoreStructureContext';
 import { cn } from '@/libs/utils';
 import courseService from '@/services/courseService';
-import { IUser } from '@/types';
-import { KEY_LOCALSTORAGE } from '@/utils';
 
 import { DateTimePicker } from '../common/DatetimePicker';
 import ScoreStructureForm from '../pages/courses/score/ScoreStructureForm';
@@ -46,7 +44,6 @@ const CourseOptionModal = ({
   const { createdCourses, setCreatedCourses } = useContext(CoursesContext);
   const [dueDateToJoinGroup, setDueDateToJoinGroup] = useState<Date | null | undefined>(null);
   const { subjects } = useContext(CreateSubjectContext);
-  const [user, setUser] = useState<IUser | null>(null);
 
   const FormSchema = z.object({
     name: z.string().min(1, {
@@ -91,16 +88,6 @@ const CourseOptionModal = ({
     },
   });
 
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
-
-    if (storedUser) {
-      setUser(storedUser);
-    } else {
-      return router.push('/login');
-    }
-  }, []);
-
   const hasFinalScoreValue = form.watch('hasFinalScore');
   const enableInvite = form.watch('enableInvite');
 
@@ -117,8 +104,10 @@ const CourseOptionModal = ({
       form.setValue('allowStudentCreateProject', course.setting?.allowStudentCreateProject);
       form.setValue('groupSizeRange', [course.setting?.minGroupSize || 1, course.setting?.maxGroupSize || 15]);
       form.setValue('hasFinalScore', course.setting?.hasFinalScore);
+
+      setDueDateToJoinGroup(course.setting?.dueDateToJoinGroup);
     }
-  }, [onOpenModal]);
+  }, [course, form, onOpenModal]);
 
   const isLoading = hasSubmitted;
 

@@ -16,7 +16,7 @@ import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/u
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { getLeafColumns } from '@/libs/utils';
+import { getLeafColumns, logError } from '@/libs/utils';
 import assignmentService from '@/services/assignmentService';
 import uploadService from '@/services/uploadService';
 import { ICourse, MetaLinkData } from '@/types';
@@ -114,7 +114,7 @@ const AssignmentHmWorkModal = ({
       return;
     }
 
-    const formattedDueDate = dueDate?.toISOString() ?? null;
+    const formattedDueDate = dueDate?.toString() ?? null;
 
     let assignmentOptions = {};
 
@@ -173,10 +173,7 @@ const AssignmentHmWorkModal = ({
       resetForm();
       setOnOpenModal(false);
     } catch (error) {
-      console.error('Error creating assignments:', error);
-      if (error instanceof AxiosError) {
-        toast.error(error?.response?.data?.message || error.message);
-      }
+      logError(error);
     }
   };
 
