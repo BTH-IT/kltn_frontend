@@ -1,3 +1,5 @@
+'use client';
+
 import { add, addHours } from 'date-fns';
 import { Calendar as CalendarIcon, X as XIcon } from 'lucide-react';
 import * as React from 'react';
@@ -39,8 +41,7 @@ export function DateTimePicker({
 
   const handleSetDate = (date: Date | undefined) => {
     if (date) {
-      const adjustedDate = addHours(date, 7);
-      setDate(adjustedDate);
+      setDate(date);
       onChange();
     }
   };
@@ -49,6 +50,12 @@ export function DateTimePicker({
     setDate(undefined);
     onChange();
   };
+
+  React.useEffect(() => {
+    if (minDate) {
+      minDate.setHours(0, 0, 0, 0);
+    }
+  }, []);
 
   return (
     <div className="inline-flex items-center w-full">
