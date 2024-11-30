@@ -254,6 +254,13 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
     });
   };
 
+  const filteredGroups = groupSubmissions.filter(
+    (gs) =>
+      gs.group.groupMembers?.some((m) => m.studentObj.fullName.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (!selectedDate ||
+        format(gs.submissionList?.submission?.createdAt ?? '', 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')),
+  );
+
   return (
     <div className="container p-4 mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -352,7 +359,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
             </TableRow>
           </TableHeader>
           <TableBody>
-            {groupSubmissions.map((gs) => (
+            {filteredGroups.map((gs) => (
               <Fragment key={gs.group.groupId}>
                 <TableRow>
                   <TableCell>
@@ -422,7 +429,6 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                             {gs.group.groupMembers &&
                               gs.group.groupMembers
                                 .filter((member) => {
-                                  // Exclude the submitted member or non-leader members
                                   if (gs.submittedMember) {
                                     return member.studentId !== gs.submittedMember.id;
                                   }
@@ -430,9 +436,11 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                                 })
                                 .map((member, index) => (
                                   <TableRow key={index}>
-                                    <TableCell className="font-medium">{member.studentObj?.fullName}</TableCell>
-                                    <TableCell>{member.studentObj?.email}</TableCell>
-                                    <TableCell>{`Student ID: ${member.studentObj?.customId}`}</TableCell>
+                                    <TableCell className="font-medium">
+                                      {member.studentObj?.fullName ?? 'N/A'}
+                                    </TableCell>
+                                    <TableCell>{member.studentObj?.email ?? 'N/A'}</TableCell>
+                                    <TableCell>{member.studentObj?.customId ?? 'N/A'}</TableCell>
                                   </TableRow>
                                 ))}
                           </TableBody>
