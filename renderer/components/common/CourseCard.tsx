@@ -30,7 +30,7 @@ const CourseCard = ({ item }: { item: ICourse }) => {
             <div className="max-w-[185px] text-sm truncate font-normal shadow-inner">{item.subject?.name}</div>
           </div>
           <Image
-            src={'/images/avt.png'}
+            src={item.lecturer?.avatar || '/images/avt.png'}
             alt="Avatar"
             width={75}
             height={75}
