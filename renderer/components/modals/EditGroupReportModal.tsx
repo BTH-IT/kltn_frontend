@@ -34,7 +34,10 @@ import { YoutubeCardProps } from '../common/YoutubeCard';
 import AddYoutubeLinkModal from './AddYoutubeLinkModal';
 import AddLinkModal from './AddLinkModal';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const EditGroupReportModal = ({
   isOpen,

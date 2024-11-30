@@ -24,7 +24,10 @@ import AvatarHeader from './AvatarHeader';
 import CommentList from './CommentList';
 import AnnouncementAttachList from './AnnouncementAttachList';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const AnnouncementItem = ({
   course,

@@ -63,6 +63,8 @@ export default withPermission(() => {
       } else {
         router.replace('/');
       }
+
+      router.refresh();
       toast.success('Đăng nhập thành công');
     } catch (error) {
       logError(error);

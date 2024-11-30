@@ -54,6 +54,7 @@ function withPermission(WrappedComponent: ElementType) {
               });
 
               router.replace('/');
+              router.refresh();
             } catch (error) {
               router.replace('/login');
             } finally {

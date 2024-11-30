@@ -18,7 +18,10 @@ import { IAssignment, MetaLinkData } from '@/types';
 
 import AnnouncementAttachList from '../common/AnnouncementAttachList';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const SubmitAssignmentForm = ({
   form,
