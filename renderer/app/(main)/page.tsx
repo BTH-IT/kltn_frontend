@@ -33,10 +33,10 @@ const HomePage = async () => {
         {courses?.createdCourses?.length === 0 && courses?.enrolledCourses?.length === 0 ? (
           <div className="flex pt-32">
             <div className="flex flex-col flex-1">
-              <div className="flex items-center justify-center flex-1">
-                <div className="text-center">
-                  <Image src="/images/empty_states_home.png" alt="Illustration" width={200} height={50} priority />
-                  <p className="mb-4">Thêm một lớp học để bắt đầu</p>
+              <div className="flex flex-col items-center justify-center flex-1 gap-1 text-center">
+                <Image src="/images/empty_states_home.png" alt="Illustration" width={200} height={50} priority />
+                <p className="mb-4">Thêm một lớp học để bắt đầu</p>
+                <div className="flex items-center gap-2">
                   <CreateCourseModal>
                     <Button variant="secondary2" className="px-4 py-2 mr-2">
                       Tạo lớp học

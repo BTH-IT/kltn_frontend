@@ -35,7 +35,10 @@ import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 export default function SubmitProject({ group, data }: { group: IGroup; data: IAssignment }) {
   const { setItems } = useContext(BreadcrumbContext);

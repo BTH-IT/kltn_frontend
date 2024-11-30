@@ -83,6 +83,7 @@ export default function Page() {
         body: JSON.stringify(res.data),
       });
       router.push('/');
+      router.refresh();
       toast.success('Success: login');
     } catch (error) {
       if (error instanceof AxiosError) {

@@ -22,7 +22,10 @@ import CommonModal from '../modals/CommonModal';
 import AvatarHeader from './AvatarHeader';
 import Button from './Button';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const CommentItem = ({
   comment,

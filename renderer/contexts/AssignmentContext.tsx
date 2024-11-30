@@ -30,7 +30,7 @@ const AssignmentProvider = ({
       }
     };
 
-    if (assignment && assignment.assignmentId) {
+    if (!assignment) {
       fetchData();
     } else {
       setData(assignment);

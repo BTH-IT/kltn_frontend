@@ -43,7 +43,7 @@ const AnnouncementFileList = ({
       ))}
     </div>
   ) : (
-    <div className="text-center text-gray-500">No files uploaded yet</div>
+    <div className="text-center text-gray-500">Chưa có tệp nào cả</div>
   );
 };
 

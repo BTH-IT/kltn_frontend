@@ -31,15 +31,23 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
     const breadcrumbLabel1 = group.course.name;
     const breadcrumbLabel2 = group.groupName;
 
-    setItems([
-      { label: 'Lớp học', href: '/' },
-      { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
-      {
-        label: 'Đồ án / Tiểu luận',
-        href: `/courses/${group.course.courseId}/projects`,
-      },
-      { label: breadcrumbLabel2 },
-    ]);
+    if (group.groupType.toLowerCase() === 'normal') {
+      setItems([
+        { label: 'Lớp học', href: '/' },
+        { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
+        { label: breadcrumbLabel2 },
+      ]);
+    } else {
+      setItems([
+        { label: 'Lớp học', href: '/' },
+        { label: breadcrumbLabel1, href: `/courses/${group.course.courseId}` },
+        {
+          label: 'Đồ án / Tiểu luận',
+          href: `/courses/${group.course.courseId}/projects`,
+        },
+        { label: breadcrumbLabel2 },
+      ]);
+    }
   }, [group, setItems]);
 
   useEffect(() => {
@@ -115,12 +123,12 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
                       <Avatar>
                         <AvatarImage
                           src={member?.studentObj?.avatar || '/images/avt.png'}
-                          alt={member?.studentObj?.userName || member?.studentObj?.fullName}
+                          alt={member?.studentObj?.fullName || member?.studentObj?.userName}
                         />
                       </Avatar>
                       <div>
                         <div className="font-medium">
-                          {member?.studentObj?.userName || member?.studentObj?.fullName}
+                          {member?.studentObj?.fullName || member?.studentObj?.userName}
                         </div>
                         {/* <div className="text-sm text-gray-500">{member.studentObj.role}</div> */}
                       </div>

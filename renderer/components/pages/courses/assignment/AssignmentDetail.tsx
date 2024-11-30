@@ -37,7 +37,10 @@ import submissionService from '@/services/submissionService';
 import { IComment, ISubmission, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 export default function AssignmentDetail() {
   const { assignment } = useContext(AssignmentContext);
@@ -227,18 +230,20 @@ export default function AssignmentDetail() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Link
-                    href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
-                  >
-                    <Button variant="ghost" size="icon" className="rounded-full">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <GraduationCap className="w-6 h-6 mr-2" />
-                        </TooltipTrigger>
-                        <TooltipContent>Xem và chấm bài</TooltipContent>
-                      </Tooltip>
-                    </Button>
-                  </Link>
+                  {assignment?.course?.lecturerId === currentUser?.id && (
+                    <Link
+                      href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
+                    >
+                      <Button variant="ghost" size="icon" className="rounded-full">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <GraduationCap className="w-6 h-6 mr-2" />
+                          </TooltipTrigger>
+                          <TooltipContent>Xem và chấm bài</TooltipContent>
+                        </Tooltip>
+                      </Button>
+                    </Link>
+                  )}
 
                   {assignment?.isGroupAssigned && (
                     <Link

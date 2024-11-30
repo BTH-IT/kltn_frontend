@@ -9,7 +9,10 @@ import { Controller, useForm } from 'react-hook-form';
 import commentService from '@/services/commentService';
 import { IComment, IUser } from '@/types';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const CommentInput = ({
   currentUser,

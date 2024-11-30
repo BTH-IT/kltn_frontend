@@ -89,7 +89,7 @@ export default function SubmissionDetailModal({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between space-x-3">
+          <DialogTitle className="flex flex-col justify-between space-x-3">
             <div className="flex items-center space-x-2 text-2xl font-bold">
               <Avatar className="w-10 h-10">
                 <AvatarImage src={student?.user.avatar ?? '/images/avt.png'} alt={student?.user.userName} />
@@ -115,7 +115,7 @@ export default function SubmissionDetailModal({
           <TabsContent value="details">
             <div className="mt-4 space-y-4">
               <div className="flex items-center justify-between">
-                <Badge variant={getStatusColor(status)} className="text-white px-3 py-1">
+                <Badge variant={getStatusColor(status)} className="px-3 py-1 text-white">
                   {status}
                 </Badge>
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -125,28 +125,37 @@ export default function SubmissionDetailModal({
                   </span>
                 </div>
               </div>
-              <div className="space-y-2">
-                <h4 className="flex items-center space-x-2 font-semibold">
-                  <ClipboardIcon className="w-4 h-4" />
-                  <span>Nội dung bài nộp:</span>
-                </h4>
-                <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-                  {student?.submission?.description ? (
-                    <div
-                      className="markdown ql-editor"
-                      dangerouslySetInnerHTML={{
-                        __html: student.submission.description,
-                      }}
-                    />
-                  ) : (
-                    <p className="text-sm italic text-muted-foreground">Không có nội dung bài nộp</p>
-                  )}
-                </ScrollArea>
-                <AnnouncementAttachList
-                  links={student?.submission?.attachedLinks || []}
-                  files={student?.submission?.attachments || []}
-                />
-              </div>
+              {student?.submission?.description ? (
+                <div className="space-y-2">
+                  <h4 className="flex items-center space-x-2 font-semibold">
+                    <ClipboardIcon className="w-4 h-4" />
+                    <span>Nội dung bài nộp:</span>
+                  </h4>
+                  <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                    {student?.submission?.description ? (
+                      <div
+                        className="markdown ql-editor"
+                        dangerouslySetInnerHTML={{
+                          __html: student.submission.description,
+                        }}
+                      />
+                    ) : (
+                      <p className="text-sm italic text-muted-foreground">Không có nội dung bài nộp</p>
+                    )}
+                  </ScrollArea>
+                  <AnnouncementAttachList
+                    links={student?.submission?.attachedLinks || []}
+                    files={student?.submission?.attachments || []}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <AnnouncementAttachList
+                    links={student?.submission?.attachedLinks || []}
+                    files={student?.submission?.attachments || []}
+                  />
+                </div>
+              )}
             </div>
           </TabsContent>
           <TabsContent value="grading">
@@ -168,7 +177,7 @@ export default function SubmissionDetailModal({
                     min={0}
                     max={10}
                     step={0.1}
-                    value={score ?? ''}
+                    value={score ?? 0}
                     onChange={(e) => setScore(parseFloat(e.target.value))}
                     className="w-20"
                   />

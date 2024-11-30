@@ -28,7 +28,10 @@ import { cn } from '@/libs/utils';
 import AnnouncementFileList from './AnnoucementFileList';
 import AnnouncementLinkList from './AnnouncementLinkList';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const BulletForm = ({
   setIsPost,

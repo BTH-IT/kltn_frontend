@@ -27,7 +27,10 @@ import AnnouncementLinkList from '@/components/pages/courses/AnnouncementLinkLis
 
 import AnnouncementAttachList from '../common/AnnouncementAttachList';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const EditAnnoucementModal = ({
   isOpen,
@@ -239,7 +242,7 @@ const EditAnnoucementModal = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent2 className="max-w-[750px] min-h-[450px] p-0 font-sans text-gray-700">
+        <DialogContent2 className="max-w-[750px] min-h-[450px] max-h-[90vh] p-0 font-sans text-gray-700 overflow-y-auto">
           <DialogHeader className="flex flex-row items-center justify-between px-6 py-3 border-b-2 h-fit">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100/60">
@@ -261,7 +264,6 @@ const EditAnnoucementModal = ({
                 value={optionSelected}
                 isSelectAll={true}
                 menuPlacement={'bottom'}
-                className="w-[300px] "
               />
             </div>
             <div className="px-3 pt-3">
@@ -273,7 +275,7 @@ const EditAnnoucementModal = ({
                   <ReactQuill
                     theme="snow"
                     placeholder="Thông báo nội dung nào đó cho lớp học của bạn"
-                    className="flex-1 rounded-md h-[180px]"
+                    className="flex-1 rounded-md"
                     value={field.value}
                     onChange={field.onChange}
                   />

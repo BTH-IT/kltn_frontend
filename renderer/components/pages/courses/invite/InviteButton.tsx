@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/common/Button';
 import courseService from '@/services/courseService';
 import { CoursesContext } from '@/contexts/CoursesContext';
+import { logError } from '@/libs/utils';
 
 const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
   const [loading, setLoading] = React.useState(false);
@@ -21,16 +22,15 @@ const InviteButton = ({ inviteCode }: { inviteCode: string }) => {
           const res = await courseService.addStudentToCourseByInviteCode(inviteCode);
 
           if (res.data) {
-            setLoading(false);
-
             setEnrolledCourses([...enrolledCourses, res.data]);
-            return router.replace(`/courses/${res.data.courseId}`);
+            router.replace(`/courses/${res.data.courseId}`);
+            router.refresh();
           }
         } catch (error) {
-          console.error('Error adding student to class:', error);
+          logError(error);
+          router.replace('/');
         } finally {
           setLoading(false);
-          router.replace('/');
         }
       }}
       className="flex items-center gap-3"

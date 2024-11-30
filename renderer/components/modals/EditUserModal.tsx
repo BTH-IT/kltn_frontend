@@ -40,20 +40,37 @@ const EditUserModal = ({
 
   const FormSchema = z.object({
     customId: z.string().refine((value) => value.length === 10, {
-      message: 'Student Id phải có 10 kí tự',
+      message: 'Mã sinh viên phải có 10 kí tự',
     }),
+    userName: z.string().min(3, 'Tên đăng nhập phải có ít nhất 3 kí tự'),
+    fullName: z.string().min(3, 'Họ và tên không được để trống'),
+    email: z.string().email('Email không hợp lệ'),
+    phoneNumber: z.string().regex(/^(\+84|84|0)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}$/, {
+      message: 'Hãy nhập một số điện thoại Việt Nam.',
+    }),
+    gender: z.string().min(1, 'Giới tính không được để trống'),
   });
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       customId: '',
+      userName: '',
+      fullName: '',
+      email: '',
+      phoneNumber: '',
+      gender: '',
     },
   });
 
   useEffect(() => {
     if (user) {
       form.setValue('customId', user.customId);
+      form.setValue('userName', user.userName);
+      form.setValue('fullName', user.fullName);
+      form.setValue('email', user.email);
+      form.setValue('phoneNumber', user.phoneNumber);
+      form.setValue('gender', user.gender);
     }
   }, [user, form, isOpen]);
 
@@ -119,6 +136,76 @@ const EditUserModal = ({
                           />
                           <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
                         </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="userName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Tên đăng nhập</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Họ và tên</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Số điện thoại</FormLabel>
+                      <FormControl>
+                        <Input type="tel" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Giới tính</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
