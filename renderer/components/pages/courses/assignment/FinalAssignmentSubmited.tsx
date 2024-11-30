@@ -23,20 +23,20 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import assignmentService from '@/services/assignmentService';
-import { IGroup, IGroupMember, ISubmissionList } from '@/types';
+import { IGroup, IGroupMember, ISubmissionList, IUser } from '@/types';
 import { AssignmentContext } from '@/contexts/AssignmentContext';
 import SubmissionDetailModal from '@/components/modals/SubmissionDetailModal';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import CommonModal from '@/components/modals/CommonModal';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
-import groupService from '@/services/groupService';
 
 interface IGroupSubmission {
   group: IGroup;
-  submittedMember: IGroupMember | null;
+  submittedMember: IUser | null;
   groupLeader: IGroupMember | null;
   isSubmitted: boolean;
   submissionList: ISubmissionList | null;
+  members: IGroupMember[];
 }
 
 export default function FinalAssigmentSubmited({ submissions }: { submissions: ISubmissionList[] }) {
@@ -63,6 +63,10 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
       },
       { label: breadcrumbLabel2 },
     ]);
+
+    if (assignment) {
+      setGroups(assignment.groups);
+    }
   }, [assignment, setItems]);
 
   const contentRef = useRef<HTMLDivElement>(null);
@@ -80,47 +84,47 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
   const [isAbleToPrint, setIsAbleToPrint] = useState(false);
 
   useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const res = await groupService.getGroupsByCourseId(assignment?.courseId || '');
-        res && setGroups(res.data);
-      } catch (err) {
-        console.error('Failed to fetch groups: ', err);
-      }
-    };
-    fetchGroups();
-
     setStudentSubmissions(submissions);
-  }, [submissions, assignment]);
+  }, [submissions]);
 
   useEffect(() => {
-    const data: IGroupSubmission[] = [];
+    if (groups.length > 0 && submissions.length > 0) {
+      const data: IGroupSubmission[] = [];
+      const groupedByGroupId = submissions.reduce(
+        (acc, submission) => {
+          const groupId = submission.groupId;
 
-    groups.forEach((group) => {
-      const groupMembers = group.groupMembers;
-      if (!groupMembers) {
-        return;
-      }
-      const groupLeader = groupMembers.find((member) => member.isLeader);
-      if (!groupLeader) {
-        return;
-      }
-      const submittedMember =
-        groupMembers.find((member) => {
-          const submission = submissions.find((sub) => sub.user.id === member.studentId && sub.submission);
-          return submission;
-        }) || null;
-      const submissionList = submissions.find((sub) => sub.user.id === submittedMember?.studentId) || null;
-      data.push({
-        group,
-        submittedMember,
-        groupLeader,
-        isSubmitted: submittedMember ? true : false,
-        submissionList,
-      });
-    });
+          if (!acc[groupId]) {
+            acc[groupId] = [];
+          }
 
-    setGroupSubmissions(data);
+          acc[groupId].push(submission);
+
+          return acc;
+        },
+        {} as Record<string, ISubmissionList[]>,
+      );
+
+      for (const groupId in groupedByGroupId) {
+        const newGroupSubmissions = groupedByGroupId[groupId];
+
+        const group = groups.find((g) => g.groupId === groupId);
+
+        const groupLeader = group?.groupMembers?.find((m) => m.isLeader) || null;
+        const members = group?.groupMembers || [];
+
+        data.push({
+          group: group!,
+          submittedMember: newGroupSubmissions[0]?.user ? newGroupSubmissions[0].user : null,
+          groupLeader: groupLeader || null,
+          isSubmitted: newGroupSubmissions.some((submission) => submission.submission !== null),
+          submissionList: newGroupSubmissions[0] || null,
+          members,
+        });
+      }
+
+      setGroupSubmissions(data);
+    }
   }, [groups, submissions]);
 
   const now = new Date();
@@ -207,13 +211,6 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
       return false;
     }).length,
   };
-
-  const filteredGroups = groupSubmissions.filter(
-    (gs) =>
-      gs.group.groupMembers?.some((m) => m.studentObj.fullName.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (!selectedDate ||
-        format(gs.submissionList?.submission?.createdAt ?? '', 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')),
-  );
 
   const handleRemove = async () => {
     if (!assignment) return;
@@ -355,7 +352,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredGroups.map((gs) => (
+            {groupSubmissions.map((gs) => (
               <Fragment key={gs.group.groupId}>
                 <TableRow>
                   <TableCell>
@@ -375,9 +372,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                     </Button>
                     <span className="inline-flex items-center ml-2">
                       <User className="w-4 h-4 mr-2" />
-                      {gs.submittedMember
-                        ? gs.submittedMember.studentObj.fullName
-                        : gs.groupLeader?.studentObj?.fullName}
+                      {gs.submittedMember ? gs.submittedMember?.fullName : gs.groupLeader?.studentObj?.fullName}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -426,11 +421,12 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                           <TableBody>
                             {gs.group.groupMembers &&
                               gs.group.groupMembers
-                                .filter((m) => {
+                                .filter((member) => {
+                                  // Exclude the submitted member or non-leader members
                                   if (gs.submittedMember) {
-                                    return m.studentId !== gs.submittedMember.studentId;
+                                    return member.studentId !== gs.submittedMember.id;
                                   }
-                                  return !m.isLeader;
+                                  return !member.isLeader;
                                 })
                                 .map((member, index) => (
                                   <TableRow key={index}>
