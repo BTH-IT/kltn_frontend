@@ -5,3 +5,11 @@ export interface ITranscript {
   fullName: string;
   scores: IScoreStructure;
 }
+
+export interface ITranscriptStatistic {
+  columnName: string;
+  average: number;
+  max: number;
+  min: number;
+  distribution: { [key: string]: number };
+}
