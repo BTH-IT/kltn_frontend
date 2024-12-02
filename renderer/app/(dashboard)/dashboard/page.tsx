@@ -2,8 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ReactApexChart from 'react-apexcharts';
 import { Book, Users, Layers } from 'lucide-react';
+import dynamic from 'next/dynamic';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import dashboardService from '@/services/dashboardService';
@@ -12,6 +12,11 @@ const formatToDate = (month: string) => {
   const year = new Date().getFullYear(); // Lấy năm hiện tại
   return `${year}-${month.padStart(2, '0')}-01`; // Chuyển thành định dạng YYYY-MM-DD
 };
+
+const ReactApexChart = dynamic(() => import('react-apexcharts'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 // Hook to fetch and process dashboard data
 function useDashboardData() {
