@@ -6,7 +6,7 @@ import { API_URL } from '@/constants/endpoints';
 import { ICourse, IGroup } from '@/types';
 import GroupHeader from '@/components/common/GroupHeader';
 
-export async function generateMetadata({ params }: { params: { courseId: string; groupId: string } }) {
+export async function generateMetadata({ params }: { params: any }) {
   const { payload } = await http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`);
 
   return {
@@ -15,13 +15,7 @@ export async function generateMetadata({ params }: { params: { courseId: string;
   };
 }
 
-const Layout = async ({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { courseId: string; groupId: string };
-}) => {
+const Layout = async ({ children, params }: { children: React.ReactNode; params: any }) => {
   const [groupData, courseData] = await Promise.all([
     http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`),
     http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`) as Promise<any>,

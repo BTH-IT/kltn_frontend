@@ -7,7 +7,7 @@ import http from '@/libs/http';
 import { ICourse } from '@/types';
 import { getUserFromCookie } from '@/libs/actions';
 
-const InviteCodePage = async ({ params }: { params: { inviteCode: string } }) => {
+const InviteCodePage = async ({ params }: { params: any }) => {
   const { inviteCode } = params;
 
   const [user, courseData] = await Promise.all([

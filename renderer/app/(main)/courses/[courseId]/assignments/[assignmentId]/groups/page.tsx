@@ -3,10 +3,9 @@ import AssigmentSubmited from '@/components/pages/courses/assignment/AssignmentS
 import FinalAssigmentSubmited from '@/components/pages/courses/assignment/FinalAssignmentSubmited';
 import { API_URL } from '@/constants/endpoints';
 import http from '@/libs/http';
-
 import { IAssignment, ISubmissionList } from '@/types';
 
-const AssignmentSubmitPage = async ({ params }: { params: { courseId: string; assignmentId: string } }) => {
+const AssignmentSubmitPage = async ({ params }: { params: any }) => {
   const {
     payload: { data: submissions },
   } = await http.get<ISubmissionList[]>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}${API_URL.SUBMISSIONS}`);

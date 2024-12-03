@@ -45,10 +45,12 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         day_hidden: 'invisible',
         ...classNames,
       }}
-      components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="w-4 h-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="w-4 h-4" />,
-      }}
+      components={
+        {
+          IconLeft: ({ ...props }: React.SVGProps<SVGSVGElement>) => <ChevronLeft className="w-4 h-4" />,
+          IconRight: ({ ...props }: React.SVGProps<SVGSVGElement>) => <ChevronRight className="w-4 h-4" />,
+        } as any
+      }
       {...props}
     />
   );

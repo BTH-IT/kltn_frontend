@@ -11,7 +11,7 @@ import RequestList from '@/components/pages/groups/RequestList';
 import { BackButtonV2 } from '@/components/common/BackButtonV2';
 import { getUserFromCookie } from '@/libs/actions';
 
-const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
+const GroupDetailPage = async ({ params }: { params: any }) => {
   const [user, data] = await Promise.all([
     getUserFromCookie(),
     http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`) as Promise<any>,

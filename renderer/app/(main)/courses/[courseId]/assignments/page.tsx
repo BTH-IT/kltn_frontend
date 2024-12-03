@@ -32,7 +32,7 @@ const AssignmentPage = () => {
     } else {
       return router.push('/login');
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!course) return;

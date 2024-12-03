@@ -1,6 +1,8 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: process.env.NODE_ENV === 'production' ? '../app' : '.next',
+  distDir: process.env.NODE_ENV === 'production' ? './out' : '.next',
   trailingSlash: true,
   reactStrictMode: true,
   images: {
@@ -22,17 +24,10 @@ const nextConfig = {
         child_process: false,
       },
     };
+
     return config;
   },
-  experimental: {
-    turbo: {},
-  },
+  output: 'standalone',
 };
-
-if (process.env.NODE_ENV === 'production') {
-  nextConfig.eslint = {
-    ignoreDuringBuilds: true,
-  };
-}
 
 module.exports = nextConfig;

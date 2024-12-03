@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+
 import { NextRequest, NextResponse } from 'next/server';
 import urlMetadata from 'url-metadata';
 

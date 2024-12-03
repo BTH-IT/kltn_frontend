@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 'use client';
 
 import Image from 'next/image';
@@ -64,7 +65,7 @@ export default function Page() {
         router.replace('/');
       }
     }
-  }, []);
+  }, [router]);
 
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/accounts/login-google`;

@@ -6,7 +6,7 @@ import { API_URL } from '@/constants/endpoints';
 import { ICourse } from '@/types';
 import CourseHeader from '@/components/pages/courses/CourseHeader';
 
-export async function generateMetadata({ params }: { params: { courseId: string } }) {
+export async function generateMetadata({ params }: { params: any }) {
   const { payload } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);
 
   return {
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: { courseId: string 
   };
 }
 
-const Layout = async ({ children, params }: { children: React.ReactNode; params: { courseId: string } }) => {
+const Layout = async ({ children, params }: { children: React.ReactNode; params: any }) => {
   const {
     payload: { data: course },
   } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);

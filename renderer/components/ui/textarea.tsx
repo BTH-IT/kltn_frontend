@@ -1,3 +1,7 @@
+/* eslint-disable-line max-len */
+
+'use client';
+
 import * as React from 'react';
 
 import { cn } from '@/libs/utils';

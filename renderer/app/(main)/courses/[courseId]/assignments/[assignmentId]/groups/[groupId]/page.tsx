@@ -9,7 +9,7 @@ import http from '@/libs/http';
 import { IGroup } from '@/types/group';
 import { BackButton } from '@/components/common/BackButton';
 
-const GroupDetailPage = async ({ params }: { params: { courseId: string; groupId: string } }) => {
+const GroupDetailPage = async ({ params }: { params: any }) => {
   const {
     payload: { data: group },
   } = await http.get<IGroup>(`${API_URL.GROUPS}/${params.groupId}`);
