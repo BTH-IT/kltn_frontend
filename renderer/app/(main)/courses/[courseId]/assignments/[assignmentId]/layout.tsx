@@ -6,7 +6,7 @@ import { GroupContextProvider } from '@/contexts/GroupContext';
 import http from '@/libs/http';
 import { IAssignment } from '@/types';
 
-export async function generateMetadata({ params }: { params: { courseId: string; assignmentId: string } }) {
+export async function generateMetadata({ params }: { params: any }) {
   const {
     payload: { data },
   } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`);
@@ -17,13 +17,7 @@ export async function generateMetadata({ params }: { params: { courseId: string;
   };
 }
 
-const Layout = async ({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { courseId: string; assignmentId: string };
-}) => {
+const Layout = async ({ children, params }: { children: React.ReactNode; params: any }) => {
   const {
     payload: { data: assignement },
   } = await http.get<IAssignment>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}`);

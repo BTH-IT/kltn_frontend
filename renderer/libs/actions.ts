@@ -54,7 +54,7 @@ const request = async <Response>(
     body = JSON.stringify(options.body);
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const baseHeaders: { [key: string]: string } =
     body instanceof FormData
@@ -115,7 +115,7 @@ const request = async <Response>(
       if (refreshData) {
         baseHeaders.Authorization = `Bearer ${refreshData.token}`;
 
-        cookies().set(KEY_LOCALSTORAGE.ACCESS_TOKEN, refreshData.token, {
+        (await cookies()).set(KEY_LOCALSTORAGE.ACCESS_TOKEN, refreshData.token, {
           httpOnly: true,
           secure: true,
           sameSite: 'lax',
@@ -144,16 +144,16 @@ const request = async <Response>(
   return data;
 };
 
-export const getUserFromCookie = () => {
-  const cookieStore = cookies();
+export const getUserFromCookie = async () => {
+  const cookieStore = await cookies();
   const userCookie = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_USER)?.value;
   const user = userCookie ? JSON.parse(decodeURIComponent(userCookie)) : null;
 
   return user;
 };
 
-export const getRoleFromCookie = () => {
-  const cookieStore = cookies();
+export const getRoleFromCookie = async () => {
+  const cookieStore = await cookies();
   const role = cookieStore.get(KEY_LOCALSTORAGE.CURRENT_ROLE)?.value;
 
   return role;

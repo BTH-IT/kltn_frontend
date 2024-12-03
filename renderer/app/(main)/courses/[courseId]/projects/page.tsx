@@ -15,7 +15,7 @@ import StudentGroup from '@/components/common/StudentGroup';
 import { BackButtonV3 } from '@/components/common/BackButtonV3';
 import { getUserFromCookie } from '@/libs/actions';
 
-const ProjectsPage = async ({ params }: { params: { courseId: string } }) => {
+const ProjectsPage = async ({ params }: { params: any }) => {
   const {
     payload: { data: course },
   } = await http.get<ICourse>(`${API_URL.COURSES}/${params.courseId}`);

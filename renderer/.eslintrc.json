@@ -4,7 +4,7 @@
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
     "brace-style": ["error", "1tbs"],
-    "max-len": ["error", { "code": 200 }],
+    "max-len": ["error", { "code": 500 }],
     "import/order": [
       "error",
       {

@@ -46,7 +46,7 @@ export default function Page() {
         router.replace('/');
       }
     }
-  }, []);
+  }, [router]);
 
   const params = useSearchParams();
 

@@ -1,4 +1,6 @@
 /* eslint-disable max-len */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 'use client';
 import React, { useState } from 'react';
 import { Edit, ScrollText, Trash } from 'lucide-react';

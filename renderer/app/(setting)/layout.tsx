@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
-  const user = getUserFromCookie();
+  const user = await getUserFromCookie();
 
   return (
     <CoursesProvider user={user}>

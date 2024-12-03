@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const TooltipBottom = ({ children, content }: { children: React.ReactNode; content: string }) => {

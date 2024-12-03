@@ -27,7 +27,14 @@
     ],
     "types": ["node"]
   },
-
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "types/**/*.ts", "../app/types/**/*.ts"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "../app/types/**/*.ts",
+    ".next/types/**/*.ts",
+    "next-env.d.ts",
+    "types/**/*.ts",
+    "./out/types/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }

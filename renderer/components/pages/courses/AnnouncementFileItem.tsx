@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import FileType from 'file-type/browser';
 import { Clapperboard, CloudUpload, Paperclip } from 'lucide-react';
 
 import { logError } from '@/libs/utils'; // Utility function for logging errors
@@ -16,8 +15,7 @@ const AnnouncementFileItem = ({ f }: { f: File | { url: string; name: string; ty
       if (f instanceof File) {
         try {
           if (f.size < 10000000) {
-            const res = await FileType.fromBlob(f);
-            setFileType(f.type || res?.mime || 'unknown');
+            setFileType(f.type || 'unknown');
           } else {
             setFileType('large');
           }

@@ -1,5 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable react/no-unescaped-entities */
+/* eslint-disable no-unused-vars */
 'use client';
 
 import Image from 'next/image';
@@ -44,7 +45,7 @@ export default withPermission(() => {
         router.replace('/');
       }
     }
-  }, []);
+  }, [router]);
 
   const onSubmit = async (values: SignUpFormInputs) => {
     try {

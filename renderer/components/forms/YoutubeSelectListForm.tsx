@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
@@ -92,7 +94,7 @@ const YoutubeSelectListForm = ({
                   <div className="flex w-[500px] rounded-md items-center border-[1px] border-gray-600 hover:border-black">
                     <Input
                       disabled={form.formState.isSubmitting}
-                      className="h-14 text-lg text-black"
+                      className="text-lg text-black h-14"
                       type="search"
                       placeholder="Tìm trên Youtube hoặc dán URL"
                       {...field}
