@@ -6,9 +6,9 @@
   "author": "Bien Thanh Hung",
   "main": "app/background.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "set PORT=8888 && next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "set PORT=8888 && next start",
     "postinstall": "electron-builder install-app-deps",
     "lint": "next lint",
     "lint:css": "stylelint **/*.{scss,css}",
