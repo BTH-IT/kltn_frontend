@@ -34,9 +34,7 @@ const YoutubeSearchForm = ({
   setSelectedVideo,
 }: YoutubeSearchFormProps) => {
   const FormSchema = z.object({
-    query: z.string().min(1, {
-      message: 'Vui lòng nhập từ khóa tìm kiếm',
-    }),
+    query: z.string(),
   });
 
   const form = useForm({

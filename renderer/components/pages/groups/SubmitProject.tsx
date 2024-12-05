@@ -43,7 +43,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 export default function SubmitProject({ group, data }: { group: IGroup; data: IAssignment }) {
   const { setItems } = useContext(BreadcrumbContext);
 
-  const [assignment, setAssignment] = useState<IAssignment[]>([data]);
+  const [assignment, setAssignment] = useState<IAssignment>(data);
 
   useEffect(() => {
     if (!group.course) return;
@@ -90,14 +90,14 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
 
   useEffect(() => {
     if (assignment) {
-      setComments(assignment[0].comments);
+      setComments(assignment.comments);
 
       const isSubmissionDeletable = () => {
-        if (!currentUser || !assignment[0].submission) return false;
+        if (!currentUser || !assignment.submission) return false;
 
-        const isCreator = assignment[0].submission.createUser.id === currentUser.id;
+        const isCreator = assignment.submission.createUser.id === currentUser.id;
         const isLecturer = currentUser.id === group.course.lecturerId;
-        const isOverdue = assignment[0].dueDate ? new Date(assignment[0].dueDate) < new Date() : false;
+        const isOverdue = assignment.dueDate ? new Date(assignment.dueDate) < new Date() : false;
         return isLecturer || (isCreator && !isOverdue);
       };
 
@@ -113,7 +113,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
     try {
       const res = await commentService.createComment({
         content: data.content,
-        commentableId: assignment[0].assignmentId,
+        commentableId: assignment.assignmentId,
       });
 
       reset();
@@ -128,7 +128,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
   const handleRemoveComment = async (id: string) => {
     if (!assignment) return;
     try {
-      await commentService.deleteComment(assignment[0].assignmentId, id);
+      await commentService.deleteComment(assignment.assignmentId, id);
 
       setComments(comments.filter((c) => c.commentId !== id));
     } catch (error) {
@@ -139,7 +139,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
   const handleUpdateComment = async (id: string, data: any) => {
     if (!assignment) return;
     try {
-      const res = await commentService.updateComment(assignment[0].assignmentId, id, data);
+      const res = await commentService.updateComment(assignment.assignmentId, id, data);
 
       const updatedComments = comments.map((a) => (a.commentId === res.data.commentId ? { ...a, ...res.data } : a));
 
@@ -154,8 +154,8 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
 
     try {
       const res = await submissionService.deleteSubmission(
-        assignment[0].assignmentId,
-        assignment[0].submission?.submissionId ?? '',
+        assignment.assignmentId,
+        assignment.submission?.submissionId ?? '',
       );
 
       if (res) {
@@ -173,10 +173,10 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
   const categorizeStatus = (submission: ISubmission | null) => {
     const now = new Date();
 
-    const dueDate = new Date(assignment[0]?.dueDate || '');
+    const dueDate = new Date(assignment?.dueDate || '');
 
     if (!submission) {
-      if (assignment[0]?.dueDate === null) return 'Đã giao';
+      if (assignment?.dueDate === null) return 'Đã giao';
 
       if (now <= dueDate) return 'Chưa nộp bài';
 
@@ -191,7 +191,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
       <div className="grid grid-cols-12 gap-8">
         <Card
           className={`col-span-9 border-none shadow-lg ${
-            currentUser?.id === assignment[0]?.createUser?.id && 'col-span-12'
+            currentUser?.id === assignment?.createUser?.id && 'col-span-12'
           }`}
         >
           <CardHeader className="rounded-t-lg bg-primary/10">
@@ -201,10 +201,10 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
                   <FileText className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold text-primary">{assignment[0]?.title}</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-primary">{assignment?.title}</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    {assignment[0]?.createUser?.fullName || 'Anonymous'} • {moment(assignment[0]?.createdAt).fromNow()}{' '}
-                    {assignment[0]?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment[0]?.updatedAt).fromNow()})` : ''}
+                    {assignment?.createUser?.fullName || 'Anonymous'} • {moment(assignment?.createdAt).fromNow()}{' '}
+                    {assignment?.updatedAt ? `(Đã chỉnh sửa lúc ${moment(assignment?.updatedAt).fromNow()})` : ''}
                   </p>
                   <p className="text-sm text-muted-foreground">Bài tập cho cột điểm: Cuối kỳ - 50%</p>
                 </div>
@@ -213,7 +213,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
               <div>
                 <TooltipProvider>
                   <Link
-                    href={`${API_URL.COURSES}/${assignment[0]?.courseId}${API_URL.ASSIGNMENTS}/${assignment[0]?.assignmentId}/submits`}
+                    href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
                   >
                     <Button variant="ghost" size="icon" className="rounded-full">
                       <Tooltip>
@@ -227,7 +227,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
                 </TooltipProvider>
 
                 <Button variant="ghost" size="icon" className="rounded-full">
-                  {assignment[0]?.createUser?.id === currentUser?.id ? (
+                  {assignment?.createUser?.id === currentUser?.id ? (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild className="cursor-pointer">
                         <EllipsisVertical className="w-6 h-6 mr-2" />
@@ -255,14 +255,11 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
           <CardContent className="flex flex-col gap-3 pt-6">
             <div
               dangerouslySetInnerHTML={{
-                __html: assignment[0]?.content || '',
+                __html: assignment?.content || '',
               }}
               className="pb-4 border-b markdown ql-editor"
             />
-            <AnnouncementAttachList
-              links={assignment[0]?.attachedLinks || []}
-              files={assignment[0]?.attachments || []}
-            />
+            <AnnouncementAttachList links={assignment?.attachedLinks || []} files={assignment?.attachments || []} />
             <CommentList
               comments={comments}
               handleRemoveComment={handleRemoveComment}
@@ -304,15 +301,15 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
             </form>
           </CardFooter>
         </Card>
-        <div className={`col-span-3 ${currentUser?.id === assignment[0]?.createUser?.id && 'col-span-12'}`}>
-          {currentUser?.id !== assignment[0]?.createUser?.id && (
+        <div className={`col-span-3 ${currentUser?.id === assignment?.createUser?.id && 'col-span-12'}`}>
+          {currentUser?.id !== assignment?.createUser?.id && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>
-                <span className="text-sm text-green-600">{categorizeStatus(assignment[0]?.submission || null)}</span>
+                <span className="text-sm text-green-600">{categorizeStatus(assignment?.submission || null)}</span>
               </CardHeader>
               <CardContent className="space-y-4">
-                {assignment[0]?.submission ? (
+                {assignment?.submission ? (
                   <>
                     <Button
                       onClick={() => setIsViewSubmissionModalOpen(true)}
@@ -332,7 +329,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
                   </>
                 ) : (
                   <Button variant="outline" className="justify-start w-full" onClick={() => setIsSubmit(true)}>
-                    {categorizeStatus(assignment[0]?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
+                    {categorizeStatus(assignment?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
                   </Button>
                 )}
               </CardContent>
@@ -342,24 +339,19 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
       </div>
       {assignment && (
         <>
-          <EditAssignmentHmWorkModal
-            onOpenModal={isEdit}
-            setOnOpenModal={setIsEdit}
-            assignment={assignment[0]}
-            setAssignments={setAssignment}
-            isFinal
-          />
+          <EditAssignmentHmWorkModal onOpenModal={isEdit} setOnOpenModal={setIsEdit} assignment={assignment} isFinal />
           <SubmitAssignmentModal
             onOpenModal={isSubmit}
             setOnOpenModal={setIsSubmit}
             course={group.course}
-            assignment={assignment[0]}
+            assignment={assignment}
+            setAssignment={setAssignment}
           />
           <ViewSubmissionModal
             onOpenModal={isViewSubmissionModalOpen}
             setOnOpenModal={setIsViewSubmissionModalOpen}
             course={group.course}
-            assignment={assignment[0]}
+            assignment={assignment}
             user={currentUser}
           />
         </>

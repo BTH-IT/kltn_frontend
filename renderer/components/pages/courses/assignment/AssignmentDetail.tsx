@@ -43,7 +43,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 });
 
 export default function AssignmentDetail() {
-  const { assignment } = useContext(AssignmentContext);
+  const { assignment, setAssignment } = useContext(AssignmentContext);
   const { setItems } = useContext(BreadcrumbContext);
 
   useEffect(() => {
@@ -173,6 +173,7 @@ export default function AssignmentDetail() {
 
       if (res) {
         toast.success('Đã xóa bài tập thành công');
+        setAssignment({ ...assignment, submission: null });
         router.refresh();
       }
     } catch (error) {
@@ -397,6 +398,7 @@ export default function AssignmentDetail() {
               setOnOpenModal={setIsSubmit}
               course={assignment.course}
               assignment={assignment}
+              setAssignment={setAssignment}
             />
             <ViewSubmissionModal
               onOpenModal={isViewSubmissionModalOpen}

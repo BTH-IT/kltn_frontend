@@ -4,7 +4,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NotebookText, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
@@ -34,11 +34,13 @@ const SubmitAssignmentModal = ({
   onOpenModal,
   setOnOpenModal,
   assignment,
+  setAssignment,
 }: {
   course: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   assignment: IAssignment;
+  setAssignment: any;
 }) => {
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
@@ -89,11 +91,12 @@ const SubmitAssignmentModal = ({
     if (!course) return;
 
     try {
-      const data = await submitForm(values);
+      const res = await submitForm(values);
 
-      if (!data) return;
+      if (!res) return;
 
       toast.success('Đã nộp bài tập thành công');
+      setAssignment({ ...assignment, submission: res.data });
 
       setOnOpenModal(false);
 

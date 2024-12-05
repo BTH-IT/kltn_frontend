@@ -20,6 +20,10 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta property="og:title" content="Courseroom Application" />
         <meta property="og:description" content="Based on Google Classroom" />
+        <meta property="og:image" content="/images/shared-image.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
       </head>
       <body className="overflow-y-hidden">
         <NextTopLoader />

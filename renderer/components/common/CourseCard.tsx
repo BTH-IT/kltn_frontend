@@ -1,14 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Folder, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 import { ICourse } from '@/types';
 
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader } from '../ui/card';
 
 const CourseCard = ({ item }: { item: ICourse }) => {
   return (
@@ -39,16 +37,8 @@ const CourseCard = ({ item }: { item: ICourse }) => {
         </CardHeader>
 
         <CardContent>
-          <div className="h-24"></div>
+          <div className="h-20"></div>
         </CardContent>
-        <CardFooter className="flex gap-6 items-center justify-end border-t-[1px] px-4 pt-[13px]">
-          <Button variant="ghost" className="px-0">
-            <TrendingUp />
-          </Button>
-          <Button variant="ghost" className="px-0">
-            <Folder />
-          </Button>
-        </CardFooter>
       </Card>
     </Link>
   );
