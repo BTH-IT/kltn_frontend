@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import YoutubeCard, { YoutubeCardProps } from '@/components/common/YoutubeCard';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { isValidYoutubeUrl } from '@/utils';
-import { getYoutubeDatabySearch } from '@/actions/youtubeAction';
+import { getYoutubeDataById, getYoutubeDatabySearch } from '@/actions/youtubeAction';
 
 interface YoutubeSelectListFormProps {
   setIsQueryUrl: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,9 +23,7 @@ interface YoutubeSelectListFormProps {
 }
 
 const FormSchema = z.object({
-  query: z.string().min(1, {
-    message: 'Vui lòng nhập từ khóa tìm kiếm',
-  }),
+  query: z.string(),
 });
 
 const YoutubeSelectListForm = ({
@@ -56,10 +54,12 @@ const YoutubeSelectListForm = ({
   };
 
   const handleFormSubmit = async (query: string) => {
+    setLoading(true);
     try {
       const link = new URL(query);
       if (isValidYoutubeUrl(link.href)) {
         setIsQueryUrl(true);
+        await selectUrl(query);
       } else {
         const data = await searchYoutubeData(query);
         setData(data);
@@ -67,7 +67,14 @@ const YoutubeSelectListForm = ({
     } catch (_) {
       const data = await searchYoutubeData(query);
       setData(data);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const selectUrl = async (query: string) => {
+    const data = await getYoutubeDataById(query.split('v=')[1]);
+    setSelectedVideo(data);
   };
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {

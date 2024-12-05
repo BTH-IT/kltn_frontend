@@ -44,7 +44,7 @@ const RequestList = ({ group }: { group: IGroup }) => {
       const res = await groupService.aceptRequest(requestId);
       if (res) {
         toast.success('Đã chấp nhận yêu cầu');
-        router.refresh();
+        window.location.reload();
       }
     } catch (error) {
       if (error instanceof AxiosError) {

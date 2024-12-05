@@ -32,13 +32,11 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 const AnnouncementItem = ({
   course,
   announcement,
-  handlePin,
   handleRemove,
   setAnnouncements,
 }: {
   course: ICourse | null;
   announcement: IAnnouncement;
-  handlePin: (announcement: IAnnouncement) => void;
   handleRemove: (id: string) => void;
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
@@ -108,23 +106,19 @@ const AnnouncementItem = ({
           mentions={announcement.mentions || []}
           students={course?.students}
           dropdownMenu={
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="cursor-pointer">
-                <EllipsisVertical />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-auto" align="end">
-                <DropdownMenuGroup>
-                  {announcement.userId === currentUser?.id && (
-                    <>
-                      <DropdownMenuItem onClick={() => handlePin(announcement)}>Chuyển lên đầu</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>Chỉnh sửa</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)}>Xóa</DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuItem>Sao chép liên kết</DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            announcement.userId === currentUser?.id && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild className="cursor-pointer">
+                  <EllipsisVertical />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-auto" align="end">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => setIsEditModalOpen(true)}>Chỉnh sửa</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setIsDeleteModalOpen(true)}>Xóa</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )
           }
         />
         <div className="markdown ql-editor" dangerouslySetInnerHTML={{ __html: announcement.content }} />

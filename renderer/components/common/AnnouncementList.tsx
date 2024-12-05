@@ -16,21 +16,6 @@ const AnnouncementList = ({
   announcements: IAnnouncement[];
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
-  const handlePin = async (announcement: IAnnouncement) => {
-    try {
-      const res = await announcementService.updateAnnouncement(announcement.courseId, announcement.announcementId, {
-        ...announcement,
-        isPinned: true,
-      });
-
-      const newAnnouncements = announcements.filter((a) => a.announcementId !== res.data.announcementId);
-
-      setAnnouncements([res.data, ...newAnnouncements]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleRemove = async (id: string) => {
     try {
       await announcementService.deleteAnnouncement(course?.courseId ?? '', id);
@@ -50,7 +35,6 @@ const AnnouncementList = ({
           key={idx}
           course={course}
           announcement={announcement}
-          handlePin={handlePin}
           handleRemove={handleRemove}
           setAnnouncements={setAnnouncements}
         />

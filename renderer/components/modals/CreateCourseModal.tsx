@@ -1,3 +1,5 @@
+/* eslint-disable no-extra-boolean-cast */
+/* eslint-disable no-unused-vars */
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
@@ -8,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { Select } from 'react-select-virtualized';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
+import { Plus } from 'lucide-react';
 
 import { KEY_LOCALSTORAGE } from '@/utils';
 import '@/styles/components/modals/create-class-modal.scss';
@@ -20,12 +23,16 @@ import { cn } from '@/libs/utils';
 import courseService from '@/services/courseService';
 import { API_URL } from '@/constants/endpoints';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
-import { ApiResponse, IUser } from '@/types';
+import { ApiResponse, ISubject, IUser } from '@/types';
+
+import CreateSubjectModal from './CreateSubjectModal';
 
 const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
   const [openModal, setOpenModal] = useState(false);
   const { subjects } = useContext(CreateSubjectContext);
   const [user, setUser] = useState<IUser | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [subjectCreated, setSubjectCreated] = useState<ISubject | null>(null);
 
   const router = useRouter();
 
@@ -46,18 +53,9 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
     name: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
     }),
-    subjectId: z
-      .object({
-        label: z.string().min(1, {
-          message: 'Mã học phần là trường bắt buộc.',
-        }),
-        value: z.string().min(1, {
-          message: 'Mã học phần là trường bắt buộc.',
-        }),
-      })
-      .refine((data) => data !== undefined, {
-        message: 'Mã học phần không được để trống.',
-      }),
+    subjectId: z.object({ label: z.string(), value: z.string() }).refine((data) => data && data.label && data.value, {
+      message: 'Mã học phần là bắt buộc',
+    }),
     courseGroup: z
       .string()
       .min(1, { message: 'Nhóm môn học là trường bắt buộc.' })
@@ -108,129 +106,137 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[525px]">
-        <DialogHeader>
-          <DialogTitle className="mx-auto text-xl">
-            {form.formState.isSubmitting ? 'Đang tạo lớp học ...' : 'Tạo lớp học mới'}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid gap-4 py-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase">Tên lớp học</FormLabel>
-                    <FormControl>
-                      <>
-                        <Input
-                          disabled={form.formState.isSubmitting}
-                          className={cn(
-                            'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
-                            form.formState.isSubmitting && 'hidden',
-                          )}
-                          id="className"
-                          placeholder="Nhập tên lớp học ..."
-                          {...field}
-                        />
-                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
-                      </>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="subjectId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase">Học phần</FormLabel>
-                    <FormControl>
-                      <>
-                        <Select
-                          {...field}
-                          className={cn(form.formState.isSubmitting && 'hidden')}
-                          options={subjects?.map((s) => {
-                            return {
-                              label: `${s.name}`,
-                              value: s.subjectId,
-                            };
-                          })}
-                        />
+    <>
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle className="mx-auto text-xl">
+              {form.formState.isSubmitting ? 'Đang tạo lớp học ...' : 'Tạo lớp học mới'}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid gap-4 py-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Tên lớp học</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            disabled={form.formState.isSubmitting}
+                            className={cn(
+                              'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                              form.formState.isSubmitting && 'hidden',
+                            )}
+                            id="className"
+                            placeholder="Nhập tên lớp học ..."
+                            {...field}
+                          />
+                          <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="subjectId"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel className="text-xs font-bold uppercase">Học phần</FormLabel>
+                      <div className="flex items-center gap-1">
+                        <FormControl className="flex-1 w-full">
+                          <div className="w-full">
+                            <Select
+                              {...field}
+                              className={cn(form.formState.isSubmitting && 'hidden')}
+                              options={subjects?.map((s) => {
+                                return {
+                                  label: `${s.name}`,
+                                  value: s.subjectId,
+                                };
+                              })}
+                            />
 
-                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
-                      </>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="courseGroup"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase">Nhóm môn học</FormLabel>
-                    <FormControl>
-                      <>
-                        <Input
-                          disabled={form.formState.isSubmitting}
-                          className={cn(
-                            'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
-                            form.formState.isSubmitting && 'hidden',
-                          )}
-                          placeholder="Nhập nhóm môn học ..."
-                          {...field}
-                        />
-                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
-                      </>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="semester"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase">Niên khóa</FormLabel>
-                    <FormControl>
-                      <>
-                        <Input
-                          disabled={form.formState.isSubmitting}
-                          className={cn(
-                            'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
-                            form.formState.isSubmitting && 'hidden',
-                          )}
-                          placeholder="Nhập niên khóa ..."
-                          {...field}
-                        />
-                        <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
-                      </>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DialogFooter className="!justify-between">
-              <Button disabled={form.formState.isSubmitting} variant="primary" type="submit">
-                {form.formState.isSubmitting && (
-                  <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
-                )}
-                Tạo lớp học
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+                            <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
+                          </div>
+                        </FormControl>
+                        <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)} type="button">
+                          <Plus className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="courseGroup"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Nhóm môn học</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            disabled={form.formState.isSubmitting}
+                            className={cn(
+                              'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                              form.formState.isSubmitting && 'hidden',
+                            )}
+                            placeholder="Nhập nhóm môn học ..."
+                            {...field}
+                          />
+                          <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="semester"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">Niên khóa</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            disabled={form.formState.isSubmitting}
+                            className={cn(
+                              'focus-visible:ring-0 text-black focus-visible:ring-offset-0',
+                              form.formState.isSubmitting && 'hidden',
+                            )}
+                            placeholder="Nhập niên khóa ..."
+                            {...field}
+                          />
+                          <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <DialogFooter className="!justify-between">
+                <Button disabled={form.formState.isSubmitting} variant="primary" type="submit">
+                  {form.formState.isSubmitting && (
+                    <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
+                  )}
+                  Tạo lớp học
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      <CreateSubjectModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} setSubjectCreated={setSubjectCreated} />
+    </>
   );
 };
 

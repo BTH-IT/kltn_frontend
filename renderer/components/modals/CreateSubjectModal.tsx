@@ -27,7 +27,6 @@ const CreateSubjectModal = ({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setSubjectCreated: React.Dispatch<React.SetStateAction<ISubject | null>>;
 }) => {
-  const [submitError, setSubmitError] = useState(false);
   const { subjects, setSubjects } = useContext(CreateSubjectContext);
 
   const FormSchema = z.object({
@@ -73,7 +72,6 @@ const CreateSubjectModal = ({
     } catch (error) {
       const axiousError = error as AxiosError;
       toast.error((axiousError.response?.data as ApiResponse<string>).message as string);
-      setSubmitError(true);
     }
   };
   const onClose = () => {
@@ -82,7 +80,7 @@ const CreateSubjectModal = ({
   };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="sm:max-w-[450px]" classOverlay="!z-50">
         <DialogHeader>
           <DialogTitle className="mx-auto">
             {form.formState.isSubmitting ? 'Đang xử lý ...' : 'Tạo học phần mới'}
