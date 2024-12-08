@@ -6,9 +6,11 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 import CommonModal from '@/components/modals/CommonModal';
 import EditAnnoucementModal from '@/components/modals/EditAnnoucementModal';
+import { logError } from '@/libs/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,6 +61,13 @@ const AnnouncementItem = ({
   const onSubmit = async (data: any) => {
     if (!currentUser?.id) return;
 
+    const trimmedContent = data.content?.replace(/<\/?[^>]+(>|$)/g, '').trim();
+
+    if (!trimmedContent) {
+      toast.error('Nội dung không được để trống hoặc chỉ chứa khoảng trắng!');
+      return;
+    }
+
     try {
       const res = await commentService.createComment({
         content: data.content,
@@ -70,7 +79,7 @@ const AnnouncementItem = ({
 
       setComments((prev) => [res.data, ...prev]);
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 

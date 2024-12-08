@@ -29,10 +29,13 @@ import { IUser } from '@/types';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
 
 import JoinClassModal from '../modals/JoinClassModal';
+import ShowGuideButton from '../common/ShowGuideButton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 const NavigationHeader = () => {
   const { setSidebar, isShow } = useContext(SidebarContext);
   const { items, setItems } = useContext(BreadcrumbContext);
+  const [isMounted, setIsMounted] = useState(false);
 
   const pathname = usePathname() ?? '';
   const path = pathname?.slice(1, pathname.length - 1);
@@ -43,8 +46,6 @@ const NavigationHeader = () => {
   const handleMenuClick = () => {
     setSidebar(!isShow);
   };
-
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     path === '' && setItems([{ label: 'Lớp học' }]);
@@ -71,7 +72,7 @@ const NavigationHeader = () => {
   return (
     isMounted && (
       <div className="w-full h-[4.5rem] bg-white border-gray-300 border-b-[0.5px] flex items-center justify-between px-4 fixed z-10">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center home-step-1">
           <button className="p-3 rounded-full hover:bg-gray-100" onClick={handleMenuClick}>
             <Menu />
           </button>
@@ -99,17 +100,31 @@ const NavigationHeader = () => {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="flex items-center">
-          <CreateCourseModal>
-            <button className={cn('mr-4 p-3 rounded-full hover:bg-gray-100', path === '' ? '' : 'hidden')}>
-              <Plus />
-            </button>
-          </CreateCourseModal>
-          <JoinClassModal>
-            <button className={cn('mr-4 p-3 rounded-full hover:bg-gray-100', path === '' ? '' : 'hidden')}>
-              <DoorOpen />
-            </button>
-          </JoinClassModal>
+        <div className="flex items-center home-step-2">
+          <ShowGuideButton />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <CreateCourseModal>
+                  <button className={cn('mr-1 p-3 rounded-full hover:bg-gray-100', path === '' ? '' : 'hidden')}>
+                    <Plus />
+                  </button>
+                </CreateCourseModal>
+              </TooltipTrigger>
+              <TooltipContent>Thêm lớp mới</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <JoinClassModal>
+                  <button className={cn('mr-1 p-3 rounded-full hover:bg-gray-100', path === '' ? '' : 'hidden')}>
+                    <DoorOpen />
+                  </button>
+                </JoinClassModal>
+              </TooltipTrigger>
+              <TooltipContent>Tham gia lớp học qua mã mời</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Avatar>

@@ -220,3 +220,7 @@ body {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
+
+div[data-tour-elem='controls'] {
+  justify-content: flex-end !important;
+}

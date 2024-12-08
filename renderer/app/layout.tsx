@@ -6,6 +6,8 @@ import { ToastContainer } from 'react-toastify';
 import '@/styles/globals.scss';
 import 'react-quill/dist/quill.snow.css';
 import 'react-toastify/dist/ReactToastify.min.css';
+import { GuideProvider } from '@/contexts/GuideContext';
+import Guide from '@/components/guides/Guide';
 
 export const metadata: Metadata = {
   title: 'Courseroom Application',
@@ -25,10 +27,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
       </head>
-      <body className="overflow-y-hidden">
-        <NextTopLoader />
-        {children}
-        <ToastContainer />
+      <body className="overflow-y-hidden main-step">
+        <GuideProvider isShow={false} steps={[]}>
+          <NextTopLoader />
+          {children}
+          <ToastContainer />
+          <Guide />
+        </GuideProvider>
       </body>
     </html>
   );

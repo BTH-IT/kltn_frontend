@@ -80,7 +80,7 @@ const CourseHeader = ({ data }: { data: ICourse }) => {
 
   return (
     <>
-      <div className="sticky top-0 right-0 bg-white z-10 border-t-[1px] flex items-center justify-between px-6 border-b w-full">
+      <div className="sticky top-0 right-0 bg-white z-10 border-t-[1px] flex items-center justify-between px-6 border-b w-full course-step-4">
         {/* Dropdown Menu for Mobile */}
         <div className="lg:hidden">
           <DropdownMenu>

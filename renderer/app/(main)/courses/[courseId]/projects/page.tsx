@@ -48,7 +48,7 @@ const ProjectsPage = async ({ params }: { params: any }) => {
   const group = groups.find((group) => group?.groupMembers?.some((member) => member.studentId === user.id));
 
   return (
-    <div className="flex-1 p-4 pt-6 space-y-4 md:p-8">
+    <div className="flex-1 p-4 pt-6 space-y-4 md:p-8 projects-step-1">
       <CreateProjectProvider projects={projects}>
         <GroupContextProvider groups={groups}>
           {user.id === course.lecturerId ? (

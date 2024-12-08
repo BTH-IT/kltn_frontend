@@ -146,7 +146,7 @@ const SettingProfile = () => {
               <div className="flex items-center gap-8">
                 <Avatar className="w-24 h-24">
                   <AvatarImage
-                    src={avatar ? URL.createObjectURL(avatar) : user.avatar ?? '/images/avt.png'}
+                    src={avatar ? URL.createObjectURL(avatar) : (user.avatar ?? '/images/avt.png')}
                     alt="Avatar"
                   />
                   <AvatarFallback>User</AvatarFallback>

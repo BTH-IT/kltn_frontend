@@ -28,7 +28,7 @@ const HomePage = async () => {
   }
 
   return (
-    <>
+    <div className="home-step-5">
       <Suspense fallback={<Loading />}>
         {courses?.createdCourses?.length === 0 && courses?.enrolledCourses?.length === 0 ? (
           <div className="flex pt-32">
@@ -59,7 +59,7 @@ const HomePage = async () => {
           </div>
         )}
       </Suspense>
-    </>
+    </div>
   );
 };
 
