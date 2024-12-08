@@ -1,0 +1,32 @@
+{
+  "name": "Courseroom",
+  "short_name": "Courseroom",
+  "theme_color": "#5F46F8",
+  "background_color": "#333333",
+  "start_url": "/",
+  "id": "Courseroom",
+  "display": "standalone",
+  "description": "Courseroom PWA helps you find the latest movies with an easy search by genre, year, and more. It works smoothly on any device, even offline, giving you a great movie browsing experience.",
+  "icons": [
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "images/logo.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "images/logo.png",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/logo.png",
+      "type": "image/png",
+      "sizes": "1080x1920",
+      "form_factor": "narrow"
+    }
+  ]
+}
