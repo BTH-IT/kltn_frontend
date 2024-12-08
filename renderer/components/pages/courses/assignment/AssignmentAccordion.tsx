@@ -37,7 +37,6 @@ const AssignmentAccordion = ({
   isTeacher: boolean;
 }) => {
   const [icon, setIcon] = useState<React.ReactNode>(null);
-  const [showButton, setShowButton] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -79,7 +78,6 @@ const AssignmentAccordion = ({
 
   const handleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
-    setShowButton(!isDropdownOpen);
   };
 
   return (
@@ -93,8 +91,6 @@ const AssignmentAccordion = ({
             className={cn(
               'flex items-center justify-between w-full rounded-t-xl pl-5 pr-16 h-16 border-b-[0.5px] hover:border-0 hover:bg-gray-100',
             )}
-            onMouseEnter={() => !isDropdownOpen && setShowButton(true)}
-            onMouseLeave={() => !isDropdownOpen && setShowButton(false)}
           >
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-500 rounded-full">{icon}</div>
@@ -115,10 +111,10 @@ const AssignmentAccordion = ({
                   <Link
                     href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
                   >
-                    <Button variant="ghost" size="icon" className="rounded-full">
+                    <Button variant="ghost" size="icon" className="flex items-center justify-center rounded-full">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <GraduationCap className="w-6 h-6 mr-2" />
+                          <GraduationCap className="w-6 h-6" />
                         </TooltipTrigger>
                         <TooltipContent>Xem và chấm bài</TooltipContent>
                       </Tooltip>
@@ -128,14 +124,12 @@ const AssignmentAccordion = ({
               )}
             </div>
             {!assignment.course?.saveAt && (
-              <div
-                className={cn('button-container absolute top-0 translate-y-[18%] right-2', !showButton && 'opacity-0')}
-              >
+              <div className={cn('button-container absolute top-0 translate-y-[18%] right-2')}>
                 <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdown}>
                   <DropdownMenuTrigger asChild className="cursor-pointer">
                     <Button
                       variant="primaryGhost"
-                      className="h-12 p-3 text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200"
+                      className="h-12 p-3 text-gray-600 bg-transparent rounded-full hover:bg-gray-200"
                       onClick={(event) => event.stopPropagation()}
                     >
                       <EllipsisVertical />

@@ -15,7 +15,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <SettingHeader />
-      <div className="w-full mx-auto">{children}</div>
+      <div className="w-full mx-auto setting-step-5">{children}</div>
     </>
   );
 };

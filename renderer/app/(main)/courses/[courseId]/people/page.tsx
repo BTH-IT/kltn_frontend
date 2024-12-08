@@ -25,10 +25,10 @@ const PeoplePage = () => {
   if (!course) return <></>;
 
   return (
-    <>
+    <div className="people-step-1">
       {course.lecturer && <People isTeacher data={[course.lecturer]} course={course} />}
       <People isTeacher={false} data={course.students} course={course} />
-    </>
+    </div>
   );
 };
 

@@ -28,7 +28,7 @@ const GroupDetailPage = async ({ params }: { params: any }) => {
   }
 
   return (
-    <div className="mt-4 space-y-6">
+    <div className="mt-4 space-y-6 groups-step-1">
       <Card className="text-white bg-gradient-to-r from-blue-500 to-purple-600">
         <CardHeader>
           <CardTitle className="flex items-center justify-between text-3xl font-bold">

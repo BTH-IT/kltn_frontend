@@ -26,7 +26,7 @@ const InviteCodePage = async ({ params }: { params: any }) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full p-10">
+    <div className="flex flex-col items-center justify-center w-full h-full p-10 invite-step-1">
       <div className="max-w-[800px] m-auto rounded-lg border text-primaryGray">
         <div className="flex flex-col justify-center items-center gap-4 py-8 px-3 bg-[#F1F3F4]">
           <Image

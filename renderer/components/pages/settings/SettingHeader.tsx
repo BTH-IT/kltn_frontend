@@ -10,7 +10,7 @@ const SettingHeader = () => {
 
   return (
     <>
-      <div className="sticky top-0 right-0 bg-white z-10 border-t-[1px] flex gap-3 justify-between items-center px-6 border-b">
+      <div className="sticky top-0 right-0 bg-white z-10 border-t-[1px] flex gap-3 justify-between items-center px-6 border-b setting-step-4">
         <div className="flex items-center">
           {settingList.map((setting, idx) => (
             <Link

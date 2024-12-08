@@ -53,7 +53,7 @@ const NavigationSidebar = () => {
         }`}
       >
         <div className="flex flex-col justify-between h-full">
-          <ul>
+          <ul className="home-step-3">
             <SidebarItem label="Màn hình chính" icon={<House size={20} />} href="/" isActive={path === ''} />
             <Separator className="my-2" />
             {!isLoading ? (

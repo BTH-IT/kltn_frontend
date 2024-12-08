@@ -98,7 +98,7 @@ const ScoreStructureTable: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 scores-step-1">
       {course.students && course.students.length > 0 ? (
         <>
           <div className="p-3" ref={contentRef}>

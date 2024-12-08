@@ -27,7 +27,7 @@ const Layout = async ({ children, params }: { children: React.ReactNode; params:
   return (
     <>
       <CourseHeader data={course} />
-      <div className="max-w-[85%] mx-auto w-full px-4 py-6">{children}</div>
+      <div className="max-w-[85%] mx-auto w-full px-4 py-6 course-step-5">{children}</div>
     </>
   );
 };

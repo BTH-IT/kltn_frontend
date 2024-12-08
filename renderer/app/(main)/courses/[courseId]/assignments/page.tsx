@@ -54,7 +54,7 @@ const AssignmentPage = () => {
   }, [course, user]);
 
   return (
-    <>
+    <div className="assignments-step-1">
       {isMounted && (
         <>
           {user?.id === course?.lecturerId && !course?.saveAt && (
@@ -95,7 +95,7 @@ const AssignmentPage = () => {
           />
         </>
       )}
-    </>
+    </div>
   );
 };
 
