@@ -14,10 +14,12 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: 22
         script: |
-          cd ~/kltn_frontend/renderer
+          cd ~/kltn_frontend
           git fetch origin
           git checkout production
           git pull
+          yarn
+          cd ~/kltn_frontend/renderer
           yarn
           yarn build
           pm2 reload nextjs-app
