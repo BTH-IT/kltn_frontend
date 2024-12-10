@@ -5,9 +5,11 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 import commentService from '@/services/commentService';
 import { IComment, IUser } from '@/types';
+import { logError } from '@/libs/utils';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -35,6 +37,13 @@ const CommentInput = ({
   const onSubmit = async (data: any) => {
     if (!currentUser?.id) return;
 
+    const trimmedContent = data.content?.replace(/<\/?[^>]+(>|$)/g, '').trim();
+
+    if (!trimmedContent) {
+      toast.error('Nội dung không được để trống hoặc chỉ chứa khoảng trắng!');
+      return;
+    }
+
     try {
       const res = await commentService.createComment({
         content: data.content,
@@ -45,8 +54,9 @@ const CommentInput = ({
       setIsFocus(false);
 
       setComments((prev) => [res.data, ...prev]);
+      toast.success('Bình luận thành công');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 

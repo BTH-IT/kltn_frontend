@@ -118,7 +118,6 @@ const stepsByPage = {
 const useGuide = () => {
   const { isShow, setGuide, setSteps } = useContext(GuideContext);
   const { steps } = usePageGuide(stepsByPage);
-  console.log(steps);
 
   const showGuide = () => {
     setSteps(steps);

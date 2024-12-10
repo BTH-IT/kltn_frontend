@@ -78,6 +78,7 @@ const AnnouncementItem = ({
       setIsFocus(false);
 
       setComments((prev) => [res.data, ...prev]);
+      toast.success('Bình luận thành công!');
     } catch (error) {
       logError(error);
     }
@@ -88,8 +89,9 @@ const AnnouncementItem = ({
       await commentService.deleteComment(announcement.announcementId, id);
 
       setComments(comments.filter((c) => c.commentableId !== id));
+      toast.success('Xóa bình luận thành công!');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 
@@ -100,8 +102,9 @@ const AnnouncementItem = ({
       const updatedComments = comments.map((a) => (a.commentId === res.data.commentId ? { ...a, ...res.data } : a));
 
       setComments(updatedComments);
+      toast.success('Sửa bình luận thành công!');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ISubject } from '@/types';
 import subjectService from '@/services/subjectService';
+import { logError } from '@/libs/utils';
 
 const CreateSubjectContext = React.createContext({
   subjects: [] as ISubject[],
@@ -20,7 +21,7 @@ const CreateSubjectProvider = ({ children }: { children: React.ReactNode }) => {
         const res = await subjectService.getSubjects();
         setData(res.data);
       } catch (error) {
-        console.log(error);
+        logError(error);
       }
     };
 

@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { SIZE_OPTIONS } from '@/types/modal-size';
+import { logError } from '@/libs/utils';
 
 const CommonModal = ({
   isOpen,
@@ -52,8 +54,9 @@ const CommonModal = ({
               try {
                 setIsLoading(true);
                 await ocClickAccept();
+                toast.success('Thành công');
               } catch (error) {
-                console.log(error);
+                logError(error);
               } finally {
                 setIsLoading(false);
               }
@@ -62,7 +65,7 @@ const CommonModal = ({
             disabled={isLoading}
           >
             {isLoading && (
-              <div className="mr-1 w-4 h-4 rounded-full border border-black border-solid animate-spin border-t-transparent"></div>
+              <div className="w-4 h-4 mr-1 border border-black border-solid rounded-full animate-spin border-t-transparent"></div>
             )}
             {acceptTitle ?? 'Chấp nhận'}
           </Button>

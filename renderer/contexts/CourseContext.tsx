@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 
 import { ICourse } from '@/types';
 import courseService from '@/services/courseService';
+import { logError } from '@/libs/utils';
 
 const CourseContext = React.createContext({
   course: {} as ICourse | null,
@@ -22,7 +23,7 @@ const CourseProvider = ({ children, course }: { children: React.ReactNode; cours
         const res = await courseService.getCourseById(params.courseId as string);
         setData(res.data);
       } catch (error) {
-        console.log(error);
+        logError(error);
       }
     }
 

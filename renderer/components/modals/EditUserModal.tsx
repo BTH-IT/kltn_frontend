@@ -2,10 +2,11 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +21,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
-import { cn } from '@/libs/utils';
+import { cn, logError } from '@/libs/utils';
 import userService from '@/services/userService';
 import { IUser } from '@/types';
 
@@ -95,7 +96,7 @@ const EditUserModal = ({
         setSubmitError(true);
       }
     } catch (error) {
-      console.log(error);
+      logError(error);
       setSubmitError(true);
     }
   };
