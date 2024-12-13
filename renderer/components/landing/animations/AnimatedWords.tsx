@@ -48,9 +48,9 @@ const AnimatedWords: React.FC<AnimatedWordsProps> = ({ title, style }) => {
               delayChildren: index * 0.25,
               staggerChildren: 0.05,
             }}
-            className={`flex items-center justify-center overflow-hidden ${index === 0 ? 'text-[#5D45F8]' : ''}`}
+            className={`flex items-center justify-center overflow-hidden !mb-0 ${index === 0 ? 'text-[#5D45F8]' : ''}`}
           >
-            <motion.span className={style} variants={wordAnimation}>
+            <motion.span className={`${style} !mb-0`} variants={wordAnimation}>
               {word}&nbsp;
             </motion.span>
           </motion.div>

@@ -2,7 +2,7 @@ import React, { ElementType, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import Loading from '@/components/loading/loading';
-import { KEY_LOCALSTORAGE, SET_LOCALSTORAGE } from '@/utils';
+import { CLEAR_LOCALSTORAGE, KEY_LOCALSTORAGE, SET_LOCALSTORAGE } from '@/utils';
 
 import { convertKeysToCamelCase } from '../utils';
 
@@ -56,11 +56,15 @@ function withPermission(WrappedComponent: ElementType) {
               router.replace('/');
               router.refresh();
             } catch (error) {
+              await fetch('/api/logout');
+              CLEAR_LOCALSTORAGE();
               router.replace('/login');
             } finally {
               setMounted(true);
             }
           } else {
+            await fetch('/api/logout');
+            CLEAR_LOCALSTORAGE();
             router.replace('/login');
             setMounted(true);
           }

@@ -102,7 +102,7 @@ const Projects = () => {
   }, []);
 
   return (
-    <section className="bg-[#F0F0F0] text-[#0E1016] py-10">
+    <section className="bg-[#F0F0F0] text-[#0E1016] pb-20">
       <div>
         <Title title="Các nền tảng khác so với ứng dụng" classes="projects-title !pb-0" />
       </div>

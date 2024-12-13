@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 import '../animations/animate.css';
 import AnimatedTitle from '../animations/AnimatedTitle';
@@ -35,13 +36,10 @@ const Contact = () => {
             charSpace={'mr-[0.001em]'}
           />
 
-          <Link
-            href="/login"
-            aria-label="Bắt đầu"
-            target="_blank"
-            className="relative z-10 py-3 overflow-hidden text-black transition-transform duration-300 rounded-full cursor-pointer group w-fit bg-violet-50 px-7 hover:scale-105 hover:shadow-lg"
-          >
-            Bắt đầu
+          <Link href="/login" aria-label="Bắt đầu" target="_blank">
+            <motion.button className="relative z-10 py-3 overflow-hidden text-black transition-transform duration-300 rounded-full cursor-pointer group w-fit bg-violet-50 px-7 hover:scale-105 hover:shadow-lg">
+              Bắt đầu
+            </motion.button>
           </Link>
         </div>
       </div>

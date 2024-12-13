@@ -31,7 +31,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="overflow-x-hidden font-mono scroll-smooth">
+    <div className={'overflow-x-hidden scroll-smooth font-mona-sans'}>
       <PreLoader />
 
       <main className="flex flex-col items-center justify-center">

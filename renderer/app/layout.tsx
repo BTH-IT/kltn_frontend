@@ -8,29 +8,12 @@ import 'react-quill/dist/quill.snow.css';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { GuideProvider } from '@/contexts/GuideContext';
 import Guide from '@/components/guides/Guide';
+import { metadataConfig } from '@/utils';
 
 export const metadata: Metadata = {
   title: 'Courseroom Application',
   description: 'Based on Google Classroom',
-  manifest: '/web.manifest',
-  icons: {
-    icon: '/images/logo-2.png',
-    shortcut: '/images/logo-2.png',
-    apple: '/images/logo-2.png',
-  },
-  openGraph: {
-    title: 'Courseroom Application',
-    description: 'Based on Google Classroom',
-    images: [
-      {
-        url: '/images/shared-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Courseroom Preview Image',
-        type: 'image/png',
-      },
-    ],
-  },
+  ...metadataConfig,
 };
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {

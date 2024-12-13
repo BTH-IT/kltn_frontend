@@ -28,12 +28,12 @@ const ProjectCard = ({ id, name, description, technologies, image }: ProjectProp
         src={image}
         alt={name}
         className={`absolute -bottom-2 w-[70%] sm:w-[85%] md:w-[60%] lg:max-w-[55%] ${
-          id % 2 === 0 ? 'right-0' : 'left-0'
+          id % 2 !== 0 ? 'right-0' : 'left-0'
         }`}
       />
       <div
         className={`absolute text-white  ${
-          !(id % 2 === 0)
+          !(id % 2 !== 0)
             ? 'right-0 top-32 mr-0 ml-10 md:right-0 md:ml-0 lg:right-0 lg:top-60  lg:mr-4'
             : 'left-10 top-32 ml-0 md:mr-12 lg:top-52 lg:ml-4'
         } mb-10  md:mb-16 lg:mb-14 `}

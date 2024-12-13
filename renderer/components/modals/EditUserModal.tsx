@@ -82,7 +82,7 @@ const EditUserModal = ({
         customId: values.customId,
         ...rest,
       };
-      const res = await userService.updateUser(user.id, data);
+      const res = await userService.updateUserForAdmin(user.id, data);
       if (res.data) {
         toast({
           title: 'Chỉnh sửa người dùng thành công',

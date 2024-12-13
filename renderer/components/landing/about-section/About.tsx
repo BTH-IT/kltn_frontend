@@ -25,28 +25,28 @@ const About = () => {
           <div className="mb-10 flex w-[100%] flex-col gap-4 text-[18px] font-medium  leading-relaxed tracking-wide text-[#e4ded7] md:mb-16 md:gap-6 md:text-[20px] md:leading-relaxed lg:mb-16  lg:max-w-[90%] lg:text-[24px] ">
             <AnimatedBody
               text={
-                'Ma passion ? Créer des interfaces numériques et résoudre des problèmes dans la tech qui ont une utilité évidente pour chaque utilisateur.'
+                'Đây là một phần mềm chuyên biệt, tập trung vào việc quản lý nhóm, giao đồ án, và theo dõi tiến độ thực hiện'
               }
             />
             <AnimatedBody
               text={
-                'Whether I’m designing a sleek user interface or coding a complex application, I’m always striving to create something unique and innovative. I love experimenting with new technologies and staying up-to-date with the latest trends in the tech world.'
+                'Được thiết kế dành riêng cho giảng viên và sinh viên trong các môn học có yêu cầu làm việc theo nhóm hoặc thực hiện đồ án'
               }
               className={'hidden'}
             />
             <AnimatedBody
               text={
-                "Mais pas que ! En plus de mon travail de dev' et en tant qu'étudiant d'Epitech, je suis très actif dans les communautés tech tels que le Google Developer Students, Microsoft et même ma propre startup de crétaeurs, CVADD."
+                'Khác với các phần mềm quản lý dự án đa lĩnh vực, phần mềm này hướng đến nội dung và mục tiêu cụ thể, tạo ra một nền tảng chuyên biệt giúp giảng viên tối ưu hóa việc quản lý và đánh giá nhóm đồ án môn học'
               }
             />
             <AnimatedBody
               text={
-                "En dehors de celà, je suis un véritable passionné de littérature et de découvertes. J'adore discuter de séries et de thrillers de toutes sortes, de bouquins mais aussi de musique anglaise (UK lover !). Je suis toujours mon équipe préféréer depuis tout petit (Barça for life)"
+                'Phần mềm hỗ trợ giảng viên quản lý hiệu quả nhóm sinh viên và đồ án môn học với nhiều tính năng nổi bật. Giảng viên có thể dễ dàng tạo nhóm sinh viên, giao đồ án kèm yêu cầu chi tiết và thiết lập các mốc thời gian cụ thể. Đồng thời, nhóm trưởng được phép mời thành viên và cập nhật trạng thái tham gia, giúp việc quản lý nhóm trở nên linh hoạt và chủ động hơn.'
               }
             />
             <AnimatedBody
               text={
-                "Aujourd'hui, je suis prêt à dédier mon expertise à tout projets innovants ! Paritciper à la résolution de problèmes et bosser avec vous sur vos idées est toujours un plus moi !"
+                'Ngoài ra, phần mềm còn tích hợp không gian thảo luận và giao tiếp giữa các thành viên trong nhóm và với giảng viên, hỗ trợ lưu trữ, chia sẻ tài liệu nhóm. phần mềm còn có chức năng châm điểm ,hỗ trợ giảng viên tổng kết điểm theo các cột'
               }
             />
           </div>
