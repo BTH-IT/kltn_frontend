@@ -7,7 +7,7 @@ import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
@@ -74,6 +74,21 @@ export default function AssignmentDetail() {
 
   const [isEdit, setIsEdit] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
+  const commentInputRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (commentInputRef.current && !commentInputRef.current.contains(event.target as Node)) {
+        setIsFocus(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const { control, handleSubmit, reset, formState } = useForm();
 
@@ -328,6 +343,7 @@ export default function AssignmentDetail() {
             </CardContent>
             <CardFooter className="border-t rounded-b-lg bg-muted/50">
               <form
+                ref={commentInputRef}
                 onSubmit={handleSubmit(onSubmit)}
                 className={`flex gap-3 items-end pt-5 comment w-full px-4 pb-4 ${isFocus ? 'active' : ''}`}
               >
@@ -352,7 +368,6 @@ export default function AssignmentDetail() {
                         value={field.value}
                         onChange={field.onChange}
                         onFocus={() => setIsFocus(true)}
-                        onBlur={() => setIsFocus(false)}
                       />
                     )}
                   />

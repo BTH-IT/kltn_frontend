@@ -2,6 +2,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+import TransitionLink from '@/app/presentation/_components/TransitionLink';
+
 import { imageAnimation, bodyAnimation } from '../animations/animations';
 import AnimatedWords from '../animations/AnimatedWords';
 import logo from '../../../public/images/logo-2.png';
@@ -18,14 +20,14 @@ const Hero = () => {
 
       <div className="absolute top-8 flex justify-center sm:w-[90%] lg:max-w-[1440px]">
         <div>
-          <Link href="https://www.bthung.id.vn/" target="_blank" aria-label="Tham gia vào cuộc hành trình của tôi">
+          <TransitionLink href="https://www.bthung.id.vn/" aria-label="Tham gia vào cuộc hành trình của tôi">
             <motion.button
               className="hidden rounded-md border-2 border-[#e4ded7] py-2 px-4 text-[14px] font-semibold text-[#e4ded7] sm:block  md:text-[16px] lg:block"
               variants={bodyAnimation}
             >
               Khám phá ứng dụng
             </motion.button>
-          </Link>
+          </TransitionLink>
         </div>
       </div>
 

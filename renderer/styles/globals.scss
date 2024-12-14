@@ -243,3 +243,21 @@ div[data-tour-elem='controls'] {
 .font-mona-sans {
   font-family: 'Mona Sans', sans-serif !important;
 }
+
+.markdown {
+  a {
+    color: blue;
+    text-decoration: underline;
+  }
+}
+
+.comment .quill {
+  overflow: visible;
+  background-color: #f8f9fa;
+}
+
+.comment .ql-toolbar.ql-snow,
+.comment .ql-container.ql-snow,
+.comment .ql-editor {
+  border-radius: 24px;
+}

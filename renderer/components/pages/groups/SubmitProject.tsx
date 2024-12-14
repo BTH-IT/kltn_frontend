@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { FileText, SendHorizontal, EllipsisVertical, User, PlusIcon, GraduationCap } from 'lucide-react';
 import moment from 'moment';
 import { Controller, useForm } from 'react-hook-form';
@@ -77,6 +77,21 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
 
   const [isEdit, setIsEdit] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
+  const commentInputRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (commentInputRef.current && !commentInputRef.current.contains(event.target as Node)) {
+        setIsFocus(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const { control, handleSubmit, reset, formState } = useForm();
 
@@ -282,6 +297,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
           </CardContent>
           <CardFooter className="border-t rounded-b-lg bg-muted/50">
             <form
+              ref={commentInputRef}
               onSubmit={handleSubmit(onSubmit)}
               className={`flex gap-3 items-center pt-6 comment w-full ${isFocus ? 'active' : ''}`}
             >
@@ -305,7 +321,6 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
                     value={field.value}
                     onChange={field.onChange}
                     onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
                   />
                 )}
               />

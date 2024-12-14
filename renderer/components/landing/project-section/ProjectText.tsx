@@ -10,18 +10,12 @@ const ProjectText = ({
   curKey,
   title,
   desc,
-  stack,
-  git,
-  url,
   colors,
 }: {
   cur: { cur: number; prev: number };
   curKey: number;
   title: string;
   desc: string;
-  stack: string[];
-  git?: string;
-  url: string;
   colors: any[];
 }) => {
   const el = useRef<HTMLDivElement | null>(null);
@@ -140,20 +134,6 @@ const ProjectText = ({
           </div>
         </div>
         <div className="py-2 text-[1.5rem] opacity-0 lg:py-3">{desc}</div>
-        <div className="flex justify-center gap-3 py-2 text-[1.25rem] opacity-0 lg:justify-start lg:py-3">
-          {stack.map((s, i) => {
-            return (
-              <div key={i}>
-                {i === 0 ? null : (
-                  <span key={`dot${i}`} className="mr-3">
-                    •
-                  </span>
-                )}
-                <span key={i}>{s}</span>
-              </div>
-            );
-          })}
-        </div>
         <div className="h-6 my-2 opacity-0 lg:my-3"></div>
       </div>
       <div ref={el} className="absolute z-[2] w-full max-w-5xl px-[6.5%] text-center lg:w-1/2 lg:text-start">
@@ -168,64 +148,6 @@ const ProjectText = ({
         </div>
         <div className="overflow-hidden text-[1.5rem]">
           <p className="py-2 project-description lg:py-3">{desc}</p>
-        </div>
-        <div className="overflow-hidden text-[1.25rem]">
-          <div className="flex justify-center gap-3 py-2 project-stack lg:justify-start lg:py-3">
-            {stack.map((s, i) => {
-              return (
-                <div key={i}>
-                  {i === 0 ? null : (
-                    <span key={`dot${i}`} className="mr-3">
-                      •
-                    </span>
-                  )}
-                  <span key={i}>{s}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <div className="overflow-hidden text-[1rem]">
-          <div className="flex justify-center gap-3 py-2 pointer-events-auto project-links lg:justify-start lg:py-3">
-            {git ? (
-              <a href={git} className="flex" target="_blank" rel="noopener noreferrer">
-                <span>GitHub</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-external-link"
-                  width={24}
-                  height={24}
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M10 7H8A2 2 0 0 0 6 9V17A2 2 0 0 0 8 19H16A2 2 0 0 0 18 17V15M10 15L18 7M14 7L18 7L18 11"></path>
-                </svg>
-              </a>
-            ) : null}
-            <a href={url} className="flex" target="_blank" rel="noopener noreferrer">
-              Visit Site
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-external-link"
-                width={24}
-                height={24}
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M10 7H8A2 2 0 0 0 6 9V17A2 2 0 0 0 8 19H16A2 2 0 0 0 18 17V15M10 15L18 7M14 7L18 7L18 11"></path>
-              </svg>
-            </a>
-          </div>
         </div>
       </div>
     </>

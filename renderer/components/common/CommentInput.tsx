@@ -3,7 +3,7 @@
 import { SendHorizontal } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -29,6 +29,21 @@ const CommentInput = ({
 }) => {
   const [isFocus, setIsFocus] = React.useState(false);
   const { control, handleSubmit, reset, formState } = useForm();
+  const commentInputRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (commentInputRef.current && !commentInputRef.current.contains(event.target as Node)) {
+        setIsFocus(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     setComments(comments);
@@ -62,6 +77,7 @@ const CommentInput = ({
 
   return (
     <form
+      ref={commentInputRef}
       onSubmit={handleSubmit(onSubmit)}
       className={`flex gap-3 items-end pt-5 comment w-full px-4 pb-4 ${isFocus ? 'active' : ''}`}
     >
@@ -86,7 +102,6 @@ const CommentInput = ({
               value={field.value}
               onChange={field.onChange}
               onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
             />
           )}
         />

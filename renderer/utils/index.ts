@@ -329,7 +329,6 @@ export const metadataConfig: any = {
     'postgres',
     'courseroom platform',
   ],
-  colorScheme: 'white',
   openGraph: {
     title: 'Courseroom Platform',
     description:

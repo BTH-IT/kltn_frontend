@@ -7,30 +7,22 @@ const ProjectTexts = ({ cur, projectColors }: { cur: { cur: number; prev: number
         cur={cur}
         curKey={0}
         colors={projectColors}
-        title="Svg Icon Library"
-        desc="A collection of easy-to-use, customizable SVG icons for use in web projects. Users can also quickly create brand new icons."
-        stack={['Next.js', 'TailwindCSS', 'Fuse.js', 'Rollup']}
-        git="https://github.com/lukeaelder/eldicons"
-        url="https://eldicons.com/"
+        title="Google Classroom"
+        desc="Google Classroom là một công cụ của Google giúp quản lý lớp học trực tuyến, phục vụ cho giáo viên và học sinh. Người dùng có thể tạo lớp học, giao bài tập, chấm điểm và tương tác trực tiếp với học sinh qua hệ thống này."
       />
       <ProjectText
         cur={cur}
         curKey={1}
         colors={projectColors}
-        title="Movie Database App"
-        desc="Search and explore any movie to get information about it. Sign up to save movies to your watchlist and create movie list."
-        stack={['Python', 'Flask', 'PostgreSQL']}
-        git="https://github.com/lukeaelder/MovieR-L"
-        url="https://movierandl.herokuapp.com/"
+        title="Moodle"
+        desc="Moodle là một hệ thống quản lý học tập mã nguồn mở (LMS) được sử dụng rộng rãi để tạo các khóa học trực tuyến. Hệ thống này cung cấp các tính năng mạnh mẽ như tạo bài giảng, giao bài tập, đánh giá, theo dõi tiến độ học viên và nhiều tính năng hợp tác khác."
       />
       <ProjectText
         cur={cur}
         curKey={2}
         colors={projectColors}
-        title="Developer Toolbox"
+        title="Courseroom"
         desc="A set of tools for web developers including string manipulation, code minifiers, data generators, and more."
-        stack={['Next.js', 'TailwindCSS', 'GSAP']}
-        url="https://wdtoolbox.com/"
       />
     </>
   );
