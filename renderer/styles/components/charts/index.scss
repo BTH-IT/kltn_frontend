@@ -1,0 +1,238 @@
+.gantt {
+  text {
+    font-size: 16px;
+  }
+
+  .rowLines {
+    z-index: 1;
+  }
+
+  ._CZjuD {
+    border-top-right-radius: 8px;
+    box-shadow: 0 0 0 1px var(--chakra-colors-border);
+  }
+
+  ._35nLX {
+    height: 64px;
+    stroke: none;
+    stroke-width: unset;
+  }
+
+  .ticks,
+  ._25P-K,
+  .bar,
+  .calendarTop,
+  .calendarTop line,
+  .content text,
+  .today,
+  ._9w8d5 {
+    display: none;
+  }
+
+  ._2B2zv {
+    overflow: unset;
+    position: relative;
+  }
+
+  .task-item {
+    padding: 0px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    text-align: left;
+    color: $textPrimary;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &.task-COMPLETED {
+      background-color: $successLight10;
+      border-left: 2px solid $success100;
+    }
+
+    &.task-IN_PROGRESS {
+      background-color: $info10;
+      border-left: 2px solid $info200;
+    }
+
+    &.task-PENDING {
+      background-color: $warningLight10;
+      border-left: 2px solid $warning200;
+    }
+
+    &.task-NOT_STARTED {
+      background-color: $bg600;
+      border-left: 2px solid $bg700;
+    }
+  }
+
+  .status {
+    &.success {
+      background-color: $success100;
+    }
+
+    &.warning {
+      background-color: $warning200;
+    }
+
+    &.info {
+      background-color: $info200;
+    }
+
+    &.none {
+      background-color: $bg500;
+    }
+  }
+
+  .status-text {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    text-align: left;
+
+    &.success {
+      color: $success200;
+    }
+
+    &.warning {
+      color: $warning300;
+    }
+
+    &.info {
+      color: $info300;
+    }
+
+    &.none {
+      color: $secondaryLight;
+    }
+  }
+
+  .table-header {
+    p {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 18px;
+      color: #25414d;
+    }
+
+    .table-cell {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      img {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .table {
+    width: 330px;
+    background-color: $paper;
+    border-bottom-left-radius: 8px;
+    border: 1px solid #e4e4e7;
+  }
+
+  .table-row {
+    width: 330px;
+    height: 32px;
+    border-bottom-width: 1px;
+  }
+
+  .table-cell-1 {
+    width: 230px;
+    cursor: pointer;
+    padding: 0px 10px 0px 28px;
+    border-inline-end-width: 1px;
+  }
+
+  .table-cell-1 {
+    &.project {
+      padding: 0 10px;
+
+      .table-cell-flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        & > div {
+          & > p {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .table-cell-flex {
+      & > div {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        & > p {
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 18px;
+          color: #000;
+          overflow: hidden;
+          text-wrap: wrap;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+      }
+    }
+  }
+
+  .table-cell-2 > div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 6px;
+  }
+}
+
+.chakra-select__positioner {
+  z-index: 2000 !important;
+}
+
+.chakra-dialog__content {
+  .chakra-select__root {
+    width: 100%;
+  }
+
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+
+  .react-datepicker__input-container {
+    input {
+      border-radius: 8px;
+      width: 100%;
+      min-width: var(--input-height);
+      outline: 0;
+      position: relative;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      -ms-appearance: none;
+      appearance: none;
+      text-align: start;
+      border-radius: var(--chakra-radii-l2);
+      height: var(--input-height);
+      --focus-color: var(--chakra-colors-color-palette-focus-ring);
+      --error-color: var(--chakra-colors-border-error);
+      font-size: var(--chakra-font-sizes-sm);
+      line-height: 1.25rem;
+      padding-inline: var(--chakra-spacing-3);
+      --input-height: var(--chakra-sizes-10);
+      background: var(--chakra-colors-transparent);
+      --bg-currentcolor: var(--chakra-colors-transparent);
+      border-width: 1px;
+      border-color: var(--chakra-colors-border);
+      --focus-ring-color: var(--chakra-colors-color-palette-focus-ring);
+    }
+  }
+}
