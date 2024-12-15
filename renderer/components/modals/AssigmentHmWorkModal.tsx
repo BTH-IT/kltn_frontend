@@ -285,12 +285,21 @@ const AssignmentHmWorkModal = ({
                       {isChooseGroup && course?.setting.hasFinalScore && (
                         <div className="flex flex-col gap-4 px-3">
                           <div className="font-medium">Hạn đăng kí nhóm</div>
-                          <DateTimePicker date={registerExpiryDate} setDate={setRegisterExpiryDate} />
+                          <DateTimePicker
+                            date={
+                              typeof registerExpiryDate === 'string' ? new Date(registerExpiryDate) : registerExpiryDate
+                            }
+                            setDate={setRegisterExpiryDate}
+                          />
                         </div>
                       )}
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Hạn nộp</div>
-                        <DateTimePicker date={dueDate} setDate={setDueDate} minDate={new Date()} />
+                        <DateTimePicker
+                          date={typeof dueDate === 'string' ? new Date(dueDate) : dueDate}
+                          setDate={setDueDate}
+                          minDate={new Date()}
+                        />
                       </div>
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Ứng với cột điểm</div>

@@ -346,7 +346,9 @@ const CourseOptionModal = ({
                         <div className="flex flex-col gap-4 px-3 mb-2">
                           <div className="font-medium">Thời hạn cho phép tham gia vào nhóm</div>
                           <DateTimePicker
-                            date={dueDateToJoinGroup}
+                            date={
+                              typeof dueDateToJoinGroup === 'string' ? new Date(dueDateToJoinGroup) : dueDateToJoinGroup
+                            }
                             setDate={setDueDateToJoinGroup}
                             onChange={() => {
                               setCanSubmit(true);

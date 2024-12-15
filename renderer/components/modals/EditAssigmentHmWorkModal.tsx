@@ -220,7 +220,10 @@ const EditAssignmentHmWorkModal = ({
                     <div className="flex flex-col col-span-6 gap-5 p-5 border-l md:col-span-3">
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Hạn nộp</div>
-                        <DateTimePicker date={dueDate} setDate={setDueDate} />
+                        <DateTimePicker
+                          date={typeof dueDate === 'string' ? new Date(dueDate) : dueDate}
+                          setDate={setDueDate}
+                        />
                       </div>
                       <div className="flex flex-col gap-4 px-3">
                         <div className="font-medium">Ứng với cột điểm</div>
