@@ -23,25 +23,25 @@ const Projects = () => {
   const projectColors = [
     ['bg-neutral-300', 'bg-neutral-400', 'bg-neutral-600'],
     [
-      'bg-[#e4dcc8]',
-      'bg-[#b29c61]',
-      'bg-[#857341]',
-      'text-[#b29c61]',
-      '[-webkit-text-stroke:2px_#b29c61] [text-stroke:2px_#b29c61]',
+      'bg-[#9dffd0]',
+      'bg-[#38f69a]',
+      'bg-[#058d4b]',
+      'text-[#10b465]',
+      '[-webkit-text-stroke:2px_#32AC71] [text-stroke:2px_#32AC71]',
     ],
     [
-      'bg-[#c4b5fd]',
-      'bg-[#8b5cf6]',
-      'bg-[#6d28d9]',
-      'text-[#8b5cf6]',
-      '[-webkit-text-stroke:2px_#8b5cf6] [text-stroke:2px_#8b5cf6]',
+      'bg-[#ffad64]',
+      'bg-[#ff9334]',
+      'bg-[#F47E17]',
+      'text-[#ff7700]',
+      '[-webkit-text-stroke:2px_#ff7700] [text-stroke:2px_#ff7700]',
     ],
     [
-      'bg-[#5eead4]',
-      'bg-[#14b8a6]',
-      'bg-[#0f766e]',
-      'text-[#14b8a6]',
-      '[-webkit-text-stroke:2px_#14b8a6] [text-stroke:2px_#14b8a6]',
+      'bg-[#7461f0]',
+      'bg-[#361ed2]',
+      'bg-[#200f8d]',
+      'text-[#5C44F7]',
+      '[-webkit-text-stroke:2px_#5C44F7] [text-stroke:2px_#5C44F7]',
     ],
     ['bg-neutral-300', 'bg-neutral-400', 'bg-neutral-600'],
   ];
@@ -102,7 +102,7 @@ const Projects = () => {
   }, []);
 
   return (
-    <section className="bg-[#F0F0F0] text-[#0E1016] pb-20">
+    <section className="bg-[#F0F0F0] text-[#0E1016] pb-20 overflow-hidden">
       <div>
         <Title title="Các nền tảng khác so với ứng dụng" classes="projects-title !pb-0" />
       </div>

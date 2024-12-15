@@ -1,10 +1,11 @@
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import Link from 'next/link';
 
-import TransitionLink from '@/app/presentation/_components/TransitionLink';
+import AnimatedGradientButton from '@/app/presentation/_components/AnimatedGradientButton';
 
 import '../animations/animate.css';
 import AnimatedTitle from '../animations/AnimatedTitle';
+import { RandomizedTextEffect } from '../animations/text-randomized';
 
 const ImageClipBox = ({ src, clipClass }: any) => (
   <div className={clipClass}>
@@ -26,7 +27,7 @@ const Contact = () => {
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <p className="mb-10 font-general text-[16px] uppercase">Khám phá cùng chúng tôi</p>
+          <RandomizedTextEffect text="Khám phá cùng chúng tôi" />
 
           <AnimatedTitle
             text="Bắt đầu khám phá ngay"
@@ -37,11 +38,9 @@ const Contact = () => {
             charSpace={'mr-[0.001em]'}
           />
 
-          <TransitionLink href="/login" aria-label="Bắt đầu" target="_blank">
-            <motion.button className="relative z-10 py-3 overflow-hidden text-black transition-transform duration-300 rounded-full cursor-pointer group w-fit bg-violet-50 px-7 hover:scale-105 hover:shadow-lg">
-              Bắt đầu
-            </motion.button>
-          </TransitionLink>
+          <Link href="" onClick={() => (window.location.href = '/login')} aria-label="Bắt đầu" target="_blank">
+            <AnimatedGradientButton>Bắt đầu</AnimatedGradientButton>
+          </Link>
         </div>
       </div>
     </div>

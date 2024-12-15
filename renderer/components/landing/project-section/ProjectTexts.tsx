@@ -7,7 +7,7 @@ const ProjectTexts = ({ cur, projectColors }: { cur: { cur: number; prev: number
         cur={cur}
         curKey={0}
         colors={projectColors}
-        title="Google Classroom"
+        title="Classroom"
         desc="Google Classroom là một công cụ của Google giúp quản lý lớp học trực tuyến, phục vụ cho giáo viên và học sinh. Người dùng có thể tạo lớp học, giao bài tập, chấm điểm và tương tác trực tiếp với học sinh qua hệ thống này."
       />
       <ProjectText
@@ -22,7 +22,7 @@ const ProjectTexts = ({ cur, projectColors }: { cur: { cur: number; prev: number
         curKey={2}
         colors={projectColors}
         title="Courseroom"
-        desc="A set of tools for web developers including string manipulation, code minifiers, data generators, and more."
+        desc="Đây là một phần mềm chuyên biệt, tập trung vào việc quản lý nhóm, giao đồ án, và theo dõi tiến độ thực hiện được thiết kế dành riêng cho giảng viên và sinh viên trong các môn học có yêu cầu làm việc theo nhóm hoặc thực hiện đồ án."
       />
     </>
   );

@@ -124,9 +124,9 @@ const ProjectText = ({
         className="pointer-events-none absolute z-[-1] w-full max-w-5xl px-[6.5%] text-center lg:w-1/2 lg:text-start"
         ref={el2}
       >
-        <div className="w-full overflow-hidden pb-1 text-[clamp(2.5rem,7.5vw+.1rem,15rem)] leading-[clamp(4rem,9vw+.1rem,15.5rem)] lg:w-fit">
+        <div className="w-full overflow-hidden pb-1 text-[clamp(1.5rem,6.5vw+.1rem,10rem)] leading-[clamp(4rem,9vw+.1rem,15.5rem)] lg:w-fit">
           <div
-            className={`project-title py-2 tracking-[0.025em] transition-colors duration-700 lg:whitespace-nowrap lg:py-3 ${
+            className={`project-title py-2 tracking-[0.025em] transition-colors duration-700 lg:whitespace-nowrap lg:py-3 font-semibold ${
               colors[cur.cur + 1][3]
             }`}
           >
@@ -137,16 +137,7 @@ const ProjectText = ({
         <div className="h-6 my-2 opacity-0 lg:my-3"></div>
       </div>
       <div ref={el} className="absolute z-[2] w-full max-w-5xl px-[6.5%] text-center lg:w-1/2 lg:text-start">
-        <div className="w-full overflow-hidden pb-1 text-[clamp(2.5rem,7.5vw+.1rem,15rem)] leading-[clamp(4rem,9vw+.1rem,15.5rem)] lg:w-fit">
-          <div
-            className={`project-title transition-[text-stroke,-webkit-text-stroke] duration-700 lg:whitespace-nowrap ${
-              colors[cur.cur + 1][4]
-            } py-2 tracking-[0.025em] text-transparent lg:py-3`}
-          >
-            {title}
-          </div>
-        </div>
-        <div className="overflow-hidden text-[1.5rem]">
+        <div className="overflow-hidden text-[1.5rem] mt-20">
           <p className="py-2 project-description lg:py-3">{desc}</p>
         </div>
       </div>

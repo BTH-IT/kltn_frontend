@@ -8,6 +8,8 @@ import { getFileType } from '@/utils';
 import { cn } from '@/libs/utils';
 import { Attachment } from '@/types';
 
+import { MediaModal } from '../modals/MediaModal';
+
 const AnnouncementAttachList = ({
   links,
   files,
@@ -40,12 +42,9 @@ const AnnouncementAttachList = ({
               className="flex items-center border rounded-lg transition-all hover:bg-[#f0f0f0] overflow-hidden px-2 col-span-12 md:col-span-6"
             >
               <div className="mr-2 max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full flex justify-center items-center border-r overflow-hidden">
-                <Image
-                  src={link.image}
-                  width={800}
-                  height={800}
+                <MediaModal
+                  imgSrc={link.image}
                   className="object-contain max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full"
-                  alt={link.title}
                 />
               </div>
               <div className="flex items-center justify-between flex-1 gap-3 pr-2">
@@ -65,20 +64,22 @@ const AnnouncementAttachList = ({
           {files.map((f: any, index: any) => (
             <div
               key={index}
-              className="flex items-center border rounded-lg transition-all hover:bg-[#f0f0f0] col-span-12 md:col-span-6 overflow-hidden px-2"
+              className="flex items-center border rounded-xl transition-all hover:bg-[#f0f0f0] col-span-12 md:col-span-6 overflow-hidden"
             >
               <div className="mr-2 max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full flex justify-center items-center border-r overflow-hidden">
                 {f.type.includes('image/') && (
-                  <Image
-                    src={f instanceof File ? URL.createObjectURL(f) : f.url}
-                    width={800}
-                    height={800}
+                  <MediaModal
+                    imgSrc={f instanceof File ? URL.createObjectURL(f) : f.url}
                     className="object-contain max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full"
-                    alt={f.name}
                   />
                 )}
                 {(f.type.includes('text/') || f.type.includes('application/')) && <Paperclip width={36} height={36} />}
-                {f.type.includes('video/') && <Clapperboard width={36} height={36} />}
+                {f.type.includes('video/') && (
+                  <MediaModal
+                    videoSrc={f instanceof File ? URL.createObjectURL(f) : f.url}
+                    className="object-contain max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full"
+                  />
+                )}
                 {f.type === 'unknown' && <CloudUpload width={36} height={36} />}
               </div>
               <div className="flex items-center justify-between flex-1 gap-3 pr-2">
@@ -105,12 +106,9 @@ const AnnouncementAttachList = ({
               className="flex items-center border rounded-lg transition-all hover:bg-[#f0f0f0] col-span-12"
             >
               <div className="mr-2 max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full flex justify-center items-center border-r overflow-hidden">
-                <Image
-                  src={link.image}
-                  width={800}
-                  height={800}
+                <MediaModal
+                  imgSrc={link.image}
                   className="object-contain max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full"
-                  alt={link.title}
                 />
               </div>
               <div className="flex items-center justify-between flex-1 gap-3 pr-2">
@@ -142,16 +140,18 @@ const AnnouncementAttachList = ({
             >
               <div className="mr-2 max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full flex justify-center items-center border-r overflow-hidden">
                 {f.type.includes('image/') && (
-                  <Image
-                    src={f instanceof File ? URL.createObjectURL(f) : f.url}
-                    width={800}
-                    height={800}
+                  <MediaModal
+                    imgSrc={f instanceof File ? URL.createObjectURL(f) : f.url}
                     className="object-contain max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full"
-                    alt={f.name}
                   />
                 )}
                 {(f.type.includes('text/') || f.type.includes('application/')) && <Paperclip width={36} height={36} />}
-                {f.type.includes('video/') && <Clapperboard width={36} height={36} />}
+                {f.type.includes('video/') && (
+                  <MediaModal
+                    videoSrc={f instanceof File ? URL.createObjectURL(f) : f.url}
+                    className="object-contain max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full"
+                  />
+                )}
                 {f.type === 'unknown' && <CloudUpload width={36} height={36} />}
               </div>
               <div className="flex items-center justify-between flex-1 gap-3 pr-2">

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Clapperboard, CloudUpload, Paperclip } from 'lucide-react';
 
 import { logError } from '@/libs/utils'; // Utility function for logging errors
+import { MediaModal } from '@/components/modals/MediaModal';
 
 const AnnouncementFileItem = ({ f }: { f: File | { url: string; name: string; type: string } }) => {
   const [fileType, setFileType] = useState('');
@@ -24,7 +25,6 @@ const AnnouncementFileItem = ({ f }: { f: File | { url: string; name: string; ty
           setFileType('unknown');
         }
       } else {
-        // If it's a URL, assume it's already a known file type
         setFileType(f.type || 'unknown');
       }
       setIsLoading(false);
@@ -40,12 +40,9 @@ const AnnouncementFileItem = ({ f }: { f: File | { url: string; name: string; ty
     return (
       <div className="mr-2 max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full flex justify-center items-center border-r overflow-hidden">
         {fileType.includes('image/') && (
-          <Image
-            src={URL.createObjectURL(f)}
-            width={800}
-            height={800}
+          <MediaModal
+            imgSrc={URL.createObjectURL(f)}
             className="object-contain max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full"
-            alt={f.name}
           />
         )}
         {(fileType.includes('text/') || fileType.includes('application/')) && <Paperclip width={36} height={36} />}
