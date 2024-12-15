@@ -20,6 +20,10 @@ const userService = {
     return configService.patch(`${API_URL.USERS}/${userId}`, userData);
   },
 
+  updateUserForAdmin(userId: string, userData: Partial<IUser>): Promise<ApiResponse<IUser>> {
+    return configService.patch(`${API_URL.USERS}/admin/${userId}`, userData);
+  },
+
   deleteUser(userId: string): Promise<ApiResponse<boolean>> {
     return configService.delete(`${API_URL.USERS}/${userId}`);
   },

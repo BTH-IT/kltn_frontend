@@ -7,7 +7,7 @@ import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
@@ -36,6 +36,7 @@ import commentService from '@/services/commentService';
 import submissionService from '@/services/submissionService';
 import { IComment, ISubmission, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
+import { logError } from '@/libs/utils';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -73,6 +74,21 @@ export default function AssignmentDetail() {
 
   const [isEdit, setIsEdit] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
+  const commentInputRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (commentInputRef.current && !commentInputRef.current.contains(event.target as Node)) {
+        setIsFocus(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const { control, handleSubmit, reset, formState } = useForm();
 
@@ -106,6 +122,13 @@ export default function AssignmentDetail() {
   const onSubmit = async (data: any) => {
     if (!currentUser?.id || !assignment) return;
 
+    const trimmedContent = data.content?.replace(/<\/?[^>]+(>|$)/g, '').trim();
+
+    if (!trimmedContent) {
+      toast.error('Nội dung không được để trống hoặc chỉ chứa khoảng trắng!');
+      return;
+    }
+
     try {
       const res = await commentService.createComment({
         content: data.content,
@@ -116,8 +139,9 @@ export default function AssignmentDetail() {
       setIsFocus(false);
 
       setComments((prev) => [res.data, ...prev]);
+      toast.success('Bình luận thành công');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 
@@ -127,8 +151,10 @@ export default function AssignmentDetail() {
       await commentService.deleteComment(assignment.assignmentId, id);
 
       setComments(comments.filter((c) => c.commentId !== id));
+
+      toast.success('Xóa bình luận thành công');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 
@@ -142,23 +168,29 @@ export default function AssignmentDetail() {
         toast.success('Đã xoá bài tập thành công');
       }
     } catch (err) {
-      console.error('Failed to delete assignment: ', err);
-      if (err instanceof AxiosError) {
-        toast.error(err?.response?.data?.message || err.message);
-      }
+      logError(err);
     }
   };
 
   const handleUpdateComment = async (id: string, data: any) => {
     if (!assignment) return;
+
+    const trimmedContent = data.content?.replace(/<\/?[^>]+(>|$)/g, '').trim();
+
+    if (!trimmedContent) {
+      toast.error('Nội dung không được để trống hoặc chỉ chứa khoảng trắng!');
+      return;
+    }
+
     try {
       const res = await commentService.updateComment(assignment.assignmentId, id, data);
 
       const updatedComments = comments.map((a) => (a.commentId === res.data.commentId ? { ...a, ...res.data } : a));
 
       setComments(updatedComments);
+      toast.success('Sửa bình luận thành công');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 
@@ -311,6 +343,7 @@ export default function AssignmentDetail() {
             </CardContent>
             <CardFooter className="border-t rounded-b-lg bg-muted/50">
               <form
+                ref={commentInputRef}
                 onSubmit={handleSubmit(onSubmit)}
                 className={`flex gap-3 items-end pt-5 comment w-full px-4 pb-4 ${isFocus ? 'active' : ''}`}
               >
@@ -335,7 +368,6 @@ export default function AssignmentDetail() {
                         value={field.value}
                         onChange={field.onChange}
                         onFocus={() => setIsFocus(true)}
-                        onBlur={() => setIsFocus(false)}
                       />
                     )}
                   />

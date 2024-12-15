@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import React, { useEffect, useRef, useState } from 'react';
 import useDrivePicker from 'react-google-drive-picker';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 import MultiSelectPeople, { Option } from '@/components/common/MultiSelectPeople';
 import TooltipBottom from '@/components/common/TooltipBottom';
@@ -24,6 +25,7 @@ import { formatDuration, getFileType, KEY_LOCALSTORAGE } from '@/utils';
 import uploadService from '@/services/uploadService';
 import AnnouncementFileList from '@/components/pages/courses/AnnoucementFileList';
 import AnnouncementLinkList from '@/components/pages/courses/AnnouncementLinkList';
+import { logError } from '@/libs/utils';
 
 import AnnouncementAttachList from '../common/AnnouncementAttachList';
 
@@ -218,8 +220,9 @@ const EditAnnoucementModal = ({
       setSelected(null);
       setIsOpen(false);
       setAnnouncements((prev) => [res.data, ...prev.filter((item) => item.announcementId !== res.data.announcementId)]);
+      toast.success('Cập nhật thông báo thành công');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 

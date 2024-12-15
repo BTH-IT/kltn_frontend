@@ -1,9 +1,9 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { MetaLinkData } from '@/types';
+import { MediaModal } from '@/components/modals/MediaModal';
 
 const AnnouncementLinkList = ({
   links,
@@ -22,12 +22,9 @@ const AnnouncementLinkList = ({
       {links.map((link, index) => (
         <div key={index} className="flex items-center border rounded-lg transition-all hover:bg-[#f0f0f0]">
           <div className="mr-2 max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full flex justify-center items-center border-r overflow-hidden">
-            <Image
-              src={link.image}
-              width={800}
-              height={800}
+            <MediaModal
+              imgSrc={link.image}
               className="object-contain max-w-[80px] max-h-[70px] min-w-[80px] min-h-[70px] w-full h-full"
-              alt={link.title}
             />
           </div>
           <div className="flex items-center justify-between flex-1 gap-3 pr-2">

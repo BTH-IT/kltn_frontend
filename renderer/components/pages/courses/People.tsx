@@ -4,6 +4,7 @@ import { EllipsisVertical, UserRoundPlus, ChevronDown, ArrowDownAZ, BookUser } f
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -19,7 +20,7 @@ import { ICourse, IUser } from '@/types';
 import InviteStudentModal from '@/components/modals/InviteStudentModal';
 import CommonModal from '@/components/modals/CommonModal';
 import { Checkbox } from '@/components/ui/checkbox';
-import { cn, sortUsersByName } from '@/libs/utils';
+import { cn, logError, sortUsersByName } from '@/libs/utils';
 import { useCheckedState, PersonState } from '@/libs/hooks/useCheckState';
 import courseService from '@/services/courseService';
 import { KEY_LOCALSTORAGE } from '@/utils';
@@ -68,8 +69,9 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
       await courseService.deleteStudentOfCourse(String(course.courseId), id);
       const newList = list.filter((item) => item.id !== id);
       setList(newList);
+      toast.success('Xoá sinh viên thành công');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 

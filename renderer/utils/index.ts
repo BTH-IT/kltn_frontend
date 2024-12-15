@@ -309,3 +309,55 @@ export const SET_LOCALSTORAGE = (data: any) => {
     localStorage.setItem(KEY_LOCALSTORAGE.CURRENT_ROLE, data.role);
   }
 };
+
+export const metadataConfig: any = {
+  manifest: '/web.manifest',
+  icons: {
+    icon: 'https://bthung.id.vn/images/logo-2.png',
+    shortcut: 'https://bthung.id.vn/images/logo-2.png',
+    apple: 'https://bthung.id.vn/images/logo-2.png',
+  },
+  keywords: [
+    'courseroom',
+    'platform',
+    'education',
+    'nextjs',
+    'react',
+    '.net',
+    'asp.net',
+    'c#',
+    'postgres',
+    'courseroom platform',
+  ],
+  openGraph: {
+    title: 'Courseroom Platform',
+    description:
+      'Courseroom is a platform that helps you create, manage and share courses with your students. It is built with Next.js, React, .NET, and PostgreSQL.',
+    url: 'https://bthung.id.vn/',
+    siteName: 'bthung.id.vn',
+    images: [
+      {
+        url: 'https://bthung.id.vn/images/logo-2.png',
+        width: 1200,
+        height: 630,
+        alt: 'Courseroom Platform',
+      },
+    ],
+    locale: 'en-US',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: false,
+      noimageindex: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  category: 'education',
+};

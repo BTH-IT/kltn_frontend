@@ -1,9 +1,11 @@
 'use client';
 
 import React from 'react';
+import { toast } from 'react-toastify';
 
 import { IAnnouncement, ICourse } from '@/types';
 import announcementService from '@/services/announcementService';
+import { logError } from '@/libs/utils';
 
 import AnnouncementItem from './AnnouncementItem';
 
@@ -23,8 +25,9 @@ const AnnouncementList = ({
       const newAnnouncements = announcements.filter((a) => a.announcementId !== id);
 
       setAnnouncements(newAnnouncements);
+      toast.success('Xóa thông báo thành công!');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 

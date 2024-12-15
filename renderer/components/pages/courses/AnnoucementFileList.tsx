@@ -28,7 +28,7 @@ const AnnouncementFileList = ({
           <div className="flex items-center justify-between flex-1 gap-3 pr-2">
             <div className="flex flex-col justify-around flex-1">
               <Link
-                href={f instanceof File ? URL.createObjectURL(f) : f.url} // Use URL.createObjectURL for Blob/File, else use the URL
+                href={f instanceof File ? URL.createObjectURL(f) : f.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-primaryGray transition-all hover:text-[#0070f3] line-clamp-1"

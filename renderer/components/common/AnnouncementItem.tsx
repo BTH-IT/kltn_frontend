@@ -4,7 +4,7 @@
 import { EllipsisVertical, SendHorizontal } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -43,6 +43,7 @@ const AnnouncementItem = ({
   setAnnouncements: React.Dispatch<React.SetStateAction<IAnnouncement[]>>;
 }) => {
   const currentUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null') as IUser;
+  const commentInputRef = useRef<HTMLFormElement>(null);
 
   const [isFocus, setIsFocus] = useState(false);
 
@@ -78,6 +79,7 @@ const AnnouncementItem = ({
       setIsFocus(false);
 
       setComments((prev) => [res.data, ...prev]);
+      toast.success('Bình luận thành công!');
     } catch (error) {
       logError(error);
     }
@@ -88,8 +90,9 @@ const AnnouncementItem = ({
       await commentService.deleteComment(announcement.announcementId, id);
 
       setComments(comments.filter((c) => c.commentableId !== id));
+      toast.success('Xóa bình luận thành công!');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 
@@ -100,10 +103,25 @@ const AnnouncementItem = ({
       const updatedComments = comments.map((a) => (a.commentId === res.data.commentId ? { ...a, ...res.data } : a));
 
       setComments(updatedComments);
+      toast.success('Sửa bình luận thành công!');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (commentInputRef.current && !commentInputRef.current.contains(event.target as Node)) {
+        setIsFocus(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-3 bg-white border rounded-lg">
@@ -140,6 +158,7 @@ const AnnouncementItem = ({
           handleUpdateComment={handleUpdateComment}
         />
         <form
+          ref={commentInputRef}
           onSubmit={handleSubmit(onSubmit)}
           className={`flex gap-3 items-end pt-5 comment w-full px-4 pb-4 ${isFocus ? 'active' : ''}`}
         >
@@ -164,7 +183,6 @@ const AnnouncementItem = ({
                   value={field.value}
                   onChange={field.onChange}
                   onFocus={() => setIsFocus(true)}
-                  onBlur={() => setIsFocus(false)}
                 />
               )}
             />

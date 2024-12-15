@@ -44,7 +44,7 @@ const AvatarHeader = ({
 
   return (
     <div
-      className={`flex gap-5 text-primaryGray !py-3 ${className} ${
+      className={`flex gap-5 text-primaryGray ${className} ${
         type === 'teacher' || type === 'student' ? 'border-b pb-3 items-center' : 'items-start'
       }`}
     >
@@ -65,7 +65,11 @@ const AvatarHeader = ({
           <div className="flex flex-col justify-around flex-1 w-full">
             <div className="flex items-center gap-3">
               <h2 className="text-sm font-semibold">{name}</h2>
-              <p className="text-xs font-light">{moment(timestamp).fromNow()}</p>
+              <p className="text-xs font-light">
+                {moment(moment()).diff(moment(timestamp), 'days') > 5
+                  ? moment(timestamp).format('DD/MM/YYYY')
+                  : moment(timestamp).fromNow()}
+              </p>
             </div>
             {children}
           </div>
@@ -90,7 +94,11 @@ const AvatarHeader = ({
                 </>
               )}
             </div>
-            <p className="text-xs font-light">{moment(timestamp).fromNow()}</p>
+            <p className="text-xs font-light">
+              {moment(moment()).diff(moment(timestamp), 'days') > 5
+                ? moment(timestamp).format('DD/MM/YYYY')
+                : moment(timestamp).fromNow()}
+            </p>
           </div>
         )}
 

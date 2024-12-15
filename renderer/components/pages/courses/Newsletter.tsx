@@ -1,6 +1,7 @@
 'use client';
 
 import { useContext, useEffect } from 'react';
+import Image from 'next/image';
 import { Pencil } from 'lucide-react';
 
 import CoursePersonalizeModal from '@/components/modals/CoursePersonalizeModal';
@@ -14,12 +15,6 @@ import InviteCode from './InviteCode';
 const Newsletter = ({ course, user }: { course: ICourse; user: IUser }) => {
   const { setItems } = useContext(BreadcrumbContext);
 
-  const bgImageStyles = {
-    backgroundImage: `url(${course.background || 'https://gstatic.com/classroom/themes/img_backtoschool.jpg'})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-  };
-
   useEffect(() => {
     const breadcrumbLabel = course.name;
 
@@ -28,26 +23,40 @@ const Newsletter = ({ course, user }: { course: ICourse; user: IUser }) => {
 
   return (
     <section>
-      <div className={'overflow-hidden relative w-full rounded-lg h-[240px]'} style={bgImageStyles}>
-        <div className="absolute w-full h-full bg-custom-radial-gradient"></div>
-        <div className="absolute flex flex-col w-full gap-2 text-white bottom-4 left-4">
-          <h2 className="text-3xl font-bold">{course.name}</h2>
-          <p className="text-xl font-medium">
-            {course.subject?.subjectCode} - {course.subject?.name}
-          </p>
-          <p className="text-sm font-normal">Niên khóa: {course.semester}</p>
-        </div>
+      <div className="relative w-full rounded-lg h-[240px] overflow-hidden">
+        <Image
+          src={course.background || 'https://gstatic.com/classroom/themes/img_backtoschool.jpg'}
+          alt="Course background"
+          layout="fill"
+          objectFit="cover"
+        />
+
         {user?.id === course.lecturerId && !course.saveAt && (
-          <CoursePersonalizeModal data={course}>
-            <Button
-              variant="ghost"
-              className="flex absolute top-4 right-4 gap-3 items-center py-1 px-3 text-[16px] text-blue-500 bg-white"
-            >
-              <Pencil width={18} height={18} />
-              <span>Tùy chỉnh</span>
-            </Button>
-          </CoursePersonalizeModal>
+          <div className="absolute top-2 right-2" style={{ zIndex: 3 }}>
+            <CoursePersonalizeModal data={course}>
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 py-1.5 px-3 text-base bg-white hover:bg-white/90 text-blue-500"
+              >
+                <Pencil className="w-4 h-4" />
+                <span>Tùy chỉnh</span>
+              </Button>
+            </CoursePersonalizeModal>
+          </div>
         )}
+
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/60 to-black/90 z-2"></div>
+
+        <div className="absolute inset-x-0 bottom-0 p-6 text-white z-3">
+          <div className="max-w-4xl">
+            <h2 className="mb-2 text-3xl font-bold leading-tight line-clamp-2 shadow-text">{course.name}</h2>
+            <p className="mb-1 text-xl font-medium shadow-text">
+              {course.subject?.subjectCode && <span className="mr-2">{course.subject.subjectCode}</span>}
+              {course.subject?.name && <span>{course.subject.name}</span>}
+            </p>
+            {course.semester && <p className="text-sm font-normal shadow-text">Niên khóa: {course.semester}</p>}{' '}
+          </div>
+        </div>
       </div>
       {!course?.saveAt && (
         <>

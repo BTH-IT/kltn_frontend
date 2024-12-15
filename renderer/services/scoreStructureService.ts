@@ -21,7 +21,7 @@ const scoreStructureService = {
     return configService.get(`${API_URL.SCORE_STRUCTURES}/${courseId}/transcripts`);
   },
 
-  getTranscriptStatistic(courseId: string): Promise<ApiResponse<ITranscriptStatistic[]>> {
+  getTranscriptStatistic(courseId: string): Promise<ApiResponse<{ columnStatistics: ITranscriptStatistic[] }>> {
     return configService.get(`${API_URL.SCORE_STRUCTURES}/${courseId}/transcripts/statistics`);
   },
 };

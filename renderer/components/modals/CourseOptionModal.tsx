@@ -20,7 +20,7 @@ import { CourseContext } from '@/contexts/CourseContext';
 import { CoursesContext } from '@/contexts/CoursesContext';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 import { ScoreStructureProvider } from '@/contexts/ScoreStructureContext';
-import { cn } from '@/libs/utils';
+import { cn, logError } from '@/libs/utils';
 import courseService from '@/services/courseService';
 
 import { DateTimePicker } from '../common/DatetimePicker';
@@ -160,8 +160,7 @@ const CourseOptionModal = ({
       setHasSubmitted(false);
       setCanSubmit(false);
     } catch (error) {
-      console.log(error);
-      toast.error('Cập nhật lớp học thất bại');
+      logError(error);
       setHasSubmitted(false);
     }
   };

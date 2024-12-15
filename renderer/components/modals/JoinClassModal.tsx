@@ -5,6 +5,7 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/libs/utils';
+import { cn, logError } from '@/libs/utils';
 import courseService from '@/services/courseService';
 import { CoursesContext } from '@/contexts/CoursesContext';
 import { IUser } from '@/types';
@@ -75,13 +76,15 @@ const JoinClassModal = ({ children }: { children: React.ReactNode }) => {
         setEnrolledCourses([...enrolledCourses, res.data]);
         router.push(`/courses/${res.data.courseId}`);
 
+        toast.success('Tham gia lớp học thành công');
+
         setHasSubmitted(false);
       } else {
         setSubmitError(true);
         setHasSubmitted(false);
       }
     } catch (error) {
-      console.log(error);
+      logError(error);
       setSubmitError(true);
       setHasSubmitted(false);
     }

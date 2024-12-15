@@ -6,9 +6,11 @@ import { EllipsisVertical } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Controller, useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 import { IComment, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
+import { logError } from '@/libs/utils';
 
 import {
   DropdownMenu,
@@ -56,12 +58,20 @@ const CommentItem = ({
 
   const onSubmit = async (values: any) => {
     try {
+      const trimmedContent = values.content?.replace(/<\/?[^>]+(>|$)/g, '').trim();
+
+      if (!trimmedContent) {
+        toast.error('Nội dung không được để trống hoặc chỉ chứa khoảng trắng!');
+        return;
+      }
+
       await handleUpdateComment(comment.commentId, values);
 
       reset();
       setIsEdit(false);
+      toast.success('Sửa bình luận thành công');
     } catch (error) {
-      console.log(error);
+      logError(error);
     }
   };
 
