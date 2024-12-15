@@ -114,7 +114,7 @@ const AssignmentHmWorkModal = ({
       return;
     }
 
-    const formattedDueDate = dueDate?.toString() ?? null;
+    const formattedDueDate = dueDate?.toISOString() ?? null;
 
     let assignmentOptions = {};
 
