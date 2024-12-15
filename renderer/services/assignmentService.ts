@@ -36,6 +36,9 @@ const assignmentService = {
   getAssignmentsByUserId(courseId: string, userId: string): Promise<ApiResponse<IAssignment[] | null>> {
     return configService.get(`${API_URL.ASSIGNMENTS}/${courseId}/user/${userId}`);
   },
+  getAssignmentsByUser(): Promise<ApiResponse<IAssignment[]>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/current-user`);
+  },
 };
 
 export default assignmentService;

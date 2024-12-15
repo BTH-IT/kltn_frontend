@@ -114,7 +114,13 @@ const AssignmentHmWorkModal = ({
       return;
     }
 
-    const formattedDueDate = dueDate?.toISOString() ?? null;
+    const formattedDueDate = dueDate
+      ? (() => {
+          const newDate = new Date(dueDate);
+          newDate.setHours(newDate.getHours() + 7);
+          return newDate.toISOString().split('.')[0] + 'Z';
+        })()
+      : null;
 
     let assignmentOptions = {};
 
@@ -165,6 +171,8 @@ const AssignmentHmWorkModal = ({
       const data = await createAssignment(values, course.courseId);
 
       if (!data) return;
+
+      console.log(data);
 
       setAssignments((prev) => [...prev, data]);
 
