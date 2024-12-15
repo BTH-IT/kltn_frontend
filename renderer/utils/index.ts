@@ -313,7 +313,7 @@ export const SET_LOCALSTORAGE = (data: any) => {
 export const metadataConfig: any = {
   manifest: '/web.manifest',
   icons: {
-    icon: 'https://bthung.id.vnhttps://bthung.id.vn/images/logo-2.png',
+    icon: 'https://bthung.id.vn/images/logo-2.png',
     shortcut: 'https://bthung.id.vn/images/logo-2.png',
     apple: 'https://bthung.id.vn/images/logo-2.png',
   },
@@ -337,7 +337,7 @@ export const metadataConfig: any = {
     siteName: 'bthung.id.vn',
     images: [
       {
-        url: 'https://bthung.id.vnhttps://bthung.id.vn/images/logo-2.png',
+        url: 'https://bthung.id.vn/images/logo-2.png',
         width: 1200,
         height: 630,
         alt: 'Courseroom Platform',
