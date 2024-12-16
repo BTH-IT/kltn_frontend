@@ -28,7 +28,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
           <NavigationHeader />
           <div className="flex">
             <NavigationSidebar />
-            <main className="flex-1 h-[calc(100vh-70px)] mt-[70px] overflow-y-auto">{children}</main>
+            <main className="flex-1 h-[calc(100vh-70px)] mt-[70px] overflow-x-hidden">{children}</main>
           </div>
         </BreadcrumbProvider>
       </SidebarProvider>

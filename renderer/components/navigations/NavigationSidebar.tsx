@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import '@/styles/components/navigation/nav-sidebar.scss';
-import { House, GraduationCap, Settings, Users, Pocket, Search } from 'lucide-react';
+import { House, GraduationCap, Settings, Users, Pocket, Search, GanttChart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Separator } from '@/components/ui/separator';
@@ -54,6 +54,12 @@ const NavigationSidebar = () => {
       >
         <div className="flex flex-col justify-between h-full">
           <ul className="home-step-3">
+            <SidebarItem
+              label="Timeline"
+              icon={<GanttChart size={20} />}
+              href="/schedule"
+              isActive={path === 'schedule'}
+            />
             <SidebarItem label="Màn hình chính" icon={<House size={20} />} href="/" isActive={path === ''} />
             <Separator className="my-2" />
             {!isLoading ? (
