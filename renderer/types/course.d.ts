@@ -26,7 +26,7 @@ export interface ICourse {
   scoreStructure: IScoreStructure;
   setting: ISetting;
   saveAt: string | null;
-  studentsCount: number;
+  studentCount: number;
 }
 
 export interface ISetting {

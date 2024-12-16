@@ -1,3 +1,23 @@
+$primary: #007bff;
+$success: #28a745;
+$info: #17a2b8;
+$warning: #ffc107;
+$secondary: #6c757d;
+$light: #f8f9fa;
+$dark: #343a40;
+
+$successLight10: rgba(40, 167, 69, 0.1);
+$infoLight10: rgba(23, 162, 184, 0.1);
+$warningLight10: rgba(255, 193, 7, 0.1);
+
+$textPrimary: #212529;
+$textSecondary: #6c757d;
+
+$paper: #ffffff;
+$bg600: #e9ecef;
+$bg700: #dee2e6;
+$bg500: #ced4da;
+
 .gantt {
   text {
     font-size: 16px;
@@ -50,17 +70,17 @@
 
     &.task-COMPLETED {
       background-color: $successLight10;
-      border-left: 2px solid $success100;
+      border-left: 2px solid $success;
     }
 
     &.task-IN_PROGRESS {
-      background-color: $info10;
-      border-left: 2px solid $info200;
+      background-color: $infoLight10;
+      border-left: 2px solid $info;
     }
 
     &.task-PENDING {
       background-color: $warningLight10;
-      border-left: 2px solid $warning200;
+      border-left: 2px solid $warning;
     }
 
     &.task-NOT_STARTED {
@@ -70,19 +90,22 @@
   }
 
   .status {
-    &.success {
-      background-color: $success100;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    &.COMPLETED {
+      background-color: $success;
     }
 
-    &.warning {
-      background-color: $warning200;
+    &.PENDING {
+      background-color: $warning;
     }
 
-    &.info {
-      background-color: $info200;
+    &.IN_PROGRESS {
+      background-color: $info;
     }
 
-    &.none {
+    &.NOT_STARTED {
       background-color: $bg500;
     }
   }
@@ -93,20 +116,20 @@
     line-height: 18px;
     text-align: left;
 
-    &.success {
-      color: $success200;
+    &.COMPLETED {
+      color: $success;
     }
 
-    &.warning {
-      color: $warning300;
+    &.PENDING {
+      color: $warning;
     }
 
-    &.info {
-      color: $info300;
+    &.IN_PROGRESS {
+      color: $info;
     }
 
-    &.none {
-      color: $secondaryLight;
+    &.NOT_STARTED {
+      color: $bg500;
     }
   }
 
@@ -140,13 +163,18 @@
     width: 330px;
     height: 32px;
     border-bottom-width: 1px;
+    display: flex;
+    align-items: center;
   }
 
   .table-cell-1 {
-    width: 230px;
+    width: 200px;
     cursor: pointer;
-    padding: 0px 10px 0px 28px;
+    padding: 0px 10px 0px 10px;
     border-inline-end-width: 1px;
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
 
   .table-cell-1 {
@@ -195,44 +223,38 @@
   }
 }
 
-.chakra-select__positioner {
-  z-index: 2000 !important;
-}
+.task-table {
+  width: 330px;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-top-left-radius: 8px;
 
-.chakra-dialog__content {
-  .chakra-select__root {
-    width: 100%;
-  }
+  thead {
+    tr {
+      border-bottom: 1px solid #e4e4e7;
 
-  .react-datepicker-wrapper {
-    width: 100%;
-  }
+      .table-header-cell {
+        text-align: left;
+        font-size: 14px;
+        font-weight: 600;
+        color: #25414d;
+        padding: 6px 10px;
 
-  .react-datepicker__input-container {
-    input {
-      border-radius: 8px;
-      width: 100%;
-      min-width: var(--input-height);
-      outline: 0;
-      position: relative;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      -ms-appearance: none;
-      appearance: none;
-      text-align: start;
-      border-radius: var(--chakra-radii-l2);
-      height: var(--input-height);
-      --focus-color: var(--chakra-colors-color-palette-focus-ring);
-      --error-color: var(--chakra-colors-border-error);
-      font-size: var(--chakra-font-sizes-sm);
-      line-height: 1.25rem;
-      padding-inline: var(--chakra-spacing-3);
-      --input-height: var(--chakra-sizes-10);
-      background: var(--chakra-colors-transparent);
-      --bg-currentcolor: var(--chakra-colors-transparent);
-      border-width: 1px;
-      border-color: var(--chakra-colors-border);
-      --focus-ring-color: var(--chakra-colors-color-palette-focus-ring);
+        &.event-name {
+          width: 70%; // Adjust for proportional width
+        }
+
+        &.status {
+          width: 30%;
+        }
+
+        .header-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      }
     }
   }
 }

@@ -172,8 +172,6 @@ const AssignmentHmWorkModal = ({
 
       if (!data) return;
 
-      console.log(data);
-
       setAssignments((prev) => [...prev, data]);
 
       toast.success('Đã đăng bài tập thành công');

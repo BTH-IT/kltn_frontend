@@ -112,7 +112,7 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
         </CardHeader>
         <CardContent>
           {members.length > 0 ? (
-            <ScrollArea className="h-[400px] pr-4">
+            <ScrollArea className="min-h-[200px] pr-4">
               <div className="space-y-4">
                 {members.map((member) => (
                   <div
@@ -130,7 +130,6 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
                         <div className="font-medium">
                           {member?.studentObj?.fullName || member?.studentObj?.userName}
                         </div>
-                        {/* <div className="text-sm text-gray-500">{member.studentObj.role}</div> */}
                       </div>
                       {member.isLeader && (
                         <Badge variant="secondary" className="text-red-500">

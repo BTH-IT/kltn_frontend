@@ -34,7 +34,7 @@ const CourseCard = ({ item }: { item: ICourse }) => {
                 </p>
                 <p className="flex items-center gap-2 text-sm text-gray-200 shadow-text">
                   <Users size={16} className="flex-shrink-0 text-green-300" />
-                  <span className="truncate">{item.studentsCount ?? 0} học viên</span>
+                  <span className="truncate">{item.studentCount ?? 0} học viên</span>
                 </p>
               </div>
 
