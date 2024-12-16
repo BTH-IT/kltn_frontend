@@ -4,6 +4,7 @@
 import { useState, useMemo } from 'react';
 import { Gantt, StylingOption, Task, ViewMode } from 'gantt-task-react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 import 'gantt-task-react/dist/index.css';
 
@@ -30,7 +31,9 @@ const getStatus = (assignment: IAssignment) => {
   if (hasSubmission) return 'COMPLETED'; // Completed (Green)
   if (endDate && currentDate > endDate) return 'PENDING'; // Pending (Yellow)
   if (currentDate >= startDate && (!endDate || currentDate <= endDate)) return 'IN_PROGRESS'; // In Progress (Blue)
-  return 'NOT_STARTED'; // Not Started (Gray)
+  if (currentDate < startDate) return 'NOT_STARTED'; // Not Started (Gray)
+
+  return 'DELAYED';
 };
 
 const initTasks = (events: IAssignment[] = []): CustomTask[] => {
@@ -85,9 +88,11 @@ const TaskListTable = ({ tasks }: { tasks: CustomTask[] }) => {
       {tasks.map((task) => (
         <tr key={task.id} className="table-row">
           <td className={'table-cell-1'}>
-            <p className="text-xs">
-              {task.courseName} - {task.name}
-            </p>
+            <div className="table-cell-flex">
+              <p className="text-xs">
+                {task.courseName} - {task.name}
+              </p>
+            </div>
           </td>
           <td className="table-cell-2">
             <div>
@@ -97,6 +102,7 @@ const TaskListTable = ({ tasks }: { tasks: CustomTask[] }) => {
                 {task.status === 'PENDING' ? 'Đang chờ' : ''}
                 {task.status === 'IN_PROGRESS' ? 'Đang thực hiện' : ''}
                 {task.status === 'NOT_STARTED' ? 'Chưa bắt đầu' : ''}
+                {task.status === 'DELAYED' ? 'Quá hạn' : ''}
               </p>
             </div>
           </td>
@@ -107,7 +113,7 @@ const TaskListTable = ({ tasks }: { tasks: CustomTask[] }) => {
 };
 
 const stylingOptions: StylingOption = {
-  listCellWidth: '400px',
+  listCellWidth: '200px',
   barCornerRadius: 8,
   TaskListHeader,
 };
@@ -118,7 +124,10 @@ const GanttChart = ({ events }: GanttChartProps) => {
 
   const tasks = useMemo(() => initTasks(events), [events]);
 
-  useGanttChartStyling(tasks, (task) => router.push(`/courses/${task.courseId}/assignments/${task.id}`));
+  useGanttChartStyling(tasks, (task) => {
+    toast.info(`Đang chuyển đến bài tập: ${task.name}`);
+    router.push(`/courses/${task.courseId}/assignments/${task.id}`);
+  });
 
   return (
     <div className="p-3">
