@@ -53,6 +53,8 @@ const AssignmentPage = () => {
     }
   }, [course, user]);
 
+  console.log(assignments);
+
   return (
     <div className="assignments-step-1">
       {isMounted && (

@@ -88,6 +88,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
   }, [submissions]);
 
   useEffect(() => {
+    console.log(groups, submissions);
     if (groups.length > 0 && submissions.length > 0) {
       const data: IGroupSubmission[] = [];
       const groupedByGroupId = submissions.reduce(
@@ -123,6 +124,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
         });
       }
 
+      console.log(data);
       setGroupSubmissions(data);
     }
   }, [groups, submissions]);

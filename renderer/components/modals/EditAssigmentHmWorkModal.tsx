@@ -110,13 +110,7 @@ const EditAssignmentHmWorkModal = ({
   const submitForm = async (values: z.infer<typeof FormSchema>) => {
     const resAttachments = files.length > 0 ? await uploadService.uploadMultipleFileWithAWS3(files) : [];
 
-    const formattedDueDate = dueDate
-      ? (() => {
-          const newDate = new Date(dueDate);
-          newDate.setHours(newDate.getHours() + 7);
-          return newDate.toISOString().split('.')[0] + 'Z';
-        })()
-      : null;
+    const formattedDueDate = dueDate ? new Date(dueDate) : null;
 
     const data = {
       title: values.title,

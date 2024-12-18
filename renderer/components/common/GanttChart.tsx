@@ -19,6 +19,7 @@ export interface CustomTask extends Task {
   status: string;
   courseId: string;
   courseName: string;
+  isHidden: boolean;
 }
 
 const getStatus = (assignment: IAssignment) => {
@@ -39,7 +40,7 @@ const getStatus = (assignment: IAssignment) => {
 const initTasks = (events: IAssignment[] = []): CustomTask[] => {
   return events.map((event, index) => {
     const startDate = new Date(event.createdAt);
-    const endDate = event.dueDate ? new Date(event.dueDate) : new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const endDate = event.dueDate ? new Date(event.dueDate) : new Date();
 
     return {
       id: event.assignmentId,
@@ -51,6 +52,7 @@ const initTasks = (events: IAssignment[] = []): CustomTask[] => {
       type: 'task',
       progress: event.submission ? 100 : 0,
       status: getStatus(event),
+      isHidden: !event.dueDate,
       displayOrder: index + 1,
       isDisabled: false,
       dependencies: [],
