@@ -24,7 +24,6 @@ const signUpSchema = z
   .object({
     username: z.string().min(1, 'Username is required'),
     fullname: z.string().min(1, 'Full name is required'),
-    customId: z.string(),
     email: z.string().email('Invalid email address'),
     password: passwordSchema,
     confirmPassword: z.string().min(8, 'confirmPassword must be at least 8 characters'),
@@ -126,7 +125,6 @@ export default function Page() {
 
             <InputForm
               name={'customId'}
-              error={errors.customId?.message}
               control={control}
               placeholder="Mã sinh viên (nếu có)"
               type="text"

@@ -100,7 +100,9 @@ const AssignmentAccordion = ({
               <div className="flex items-center">
                 <div className="text-sm text-gray-500">
                   {assignment.dueDate
-                    ? `Đến hạn vào ${formatVNDate(assignment.dueDate)}`
+                    ? `Đến hạn vào ${moment(assignment.dueDate).format(
+                        'l',
+                      )} - ${moment(assignment.dueDate).format('LT')}`
                     : isTeacher
                       ? `Đã đăng ${moment(assignment.createdAt).fromNow()}`
                       : 'Không có ngày đến hạn'}
@@ -180,7 +182,7 @@ const AssignmentAccordion = ({
             <div className="flex flex-col gap-4 pb-5 pl-5 pr-8 overflow-y-auto">
               <div className="flex items-center justify-between text-sm">
                 <div className="text-gray-500">
-                  {`Đã đăng vào ${formatVNDate(assignment.createdAt, false)} ${
+                  {`Đã đăng vào ${formatVNDate(assignment?.createdAt.toString(), false)} ${
                     assignment.updatedAt != assignment.createdAt && assignment.updatedAt
                       ? `(Đã chỉnh sửa  ${moment(assignment?.updatedAt).fromNow()})`
                       : ''

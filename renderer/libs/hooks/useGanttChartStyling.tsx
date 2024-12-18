@@ -7,7 +7,7 @@ import { CustomTask } from '@/components/common/GanttChart';
 
 const MILLISECONDS_IN_A_DAY = 86400000;
 const COLUMN_WIDTH = 30;
-const ROW_HEIGHT = 40;
+const ROW_HEIGHT = 32;
 const TASK_HEIGHT = 20;
 const HEADER_HEIGHT = 50;
 
@@ -34,17 +34,24 @@ const useGanttChartStyling = (tasks: CustomTask[], onClick: (task: CustomTask) =
           const taskWidth = taskDuration * COLUMN_WIDTH;
           const taskDiv = document.createElement('div');
           taskDiv.style.position = 'absolute';
-          taskDiv.style.top = `${(task.displayOrder! - 1) * ROW_HEIGHT + 3}px`;
+          taskDiv.style.top = `${(task.displayOrder! - 1) * ROW_HEIGHT + 6}px`;
           taskDiv.style.left = `${leftPosition}px`;
           taskDiv.style.width = `${taskWidth}px`;
           taskDiv.style.height = `${TASK_HEIGHT}px`;
           taskDiv.style.zIndex = '1';
           taskDiv.textContent = task.name;
           taskDiv.classList.add('task-item', `task-${task.status}`);
-          taskDiv.onclick = () => {
-            onClick(task);
-          };
-          container?.appendChild(taskDiv);
+
+          if (task.isHidden) {
+            taskDiv.style.display = 'none';
+          } else {
+            taskDiv.onclick = () => {
+              onClick(task);
+            };
+            container?.appendChild(taskDiv);
+          }
+
+          console.log(taskDiv);
         }
       });
 

@@ -10,11 +10,11 @@ export interface IAssignment {
   title: string;
   type: string;
   content: string;
-  dueDate?: string | null;
+  dueDate?: Date | string | null;
   attachments: any;
   attachedLinks: any;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   course: ICourse;
   createUser: IUser | null;
   isGroupAssigned: boolean;
