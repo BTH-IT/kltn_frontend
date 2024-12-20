@@ -18,7 +18,6 @@ import { KEY_LOCALSTORAGE, SET_LOCALSTORAGE } from '@/utils';
 import withPermission from '@/libs/hoc/withPermission';
 import { signUpSchema, SignUpFormInputs } from '@/utils/schemas';
 import { Separator } from '@/components/ui/separator';
-import { logError } from '@/libs/utils';
 
 import InputForm from '../_components/InputForm';
 
@@ -68,7 +67,7 @@ export default withPermission(() => {
       router.refresh();
       toast.success('Đăng nhập thành công');
     } catch (error) {
-      logError(error);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }

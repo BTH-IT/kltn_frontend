@@ -14,16 +14,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent2, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import submissionService from '@/services/submissionService';
-import uploadService from '@/services/uploadService';
-import { ICourse, IUser, MetaLinkData } from '@/types';
+import { ICourse, IUser } from '@/types';
 import { IAssignment } from '@/types/assignment';
-import { formatDuration } from '@/utils';
 
-import { YoutubeCardProps } from '../common/YoutubeCard';
 import SubmitAssignmentForm from '../forms/SubmitAssignmentForm';
-
-import AddLinkModal from './AddLinkModal';
-import AddYoutubeLinkModal from './AddYoutubeLinkModal';
 
 const FormSchema = z.object({
   description: z.string(),
@@ -52,14 +46,14 @@ const ViewSubmissionModal = ({
   });
 
   useEffect(() => {
-    if (assignment) {
+    if (assignment && course) {
       form.setValue('description', assignment.content);
 
       const isSubmissionDeletable = () => {
         if (!user || !assignment.submission) return false;
 
         const isCreator = assignment.submission.createUser.id === user.id;
-        const isLecturer = user.id === assignment.course.lecturerId;
+        const isLecturer = user.id === course.lecturerId;
         const isOverdue = assignment.dueDate ? new Date(assignment.dueDate) < new Date() : false;
 
         return isLecturer || (isCreator && !isOverdue);
@@ -69,7 +63,7 @@ const ViewSubmissionModal = ({
         setSubmitable(true);
       }
     }
-  }, [assignment, user, form, onOpenModal]);
+  }, [assignment, user, form, onOpenModal, course]);
 
   const onSubmit = async (values: z.infer<typeof FormSchema>): Promise<void> => {
     if (!assignment) return;
