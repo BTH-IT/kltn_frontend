@@ -38,13 +38,12 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
-
     if (storedUser) {
       setUser(storedUser);
     } else {
-      return router.push('/login');
+      router.push('/login');
     }
-  }, []);
+  }, [router]);
 
   const currentYear = new Date().getFullYear();
   const nextYear = currentYear + 1;

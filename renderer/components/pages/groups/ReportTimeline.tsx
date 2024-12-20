@@ -3,7 +3,7 @@
 'use client';
 
 import { useContext, useEffect, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { ClipboardList, Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
@@ -152,25 +152,37 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              <Accordion
-                type="multiple"
-                defaultValue={reports.map((report) => report.reportId.toString())}
-                className="w-full"
-              >
-                {reports.map((report, idx) => (
-                  <ReportAccordionItem
-                    report={report}
-                    idx={idx}
-                    key={report.reportId}
-                    setCurrentReport={setCurrentReport}
-                    handleGenerateBrief={handleGenerateBrief}
-                    currentUser={currentUser}
-                    setBriefReport={setBriefReport}
-                    setEditingReport={setEditingReport}
-                    setDeletingReport={setDeletingReport}
-                  />
-                ))}
-              </Accordion>
+              {reports.length <= 0 ? (
+                <div className="flex flex-col items-center justify-center p-8 text-center min-h-[300px] bg-gray-50">
+                  <div className="p-3 mb-4 bg-blue-100 rounded-full">
+                    <ClipboardList className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="mb-1 text-lg font-medium text-gray-900">Chưa có báo cáo nào cả</h3>
+                  <p className="mb-4 text-sm text-gray-500">
+                    Bắt đầu bằng cách thêm báo cáo tiến độ đầu tiên cho nhóm của bạn
+                  </p>
+                </div>
+              ) : (
+                <Accordion
+                  type="multiple"
+                  defaultValue={reports.map((report) => report.reportId.toString())}
+                  className="w-full"
+                >
+                  {reports.map((report, idx) => (
+                    <ReportAccordionItem
+                      report={report}
+                      idx={idx}
+                      key={report.reportId}
+                      setCurrentReport={setCurrentReport}
+                      handleGenerateBrief={handleGenerateBrief}
+                      currentUser={currentUser}
+                      setBriefReport={setBriefReport}
+                      setEditingReport={setEditingReport}
+                      setDeletingReport={setDeletingReport}
+                    />
+                  ))}
+                </Accordion>
+              )}
             </CardContent>
           </Card>
           <AddGroupReportModal
