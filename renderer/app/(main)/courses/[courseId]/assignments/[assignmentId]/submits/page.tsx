@@ -1,4 +1,5 @@
 import React from 'react';
+import { redirect } from 'next/navigation';
 
 import AssigmentSubmited from '@/components/pages/courses/assignment/AssignmentSubmited';
 import http from '@/libs/http';
@@ -10,6 +11,10 @@ const AssignmentSubmitPage = async ({ params }: { params: any }) => {
   const {
     payload: { data: submissions },
   } = await http.get<ISubmissionList[]>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}${API_URL.SUBMISSIONS}`);
+
+  if (!submissions) {
+    redirect('/');
+  }
 
   return (
     <>

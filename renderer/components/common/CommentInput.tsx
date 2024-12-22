@@ -68,7 +68,7 @@ const CommentInput = ({
       reset();
       setIsFocus(false);
 
-      setComments((prev) => [res.data, ...prev]);
+      setComments([res.data, ...comments]);
       toast.success('Bình luận thành công');
     } catch (error) {
       logError(error);

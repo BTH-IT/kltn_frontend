@@ -23,7 +23,6 @@ const ReportCommentList = ({ report, currentUser }: { report: IReport; currentUs
       await commentService.deleteComment(report.reportId, id);
 
       setComments(comments.filter((c) => c.commentId !== id));
-      toast.success('Xóa bình luận thành công');
     } catch (error) {
       logError(error);
     }

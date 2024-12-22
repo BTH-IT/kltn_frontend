@@ -6,13 +6,14 @@ import { ClipboardList, Printer } from 'lucide-react';
 import { utils, writeFile } from 'xlsx';
 import { motion } from 'framer-motion';
 import ReactSelect from 'react-select';
+import { useRouter } from 'next/navigation';
 
 import { ScoreStructureContext } from '@/contexts/ScoreStructureContext';
 import { CourseContext } from '@/contexts/CourseContext';
-import { getLeafColumns } from '@/utils';
+import { getLeafColumns, KEY_LOCALSTORAGE } from '@/utils';
 import scoreStructureService from '@/services/scoreStructureService';
 import { ITranscript } from '@/types/transcript';
-import { ICourse, IScoreStructure } from '@/types';
+import { ICourse, IScoreStructure, IUser } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -32,6 +33,18 @@ const ScoreStructureTable: React.FC = () => {
   const [transcripts, setTranscripts] = useState<ITranscript[]>([]);
   const [exportOption, setExportOption] = useState<'full' | 'scoresOnly' | 'infosOnly'>('full');
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+  const [user, setUser] = useState<IUser | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE.CURRENT_USER) || 'null');
+
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      return router.push('/login');
+    }
+  }, [router]);
 
   useEffect(() => {
     const fetchTranscripts = async () => {
@@ -98,10 +111,10 @@ const ScoreStructureTable: React.FC = () => {
   };
 
   return (
-    <div className="p-4 scores-step-1">
+    <div className="overflow-x-auto scores-step-1">
       {course.students && course.students.length > 0 ? (
         <>
-          <div className="p-3" ref={contentRef}>
+          <div className="pb-3" ref={contentRef}>
             <div className="flex items-center justify-between gap-2 mb-6">
               <h2 className="mb-4 text-2xl font-bold">Bảng điểm</h2>
               <div className="flex items-start gap-3">
@@ -208,16 +221,18 @@ const ScoreStructureTable: React.FC = () => {
               </tbody>
             </table>
           </div>
-          <div className="flex justify-end w-full mt-5">
-            <Button className="flex gap-2" onClick={handleExportExcel}>
-              <Printer className="w-4 h-4" />
-              Xuất Excel
-            </Button>
-            <Button className="flex gap-2 ml-2" onClick={handlePrintClick}>
-              <Printer className="w-4 h-4" />
-              In bảng điểm
-            </Button>
-          </div>
+          {user?.id === course?.lecturerId && (
+            <div className="flex justify-end w-full mt-5">
+              <Button className="flex gap-2" onClick={handleExportExcel}>
+                <Printer className="w-4 h-4" />
+                Xuất Excel
+              </Button>
+              <Button className="flex gap-2 ml-2" onClick={handlePrintClick}>
+                <Printer className="w-4 h-4" />
+                In bảng điểm
+              </Button>
+            </div>
+          )}
         </>
       ) : (
         <div className="flex flex-col items-center justify-center min-h-[500px] p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-lg">
