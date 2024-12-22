@@ -90,7 +90,6 @@ const AnnouncementItem = ({
       await commentService.deleteComment(announcement.announcementId, id);
 
       setComments(comments.filter((c) => c.commentableId !== id));
-      toast.success('Xóa bình luận thành công!');
     } catch (error) {
       logError(error);
     }

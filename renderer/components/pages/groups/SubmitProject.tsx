@@ -9,7 +9,6 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { AxiosError } from 'axios';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -153,7 +152,6 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
       await commentService.deleteComment(assignment.assignmentId, id);
 
       setComments(comments.filter((c) => c.commentId !== id));
-      toast.success('Xóa bình luận thành công');
     } catch (error) {
       logError(error);
     }
@@ -239,24 +237,24 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
                 </div>
               </div>
 
-              <div>
-                <TooltipProvider>
-                  <Link
-                    href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
-                  >
-                    <Button variant="ghost" size="icon" className="rounded-full">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <GraduationCap className="w-6 h-6 mr-2" />
-                        </TooltipTrigger>
-                        <TooltipContent>Xem và chấm bài</TooltipContent>
-                      </Tooltip>
-                    </Button>
-                  </Link>
-                </TooltipProvider>
+              {assignment?.createUser?.id === currentUser?.id && (
+                <div>
+                  <TooltipProvider>
+                    <Link
+                      href={`${API_URL.COURSES}/${assignment?.courseId}${API_URL.ASSIGNMENTS}/${assignment?.assignmentId}/submits`}
+                    >
+                      <Button variant="ghost" size="icon" className="rounded-full">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <GraduationCap className="w-6 h-6 mr-2" />
+                          </TooltipTrigger>
+                          <TooltipContent>Xem và chấm bài</TooltipContent>
+                        </Tooltip>
+                      </Button>
+                    </Link>
+                  </TooltipProvider>
 
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  {assignment?.createUser?.id === currentUser?.id ? (
+                  <Button variant="ghost" size="icon" className="rounded-full">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild className="cursor-pointer">
                         <EllipsisVertical className="w-6 h-6 mr-2" />
@@ -274,11 +272,9 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
                         </DropdownMenuGroup>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  ) : (
-                    <></>
-                  )}
-                </Button>
-              </div>
+                  </Button>
+                </div>
+              )}
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-3 pt-6">
@@ -357,7 +353,7 @@ export default function SubmitProject({ group, data }: { group: IGroup; data: IA
                     </Button>
                   </>
                 ) : (
-                  <Button variant="outline" className="justify-start w-full" onClick={() => setIsSubmit(true)}>
+                  <Button variant="outline" className="justify-center w-full" onClick={() => setIsSubmit(true)}>
                     {categorizeStatus(assignment?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
                   </Button>
                 )}

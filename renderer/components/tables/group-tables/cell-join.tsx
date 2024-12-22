@@ -3,7 +3,7 @@
 
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
@@ -12,12 +12,14 @@ import userService from '@/services/userService';
 import { IUser } from '@/types';
 import { IGroup, IRequest } from '@/types/group';
 import { KEY_LOCALSTORAGE } from '@/utils';
+import { CourseContext } from '@/contexts/CourseContext';
 interface CellJoinProps {
   data: IGroup;
 }
 
 export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
   const router = useRouter();
+  const { course } = useContext(CourseContext);
 
   const [user, setUser] = useState<IUser | null>(null);
   const [isRequestSent, setIsRequestSent] = useState(false);
@@ -50,7 +52,8 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
             (request) =>
               request.groupId === data.groupId &&
               request.userId === user?.id &&
-              request.group?.groupType == data.groupType,
+              request.group?.groupType == data.groupType &&
+              course?.courseId === request.group?.courseId,
           );
 
           setHasRequest(userRequestForGroup);
@@ -59,7 +62,8 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
             (request) =>
               request.groupId !== data.groupId &&
               request.userId === user?.id &&
-              request.group?.groupType == data.groupType,
+              request.group?.groupType == data.groupType &&
+              course?.courseId === request.group?.courseId,
           );
           setUserHasRequestOther(otherGroupRequest);
 
@@ -113,20 +117,20 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
 
   return (
     <div className="flex items-center justify-center gap-3">
-      {hasLeader ? null : (
+      {hasLeader ? (
+        <>Nhóm đã có trưởng nhóm vui lòng liên hệ họ hoặc giảng viên để tham gia</>
+      ) : (
         <>
           {hasRequest ? (
             <Button variant="destructive" onClick={cancelRequest}>
               Huỷ yêu cầu
             </Button>
+          ) : !isRequestSent && !groupHasRequest && !userHasRequestOther ? (
+            <Button variant="primary" onClick={sendRequest}>
+              Yêu cầu tham gia
+            </Button>
           ) : (
-            !isRequestSent &&
-            !groupHasRequest &&
-            !userHasRequestOther && (
-              <Button variant="primary" onClick={sendRequest}>
-                Yêu cầu tham gia
-              </Button>
-            )
+            <>Nhóm này đã có người gửi yêu cầu hoặc bạn đã gửi yêu cầu cho nhóm khác</>
           )}
         </>
       )}

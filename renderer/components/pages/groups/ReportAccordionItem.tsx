@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 'use client';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Edit, ScrollText, Trash } from 'lucide-react';
 
 import { IReport } from '@/types';
@@ -11,6 +11,7 @@ import { formatVNDate } from '@/utils';
 import AnnouncementAttachList from '@/components/common/AnnouncementAttachList';
 import ReportCommentList from '@/components/common/ReportCommentList';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CourseContext } from '@/contexts/CourseContext';
 
 const ReportAccordionItem = ({
   report,
@@ -32,6 +33,8 @@ const ReportAccordionItem = ({
   currentUser: any;
 }) => {
   const [isLoadingBrief, setIsLoadingBrief] = useState(false);
+  const { course } = useContext(CourseContext);
+
   return (
     <TooltipProvider>
       <AccordionItem key={report.reportId} value={report.reportId.toString()} className="pr-4 border-b last:border-b-0">
@@ -47,36 +50,40 @@ const ReportAccordionItem = ({
               </div>
             </div>
             <div className="flex space-x-4">
-              {isLoadingBrief ? (
-                <div
-                  className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-primary motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                  role="status"
-                />
-              ) : (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <ScrollText
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        setCurrentReport(report);
-                        if (!report.brief) {
-                          try {
-                            setIsLoadingBrief(true);
-                            await handleGenerateBrief(report);
-
-                            setIsLoadingBrief(false);
-                          } catch (error) {
-                            setIsLoadingBrief(false);
-                          }
-                        } else {
-                          setBriefReport(true);
-                        }
-                      }}
-                      className="w-4 h-4 text-green-500"
+              {course?.lecturerId === currentUser.id && (
+                <>
+                  {isLoadingBrief ? (
+                    <div
+                      className="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-primary motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                      role="status"
                     />
-                  </TooltipTrigger>
-                  <TooltipContent>Tóm tắt báo cáo</TooltipContent>
-                </Tooltip>
+                  ) : (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <ScrollText
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            setCurrentReport(report);
+                            if (!report.brief) {
+                              try {
+                                setIsLoadingBrief(true);
+                                await handleGenerateBrief(report);
+
+                                setIsLoadingBrief(false);
+                              } catch (error) {
+                                setIsLoadingBrief(false);
+                              }
+                            } else {
+                              setBriefReport(true);
+                            }
+                          }}
+                          className="w-4 h-4 text-green-500"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>Tóm tắt báo cáo</TooltipContent>
+                    </Tooltip>
+                  )}
+                </>
               )}
 
               <Tooltip>

@@ -151,8 +151,6 @@ export default function AssignmentDetail() {
       await commentService.deleteComment(assignment.assignmentId, id);
 
       setComments(comments.filter((c) => c.commentId !== id));
-
-      toast.success('Xóa bình luận thành công');
     } catch (error) {
       logError(error);
     }
