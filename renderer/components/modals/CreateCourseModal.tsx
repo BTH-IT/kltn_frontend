@@ -24,6 +24,7 @@ import courseService from '@/services/courseService';
 import { API_URL } from '@/constants/endpoints';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 import { ApiResponse, ISubject, IUser } from '@/types';
+import { CoursesContext } from '@/contexts/CoursesContext';
 
 import CreateSubjectModal from './CreateSubjectModal';
 
@@ -33,6 +34,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [subjectCreated, setSubjectCreated] = useState<ISubject | null>(null);
+  const { setCreatedCourses, createdCourses } = useContext(CoursesContext);
 
   const router = useRouter();
 
@@ -95,6 +97,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
       const res = await courseService.createCourse(data as any);
       router.refresh();
       router.push(`${API_URL.COURSES}/${res.data.courseId}`);
+      setCreatedCourses([...createdCourses, res.data]);
       setOpenModal(false);
       form.reset();
       toast.success('Tạo lớp học thành công');
