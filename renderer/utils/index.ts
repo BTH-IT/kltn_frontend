@@ -272,7 +272,15 @@ export const getLeafColumns = (node: any) => {
   if (!node.children || node.children.length === 0) {
     return [node];
   }
-  return node.children.flatMap(getLeafColumns);
+  return sortColumnsByPercent(node.children.flatMap(getLeafColumns));
+};
+
+export const sortColumnsByPercent = (columns: any[]) => {
+  return columns.sort((a, b) => {
+    const percentA = a.percent || 0;
+    const percentB = b.percent || 0;
+    return percentA - percentB;
+  });
 };
 
 export const BE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
