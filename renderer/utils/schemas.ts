@@ -2,11 +2,11 @@ import * as z from 'zod';
 
 export const passwordSchema = z
   .string()
-  .min(8, 'Password must be at least 8 characters')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(/[#!@$%^&*-]/, 'Password must contain at least one special character (#?!@$%^&*-)');
+  .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
+  .regex(/[a-z]/, 'Mật khẩu phải chứa ít nhất một chữ cái viết thường')
+  .regex(/[A-Z]/, 'Mật khẩu phải chứa ít nhất một chữ cái viết hoa')
+  .regex(/[0-9]/, 'Mật khẩu phải chứa ít nhất một số')
+  .regex(/[#!@$%^&*-]/, 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt (#?!@$%^&*-)');
 
 export const signUpSchema = z.object({
   identifier: z.string().min(1, 'Username or email is required'),

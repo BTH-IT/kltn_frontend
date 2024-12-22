@@ -22,18 +22,18 @@ import InputForm from '../_components/InputForm';
 
 const signUpSchema = z
   .object({
-    username: z.string().min(1, 'Username is required'),
-    fullname: z.string().min(1, 'Full name is required'),
-    email: z.string().email('Invalid email address'),
+    username: z.string().min(1, 'Tên đăng nhập là bắt buộc'),
+    fullname: z.string().min(1, 'Họ tên là bắt buộc'),
+    email: z.string().email('Địa chỉ email không hợp lệ'),
     password: passwordSchema,
-    confirmPassword: z.string().min(8, 'confirmPassword must be at least 8 characters'),
+    confirmPassword: z.string().min(8, 'Xác nhận mật khẩu phải có ít nhất 8 ký tự'),
   })
   .superRefine((data, ctx) => {
     if (data.confirmPassword !== data.password) {
       ctx.addIssue({
         code: 'not_finite',
         path: ['confirmPassword'],
-        message: 'Passwords do not match',
+        message: 'Mật khẩu không khớp',
       });
     }
   });
@@ -95,16 +95,16 @@ export default function Page() {
   };
 
   return (
-    <div className="grid w-screen h-screen grid-cols-12 gap-2">
+    <div className="grid w-screen h-screen grid-cols-12 gap-2 overflow-y-auto">
       <div className="col-span-6 bg-[#EBF7F7] flex items-center justify-center">
         <Image src="/images/forgot-password.png" width={1000} height={1000} objectFit="cover" alt={'Forgot Password'} />
       </div>
       <div className="flex items-center justify-center col-span-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-[600px] p-5 mx-auto rounded-md">
-          <h2 className="text-3xl font-bold">Đăng ký</h2>
-          <p className="mt-1 mb-5 text-[#919191]">Vui lòng đăng ký tài khoản để bắt đầu hành trình</p>
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-[800px] p-5 mx-auto rounded-md">
+          <h2 className="text-2xl font-bold">Đăng ký</h2>
+          <p className="mt-1 mb-5 text-xl text-[#919191]">Vui lòng đăng ký tài khoản để bắt đầu hành trình</p>
 
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             <InputForm
               name={'username'}
               error={errors.username?.message}
@@ -163,13 +163,13 @@ export default function Page() {
 
           <Button
             type="submit"
-            className="mt-10 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl"
+            className="mt-5 bg-[#2FB2AC] w-full rounded-2xl font-medium text-xl"
             disabled={isLoading}
           >
             Đăng ký
           </Button>
 
-          <Separator className="my-8" />
+          <Separator className="my-4" />
 
           <Button
             type="button"
@@ -181,7 +181,7 @@ export default function Page() {
             Đăng nhập với Google
           </Button>
 
-          <p className="mt-10 flex gap-2 items-center justify-center text-[#919191]">
+          <p className="mt-5 flex gap-2 items-center justify-center text-[#919191]">
             <span>Bạn đã có tài khoản?</span>
             <Link href={'/login'} className="text-[#2FB2AC]">
               Đăng nhập

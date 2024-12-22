@@ -21,9 +21,6 @@ const InputForm = ({ control, name, error, className, iconStart, iconEnd = false
     <div className="flex flex-col gap-2">
       <Controller
         control={control}
-        rules={{
-          required: true,
-        }}
         render={({ field }) => (
           <div className="relative">
             <div className="absolute -translate-y-1/2 left-4 top-1/2">{iconStart}</div>
