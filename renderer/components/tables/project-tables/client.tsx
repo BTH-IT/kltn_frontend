@@ -117,7 +117,8 @@ export const ProjectClient = ({ user }: { user: IUser | null }) => {
         </div>
       )}
 
-      <Separator />
+      <Separator className="my-3" />
+
       <CreateProjectModal
         isOpen={isProjectModalOpen}
         setIsOpen={setIsProjectModalOpen}

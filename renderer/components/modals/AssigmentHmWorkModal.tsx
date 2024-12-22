@@ -5,7 +5,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { NotebookText, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'react-toastify';
@@ -22,6 +22,7 @@ import uploadService from '@/services/uploadService';
 import { ICourse, MetaLinkData } from '@/types';
 import { IAssignment } from '@/types/assignment';
 import { formatDuration } from '@/utils';
+import { CourseContext } from '@/contexts/CourseContext';
 
 import { DateTimePicker } from '../common/DatetimePicker';
 import { YoutubeCardProps } from '../common/YoutubeCard';
@@ -54,6 +55,7 @@ const AssignmentHmWorkModal = ({
   const [registerExpiryDate, setRegisterExpiryDate] = useState<Date | undefined | null>(undefined);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
+  const { setCourse } = useContext(CourseContext);
 
   useEffect(() => {
     if (course) {
@@ -164,9 +166,13 @@ const AssignmentHmWorkModal = ({
     try {
       const data = await createAssignment(values, course.courseId);
 
-      if (!data) return;
+      if (!data || !course) return;
 
       setAssignments((prev) => [...prev, data]);
+      setCourse({
+        ...course!,
+        assignments: [...course!.assignments, data],
+      });
 
       toast.success('Đã đăng bài tập thành công');
 

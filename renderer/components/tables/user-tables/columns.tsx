@@ -9,9 +9,9 @@ import { CellAction } from './cell-action';
 
 export const columns: ColumnDef<IUser>[] = createColumns([
   {
-    accessorKey: 'userId',
+    accessorKey: 'customId',
     header: 'Mã người dùng',
-    cell: ({ row }: any) => row.original.userId || 'N/A',
+    cell: ({ row }: any) => row.original.customId || 'N/A',
   },
   {
     accessorKey: 'email',
