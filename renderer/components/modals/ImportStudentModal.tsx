@@ -2,8 +2,7 @@
 /* eslint-disable max-len */
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useContext, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { CheckSquare2, FileSpreadsheet, Upload, X, AlertCircle, LayoutGrid, Columns, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -17,6 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { ICourse } from '@/types';
 import courseService from '@/services/courseService';
 import { logError } from '@/libs/utils';
+import { CourseContext } from '@/contexts/CourseContext';
 
 const mandatoryColumns = ['customId', 'name', 'email'];
 
@@ -29,7 +29,7 @@ export default function ImportStudentModal({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   course: ICourse;
 }) {
-  const router = useRouter();
+  const { setCourse } = useContext(CourseContext);
   const [data, setData] = useState<any[]>([]);
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
@@ -196,10 +196,10 @@ export default function ImportStudentModal({
           };
         });
 
-      await courseService.importStudents(course.courseId, selectedData);
+      const res = await courseService.importStudents(course.courseId, selectedData);
       toast.success('Thêm sinh viên thành công');
       setIsOpen(false);
-      router.refresh();
+      setCourse({ ...course, students: res.data?.students || [] });
     } catch (error) {
       logError(error);
     } finally {

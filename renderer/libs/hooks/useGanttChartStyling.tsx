@@ -50,8 +50,6 @@ const useGanttChartStyling = (tasks: CustomTask[], onClick: (task: CustomTask) =
             };
             container?.appendChild(taskDiv);
           }
-
-          console.log(taskDiv);
         }
       });
 

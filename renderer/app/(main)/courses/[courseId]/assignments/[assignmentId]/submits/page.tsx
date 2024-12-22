@@ -11,8 +11,6 @@ const AssignmentSubmitPage = async ({ params }: { params: any }) => {
     payload: { data: submissions },
   } = await http.get<ISubmissionList[]>(`${API_URL.ASSIGNMENTS}/${params.assignmentId}${API_URL.SUBMISSIONS}`);
 
-  console.log(submissions);
-
   return (
     <>
       {submissions[0]?.groupId ? (

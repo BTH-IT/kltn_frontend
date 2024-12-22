@@ -4,7 +4,6 @@ import { EllipsisVertical, UserRoundPlus, ChevronDown, ArrowDownAZ, BookUser } f
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -69,7 +68,6 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
       await courseService.deleteStudentOfCourse(String(course.courseId), id);
       const newList = list.filter((item) => item.id !== id);
       setList(newList);
-      toast.success('Xoá sinh viên thành công');
     } catch (error) {
       logError(error);
     }
@@ -78,7 +76,7 @@ const People = ({ isTeacher = true, data, course }: { isTeacher?: boolean; data:
   return (
     <section className={(cn('flex flex-col gap-3 mx-auto max-w-[800px]'), isTeacher ? 'mb-10' : '')}>
       <div className="flex items-center justify-between gap-3 py-2 border-b">
-        <h2 className="text-3xl">{isTeacher ? 'Giáo viên' : 'Sinh viên'}</h2>
+        <h2 className={`text-3xl ${isTeacher ?? 'mb-2'}`}>{isTeacher ? 'Giáo viên' : 'Sinh viên'}</h2>
         <div className="flex items-center justify-end gap-3">
           {!isTeacher && (
             <>

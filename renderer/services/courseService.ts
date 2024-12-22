@@ -50,7 +50,7 @@ const courseService = {
     });
   },
 
-  addStudents(courseId: string, emails: string[]): Promise<ApiResponse<boolean>> {
+  addStudents(courseId: string, emails: string[]): Promise<ApiResponse<ICourse | null>> {
     return configService.post(`${API_URL.COURSES}/${courseId}/students`, {
       emails,
     });
@@ -86,7 +86,7 @@ const courseService = {
   unarchive(courseId: string): Promise<ApiResponse<IAssignment>> {
     return configService.post(`${API_URL.COURSES}/${courseId}/cancel-saved`);
   },
-  importStudents(courseId: string, data: any): Promise<ApiResponse<boolean>> {
+  importStudents(courseId: string, data: any): Promise<ApiResponse<ICourse | null>> {
     return configService.post(`${API_URL.COURSES}/${courseId}/import-student`, data);
   },
 };

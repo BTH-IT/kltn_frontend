@@ -60,7 +60,7 @@ const AvatarHeader = ({
         className="w-[35px] h-[35px] rounded-full"
       />
 
-      <div className="flex items-start flex-1 gap-3">
+      <div className="flex items-center flex-1 gap-3">
         {type === 'comment' && (
           <div className="flex flex-col justify-around flex-1 w-full">
             <div className="flex items-center gap-3">

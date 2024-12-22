@@ -5,10 +5,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
 import { Copy } from 'lucide-react';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { z } from 'zod';
-import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent2, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -16,6 +15,7 @@ import { FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ICourse } from '@/types';
 import courseService from '@/services/courseService';
 import { logError } from '@/libs/utils';
+import { CourseContext } from '@/contexts/CourseContext';
 
 import { MultiValueInput } from '../common/MultiValueInput';
 
@@ -28,7 +28,7 @@ const InviteStudentModal = ({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   course: ICourse;
 }) => {
-  const router = useRouter();
+  const { setCourse } = useContext(CourseContext);
   const FormSchema = z.object({
     emails: z.array(z.string().email({ message: 'Địa chỉ email không hợp lệ' })).min(1, {
       message: 'Ít nhất một email phải được nhập',
@@ -44,10 +44,10 @@ const InviteStudentModal = ({
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      await courseService.addStudents(course.courseId, values.emails);
+      const res = await courseService.addStudents(course.courseId, values.emails);
       setIsOpen(false);
       toast.success('Mời sinh viên thành công');
-      router.refresh();
+      setCourse({ ...course, students: res.data?.students || [] });
     } catch (error) {
       logError(error);
     }

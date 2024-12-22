@@ -35,11 +35,13 @@ const AssignmentHmWorkModal = ({
   onOpenModal,
   setOnOpenModal,
   setAssignments,
+  setCourse,
 }: {
   course: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignments: React.Dispatch<React.SetStateAction<IAssignment[]>>;
+  setCourse: React.Dispatch<React.SetStateAction<ICourse | null>>;
 }) => {
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
@@ -164,9 +166,13 @@ const AssignmentHmWorkModal = ({
     try {
       const data = await createAssignment(values, course.courseId);
 
-      if (!data) return;
+      if (!data || !course) return;
 
       setAssignments((prev) => [...prev, data]);
+      setCourse({
+        ...course!,
+        assignments: [...course!.assignments, data],
+      });
 
       toast.success('Đã đăng bài tập thành công');
 
