@@ -5,7 +5,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { NotebookText, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'react-toastify';
@@ -22,6 +22,7 @@ import uploadService from '@/services/uploadService';
 import { ICourse, MetaLinkData } from '@/types';
 import { IAssignment } from '@/types/assignment';
 import { formatDuration } from '@/utils';
+import { CourseContext } from '@/contexts/CourseContext';
 
 import { DateTimePicker } from '../common/DatetimePicker';
 import { YoutubeCardProps } from '../common/YoutubeCard';
@@ -35,13 +36,11 @@ const AssignmentHmWorkModal = ({
   onOpenModal,
   setOnOpenModal,
   setAssignments,
-  setCourse,
 }: {
   course: ICourse | null;
   onOpenModal: boolean;
   setOnOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignments: React.Dispatch<React.SetStateAction<IAssignment[]>>;
-  setCourse: React.Dispatch<React.SetStateAction<ICourse | null>>;
 }) => {
   const [isOpenSelectLinkModal, setIsOpenSelectLinkModal] = useState(false);
   const [isOpenSelectYoutubeModal, setIsOpenSelectYoutubeModal] = useState(false);
@@ -56,6 +55,7 @@ const AssignmentHmWorkModal = ({
   const [registerExpiryDate, setRegisterExpiryDate] = useState<Date | undefined | null>(undefined);
   const [files, setFiles] = useState<File[]>([]);
   const [links, setLinks] = useState<MetaLinkData[]>([]);
+  const { setCourse } = useContext(CourseContext);
 
   useEffect(() => {
     if (course) {
