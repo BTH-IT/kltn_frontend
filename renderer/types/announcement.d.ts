@@ -12,4 +12,7 @@ export interface IAnnouncement extends IBaseModel {
   attachments?: any;
   mentions?: any;
   comments: IComment[];
+  type?: string;
+  title?: string;
+  url?: string;
 }
