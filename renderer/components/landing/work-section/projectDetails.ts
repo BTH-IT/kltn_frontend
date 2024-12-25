@@ -26,10 +26,10 @@ export const devProjects = [
   },
   {
     id: 2,
-    name: 'PostgreSQL',
+    name: 'MySQL',
     description:
-      'PostgreSQL được ưa chuộng vì tính ổn định, hiệu suất cao và khả năng xử lý dữ liệu phức tạp, đặc biệt là trong các ứng dụng AI và phân tích dữ liệu.',
+      'MySQL được ưa chuộng vì tính ổn định, hiệu suất cao và khả năng xử lý dữ liệu phức tạp, đặc biệt là trong các ứng dụng AI và phân tích dữ liệu.',
     technologies: ['Tính mở rộng cao', 'Dữ liệu phức tạp', 'Ổn định'],
-    image: require('../../../public/images/landing/psql.png'),
+    image: require('../../../public/images/landing/sql.webp'),
   },
 ];
