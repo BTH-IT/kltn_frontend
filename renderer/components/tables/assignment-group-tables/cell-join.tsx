@@ -3,7 +3,7 @@
 
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,8 @@ import userService from '@/services/userService';
 import { IUser } from '@/types';
 import { IGroup, IRequest } from '@/types/group';
 import { KEY_LOCALSTORAGE } from '@/utils';
+import { CourseContext } from '@/contexts/CourseContext';
+import { AssignmentContext } from '@/contexts/AssignmentContext';
 interface CellJoinProps {
   data: IGroup;
 }
@@ -19,6 +21,7 @@ interface CellJoinProps {
 export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
   const router = useRouter();
 
+  const { course } = useContext(CourseContext);
   const [user, setUser] = useState<IUser | null>(null);
   const [isRequestSent, setIsRequestSent] = useState(false);
   const [hasRequest, setHasRequest] = useState(false);
@@ -47,7 +50,11 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
         if (res) {
           const userRequests = res.data || [];
           const userRequestForGroup = userRequests.some(
-            (request) => request.groupId === data.groupId && request.userId === user?.id,
+            (request) =>
+              request.groupId === data.groupId &&
+              request.userId === user?.id &&
+              request.group?.groupType == data.groupType &&
+              course?.courseId === request.group?.courseId,
           );
           setHasRequest(userRequestForGroup);
 
@@ -88,7 +95,13 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
   // Cancel the join request
   const cancelRequest = async () => {
     try {
-      const request = allRequests.find((request) => request.userId === user?.id && request.groupId === data.groupId);
+      const request = allRequests.find(
+        (request) =>
+          request.groupId !== data.groupId &&
+          request.userId === user?.id &&
+          request.group?.groupType == data.groupType &&
+          course?.courseId === request.group?.courseId,
+      );
       if (request) {
         const res = await groupService.removeRequest(request.requestId);
         if (res) {
