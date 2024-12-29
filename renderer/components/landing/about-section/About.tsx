@@ -68,7 +68,7 @@ const About = () => {
                 wordSpace={'mr-[0.25em]'}
                 charSpace={'mr-[0.01em]'}
               />
-              <AnimatedBody text={'ASP.NET, PostgreSQL'} />
+              <AnimatedBody text={'ASP.NET, MySQL'} />
             </div>
             <div className="flex flex-col gap-3">
               <AnimatedTitle
