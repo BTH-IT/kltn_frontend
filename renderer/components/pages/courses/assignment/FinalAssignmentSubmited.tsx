@@ -388,8 +388,8 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {gs.submissionList
-                      ? format(new Date(gs.submissionList.submission?.createdAt || 'N/A'), 'yyyy-MM-dd')
+                    {gs.submissionList && gs.submissionList.submission?.createdAt
+                      ? format(new Date(gs.submissionList.submission?.createdAt), 'yyyy-MM-dd')
                       : 'N/A'}
                   </TableCell>
                   <TableCell>
