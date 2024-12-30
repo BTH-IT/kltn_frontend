@@ -22,6 +22,7 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
   const router = useRouter();
 
   const { course } = useContext(CourseContext);
+  const { assignment } = useContext(AssignmentContext);
   const [user, setUser] = useState<IUser | null>(null);
   const [isRequestSent, setIsRequestSent] = useState(false);
   const [hasRequest, setHasRequest] = useState(false);
@@ -54,12 +55,18 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
               request.groupId === data.groupId &&
               request.userId === user?.id &&
               request.group?.groupType == data.groupType &&
-              course?.courseId === request.group?.courseId,
+              course?.courseId === request.group?.courseId &&
+              request.group?.assignmentId == assignment?.assignmentId,
           );
           setHasRequest(userRequestForGroup);
 
           const otherGroupRequest = userRequests.some(
-            (request) => request.groupId !== data.groupId && request.userId === user?.id,
+            (request) =>
+              request.groupId !== data.groupId &&
+              request.userId === user?.id &&
+              request.group?.groupType == data.groupType &&
+              course?.courseId === request.group?.courseId &&
+              request.group?.assignmentId == assignment?.assignmentId,
           );
           setUserHasRequestOther(otherGroupRequest);
 
@@ -82,7 +89,7 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
       if (res) {
         toast.success('Gửi yêu cầu tham gia thành công');
         setIsRequestSent(true);
-        router.refresh();
+        window.location.reload();
       }
     } catch (error) {
       console.error('Error sending join request:', error);
@@ -97,16 +104,18 @@ export const CellJoin: React.FC<CellJoinProps> = ({ data }) => {
     try {
       const request = allRequests.find(
         (request) =>
-          request.groupId !== data.groupId &&
+          request.groupId === data.groupId &&
           request.userId === user?.id &&
           request.group?.groupType == data.groupType &&
-          course?.courseId === request.group?.courseId,
+          course?.courseId === request.group?.courseId &&
+          request.group?.assignmentId == assignment?.assignmentId,
       );
+
       if (request) {
         const res = await groupService.removeRequest(request.requestId);
         if (res) {
           toast.success('Huỷ yêu cầu tham gia thành công');
-          router.refresh();
+          window.location.reload();
         }
       }
     } catch (error) {
