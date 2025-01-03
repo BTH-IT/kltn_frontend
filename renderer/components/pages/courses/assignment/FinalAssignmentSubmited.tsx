@@ -1,7 +1,16 @@
 'use client';
 
 import { useContext, useEffect, useRef, useState, MouseEventHandler, Fragment } from 'react';
-import { Settings2, Search, Calendar as CalendarIcon, FileText, Printer, ChevronRight, User } from 'lucide-react';
+import {
+  Settings2,
+  Search,
+  Calendar as CalendarIcon,
+  FileText,
+  Printer,
+  ChevronRight,
+  User,
+  AlertCircle,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
@@ -29,6 +38,7 @@ import SubmissionDetailModal from '@/components/modals/SubmissionDetailModal';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import CommonModal from '@/components/modals/CommonModal';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface IGroupSubmission {
   group: IGroup;
@@ -73,7 +83,6 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
   const reactToPrintFn = useReactToPrint({ contentRef });
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [studentSubmissions, setStudentSubmissions] = useState<ISubmissionList[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedStudent, setSelectedStudent] = useState<ISubmissionList | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -82,10 +91,6 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
   const [groupSubmissions, setGroupSubmissions] = useState<IGroupSubmission[]>([]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [isAbleToPrint, setIsAbleToPrint] = useState(false);
-
-  useEffect(() => {
-    setStudentSubmissions(submissions);
-  }, [submissions]);
 
   useEffect(() => {
     if (groups.length > 0 && submissions.length > 0) {
@@ -165,11 +170,12 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
     }
   };
 
-  const calcucalteStats = (student: ISubmissionList) => {
+  const calculateStats = (student: ISubmissionList) => {
     const dueDate = new Date(assignment?.dueDate || '');
+    const now = new Date();
 
     if (!student?.submission) {
-      if (assignment?.dueDate === null) return 'Đã giao';
+      if (!assignment?.dueDate) return 'Đã giao';
 
       if (now <= dueDate) return 'Chưa nộp bài';
 
@@ -183,34 +189,23 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
     }
   };
 
-  const uniqueGroupIds = new Set();
+  const stats = groupSubmissions.reduce(
+    (acc, group) => {
+      if (group.submissionList) {
+        const status = calculateStats(group.submissionList);
 
-  const stats = {
-    submitted: studentSubmissions.filter((student) => {
-      const stats = calcucalteStats(student);
-      if (stats === 'Đã nộp' && !uniqueGroupIds.has(student.groupId)) {
-        uniqueGroupIds.add(student.groupId);
-        return true;
+        if (status === 'Đã nộp') {
+          acc.submitted++;
+        } else if (status === 'Đã chấm bài') {
+          acc.graded++;
+        } else if (status === 'Chưa nộp bài' || status === 'Trễ hạn' || status === 'Đã giao') {
+          acc.notSubmit++;
+        }
       }
-      return false;
-    }).length,
-    graded: studentSubmissions.filter((student) => {
-      const stats = calcucalteStats(student);
-      if (stats === 'Đã chấm bài' && !uniqueGroupIds.has(student.groupId)) {
-        uniqueGroupIds.add(student.groupId);
-        return true;
-      }
-      return false;
-    }).length,
-    notSubmit: studentSubmissions.filter((student) => {
-      const stats = calcucalteStats(student);
-      if (stats === 'Chưa nộp bài' && !uniqueGroupIds.has(student.groupId)) {
-        uniqueGroupIds.add(student.groupId);
-        return true;
-      }
-      return false;
-    }).length,
-  };
+      return acc;
+    },
+    { submitted: 0, graded: 0, notSubmit: 0 },
+  );
 
   const handleRemove = async () => {
     if (!assignment) return;
@@ -230,7 +225,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
   };
 
   const handlePrintClick: MouseEventHandler<HTMLButtonElement> = () => {
-    const groupIds: string[] = Array.from(uniqueGroupIds) as string[];
+    const groupIds: string[] = Array.from(groupSubmissions.map((item) => item.group?.groupId)) as string[];
     setExpandedRows(new Set(groupIds));
     setIsAbleToPrint(true);
   };
@@ -293,6 +288,14 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
           </DropdownMenu>
         </div>
       </div>
+
+      {assignment?.dueDate && new Date(assignment.dueDate) <= new Date() && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="w-4 h-4" />
+          <AlertTitle>Chú ý</AlertTitle>
+          <AlertDescription>Bài tập này chưa hết hạn nộp bài.</AlertDescription>
+        </Alert>
+      )}
 
       <div className="grid grid-cols-3 gap-4 mb-6">
         <Card>
@@ -393,15 +396,15 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                       : 'N/A'}
                   </TableCell>
                   <TableCell>
-                    {gs.submissionList !== null
-                      ? gs.submissionList.score !== null
-                        ? gs.submissionList.score
+                    {gs.submissionList?.submission !== null
+                      ? gs.submissionList?.score
+                        ? gs.submissionList?.score
                         : 'Chưa chấm bài'
-                      : 'Chưa nộp bài'}
+                      : 'N/A'}
                   </TableCell>
                   <TableCell className="text-right">
                     <TableCell className="toHide">
-                      {gs.submissionList !== null && (
+                      {gs.submissionList && gs.submissionList?.submission !== null ? (
                         <SubmissionDetailModal
                           currentStudent={gs.submissionList}
                           student={selectedStudent}
@@ -409,6 +412,8 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
                           isGroup
                           groupName={gs.group.groupName}
                         />
+                      ) : (
+                        'Chưa nộp bài'
                       )}
                     </TableCell>
                   </TableCell>

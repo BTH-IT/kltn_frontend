@@ -1,7 +1,15 @@
 'use client';
 
 import { useContext, useEffect, useRef, useState, MouseEventHandler } from 'react';
-import { Settings2, Search, Calendar as CalendarIcon, FileText, Printer, ArrowLeftFromLine } from 'lucide-react';
+import {
+  Settings2,
+  Search,
+  Calendar as CalendarIcon,
+  FileText,
+  Printer,
+  ArrowLeftFromLine,
+  AlertCircle,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -31,6 +39,7 @@ import SubmissionDetailModal from '@/components/modals/SubmissionDetailModal';
 import EditAssignmentHmWorkModal from '@/components/modals/EditAssigmentHmWorkModal';
 import CommonModal from '@/components/modals/CommonModal';
 import { BreadcrumbContext } from '@/contexts/BreadcrumbContext';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function AssigmentSubmited({ submissions }: { submissions: ISubmissionList[] }) {
   const router = useRouter();
@@ -171,6 +180,14 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
         </div>
       </div>
 
+      {assignment?.dueDate && new Date(assignment.dueDate) <= new Date() && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="w-4 h-4" />
+          <AlertTitle>Chú ý</AlertTitle>
+          <AlertDescription>Bài tập này chưa hết hạn nộp bài.</AlertDescription>
+        </Alert>
+      )}
+
       {assignment?.scoreStructure ? (
         <div className="grid grid-cols-3 gap-4 mb-6">
           <Card>
@@ -277,7 +294,7 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
                 <TableCell>
                   {student.submission ? format(new Date(student.submission.createdAt), 'yyyy-MM-dd') : 'N/A'}
                 </TableCell>
-                <TableCell>{student.score !== null ? student.score : 'Chưa chấm bài'}</TableCell>
+                <TableCell>{student.score !== null ? student.score : 'N/A'}</TableCell>
                 <TableCell className="toHide">
                   {student.submission && (
                     <SubmissionDetailModal
