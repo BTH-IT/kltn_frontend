@@ -2,7 +2,7 @@
 'use client';
 
 import { AxiosError } from 'axios';
-import { EllipsisVertical, FileText, GraduationCap, SendHorizontal, UsersRound } from 'lucide-react';
+import { AlertCircle, EllipsisVertical, FileText, GraduationCap, SendHorizontal, UsersRound } from 'lucide-react';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -37,6 +37,7 @@ import submissionService from '@/services/submissionService';
 import { IComment, ISubmission, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import { logError } from '@/libs/utils';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -230,6 +231,10 @@ export default function AssignmentDetail() {
     return 'Đã nộp bài';
   };
 
+  const group = assignment?.groups.find((group) =>
+    group?.groupMembers?.some((member) => member.studentId === currentUser?.id),
+  );
+
   return (
     <>
       <TooltipProvider>
@@ -377,7 +382,13 @@ export default function AssignmentDetail() {
             </CardFooter>
           </Card>
           <div className={`col-span-3 ${currentUser?.id === assignment?.createUser?.id && 'col-span-12'}`}>
-            {currentUser?.id !== assignment?.createUser?.id && (
+            {currentUser?.id !== assignment?.createUser?.id && (assignment?.groups?.length || 0) > 0 && !group ? (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="w-4 h-4" />
+                <AlertTitle>Chú ý</AlertTitle>
+                <AlertDescription>Bạn chưa tham gia nhóm nào, vui lòng chọn nhóm để nộp bài</AlertDescription>
+              </Alert>
+            ) : (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>
