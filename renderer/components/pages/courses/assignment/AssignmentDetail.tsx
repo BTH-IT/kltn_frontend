@@ -381,55 +381,57 @@ export default function AssignmentDetail() {
               </form>
             </CardFooter>
           </Card>
-          <div className={`col-span-3 ${currentUser?.id === assignment?.createUser?.id && 'col-span-12'}`}>
-            {currentUser?.id !== assignment?.createUser?.id && (assignment?.groups?.length || 0) > 0 && !group ? (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="w-4 h-4" />
-                <AlertTitle>Chú ý</AlertTitle>
-                <AlertDescription>Bạn chưa tham gia nhóm nào, vui lòng chọn nhóm để nộp bài</AlertDescription>
-              </Alert>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>
-                  <span className="text-sm text-green-600">{categorizeStatus(assignment?.submission || null)}</span>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {assignment?.submission ? (
-                    <>
+          {currentUser?.id !== assignment?.createUser?.id && (
+            <div className={`col-span-3 ${currentUser?.id === assignment?.createUser?.id && 'col-span-12'}`}>
+              {currentUser?.id !== assignment?.createUser?.id && (assignment?.groups?.length || 0) > 0 && !group ? (
+                <Alert variant="destructive" className="mb-6">
+                  <AlertCircle className="w-4 h-4" />
+                  <AlertTitle>Chú ý</AlertTitle>
+                  <AlertDescription>Bạn chưa tham gia nhóm nào, vui lòng chọn nhóm để nộp bài</AlertDescription>
+                </Alert>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold">Bài tập của bạn</CardTitle>
+                    <span className="text-sm text-green-600">{categorizeStatus(assignment?.submission || null)}</span>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {assignment?.submission ? (
+                      <>
+                        <Button
+                          onClick={() => setIsViewSubmissionModalOpen(true)}
+                          variant="outline"
+                          className="justify-center w-full"
+                        >
+                          Xem bài đã nộp
+                        </Button>
+                        <Button
+                          onClick={() => setIsDeleteSubmissionModalOpen(true)}
+                          disabled={!isSubmissionDeletable}
+                          variant="destructive"
+                          className="justify-center w-full"
+                        >
+                          Hủy nộp bài
+                        </Button>
+                      </>
+                    ) : (
                       <Button
-                        onClick={() => setIsViewSubmissionModalOpen(true)}
                         variant="outline"
                         className="justify-center w-full"
+                        onClick={() => {
+                          if (categorizeStatus(assignment?.submission || null) !== 'Trễ hạn') {
+                            setIsSubmit(true);
+                          }
+                        }}
                       >
-                        Xem bài đã nộp
+                        {categorizeStatus(assignment?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
                       </Button>
-                      <Button
-                        onClick={() => setIsDeleteSubmissionModalOpen(true)}
-                        disabled={!isSubmissionDeletable}
-                        variant="destructive"
-                        className="justify-center w-full"
-                      >
-                        Hủy nộp bài
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      className="justify-center w-full"
-                      onClick={() => {
-                        if (categorizeStatus(assignment?.submission || null) !== 'Trễ hạn') {
-                          setIsSubmit(true);
-                        }
-                      }}
-                    >
-                      {categorizeStatus(assignment?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-          </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
         </div>
         {assignment && (
           <>

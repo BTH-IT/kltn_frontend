@@ -32,6 +32,19 @@ const AnnouncementAttachList = ({
     setFiles(newFiles);
   };
 
+  const handleDownloadAllFiles = () => {
+    files.forEach((file, index) => {
+      setTimeout(() => {
+        const link = document.createElement('a');
+        link.href = file instanceof File ? URL.createObjectURL(file) : file.url;
+        link.download = file.title || `download_${index}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }, index * 500);
+    });
+  };
+
   return (
     <div className={cn('grid grid-cols-12 gap-3', isEdit && 'px-3')}>
       {!isEdit ? (
@@ -178,6 +191,17 @@ const AnnouncementAttachList = ({
             </div>
           ))}
         </>
+      )}
+      {files.length > 0 && (
+        <div className="flex items-center justify-center col-span-12">
+          <button
+            onClick={handleDownloadAllFiles}
+            className="flex items-center justify-center p-2 text-sm font-semibold text-white transition-all bg-blue-500 rounded-lg hover:bg-blue-600"
+          >
+            <Clapperboard className="w-4 h-4 mr-2" />
+            Tải xuống tất cả
+          </button>
+        </div>
       )}
     </div>
   );

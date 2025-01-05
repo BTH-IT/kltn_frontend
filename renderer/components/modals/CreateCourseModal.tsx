@@ -33,7 +33,6 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
   const { subjects } = useContext(CreateSubjectContext);
   const [user, setUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [subjectCreated, setSubjectCreated] = useState<ISubject | null>(null);
   const { setCreatedCourses, createdCourses } = useContext(CoursesContext);
 
   const router = useRouter();
@@ -73,6 +72,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
       .regex(new RegExp(`^HK[1-3] \\| ${currentYear} - ${nextYear}$`), {
         message: `Niên khóa phải có dạng "HK1 | ${currentYear} - ${nextYear}", "HK2 | ${currentYear} - ${nextYear}", hoặc "HK3 | ${currentYear} - ${nextYear}".`,
       }),
+    sourceCourseId: z.object({ label: z.string(), value: z.string() }),
   });
 
   const form = useForm({
@@ -82,10 +82,35 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
       subjectId: { label: '', value: '' },
       courseGroup: '',
       semester: '',
+      sourceCourseId: { label: '', value: '' },
     },
   });
 
+  const sourceCourseId = form.watch('sourceCourseId');
+
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    if (values.sourceCourseId.value !== '') {
+      try {
+        const data = {
+          name: values.name,
+          sourceCourseId: values.sourceCourseId.value,
+          semester: values.semester,
+          courseGroup: values.courseGroup,
+        };
+        const res = await courseService.createTemplateCourse(data);
+        router.refresh();
+        router.push(`${API_URL.COURSES}/${res.data.courseId}`);
+        setCreatedCourses([...createdCourses, res.data]);
+        setOpenModal(false);
+        form.reset();
+        toast.success('Sao chép lớp học thành công');
+      } catch (error) {
+        const axiousError = error as AxiosError;
+        toast.error((axiousError.response?.data as ApiResponse<string>).message as string);
+      }
+      return;
+    }
+
     try {
       const data = {
         name: values.name,
@@ -147,35 +172,59 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="subjectId"
+                  name="sourceCourseId"
                   render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className="text-xs font-bold uppercase">Học phần</FormLabel>
-                      <div className="flex items-center gap-1">
-                        <FormControl className="flex-1 w-full">
-                          <div className="w-full">
-                            <Select
-                              {...field}
-                              className={cn(form.formState.isSubmitting && 'hidden')}
-                              options={subjects?.map((s) => {
-                                return {
-                                  label: `${s.name}`,
-                                  value: s.subjectId,
-                                };
-                              })}
-                            />
-
-                            <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
-                          </div>
-                        </FormControl>
-                        <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)} type="button">
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
+                    <FormItem>
+                      <FormLabel className="text-xs font-bold uppercase">
+                        Sao chép nội dung từ lớp học đã tạo (Không bắt buộc)
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          {...field}
+                          options={createdCourses.map((course) => ({
+                            label: course.name,
+                            value: course.courseId,
+                          }))}
+                          className={cn(form.formState.isSubmitting && 'hidden')}
+                          placeholder="Chọn lớp học nguồn ..."
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                {!sourceCourseId?.value && (
+                  <FormField
+                    control={form.control}
+                    name="subjectId"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className="text-xs font-bold uppercase">Học phần</FormLabel>
+                        <div className="flex items-center gap-1">
+                          <FormControl className="flex-1 w-full">
+                            <div className="w-full">
+                              <Select
+                                {...field}
+                                className={cn(form.formState.isSubmitting && 'hidden')}
+                                options={subjects?.map((s) => {
+                                  return {
+                                    label: `${s.name}`,
+                                    value: s.subjectId,
+                                  };
+                                })}
+                              />
+                              <Skeleton className={cn('h-10 w-full', !form.formState.isSubmitting && 'hidden')} />
+                            </div>
+                          </FormControl>
+                          <Button className="text-xs md:text-sm" onClick={() => setIsModalOpen(true)} type="button">
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 <FormField
                   control={form.control}
                   name="courseGroup"
@@ -237,7 +286,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
           </Form>
         </DialogContent>
       </Dialog>
-      <CreateSubjectModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} setSubjectCreated={setSubjectCreated} />
+      <CreateSubjectModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
     </>
   );
 };

@@ -86,6 +86,10 @@ const courseService = {
   unarchive(courseId: string): Promise<ApiResponse<IAssignment>> {
     return configService.post(`${API_URL.COURSES}/${courseId}/cancel-saved`);
   },
+  createTemplateCourse(courseData: Partial<ICourse>): Promise<ApiResponse<ICourse>> {
+    return configService.post(`${API_URL.COURSES}/template`, courseData);
+  },
+
   importStudents(courseId: string, data: any): Promise<ApiResponse<ICourse | null>> {
     return configService.post(`${API_URL.COURSES}/${courseId}/import-student`, data);
   },

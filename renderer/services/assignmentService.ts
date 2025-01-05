@@ -39,6 +39,9 @@ const assignmentService = {
   getAssignmentsByUser(): Promise<ApiResponse<IAssignment[]>> {
     return configService.get(`${API_URL.ASSIGNMENTS}/current-user`);
   },
+  getAllFiles(assignmentId: string): Promise<ApiResponse<IAssignment[]>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/${assignmentId}/downloads`);
+  },
 };
 
 export default assignmentService;

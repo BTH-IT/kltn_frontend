@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +36,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
   const [currentReport, setCurrentReport] = useState<IReport | null>(null);
   const [currentUser, setUser] = useState<IUser | null>(null);
   const { setItems } = useContext(BreadcrumbContext);
+  const router = useRouter();
 
   useEffect(() => {
     if (!group.course) return;
@@ -97,9 +99,12 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
         model: 'gemini-1.5-pro-002',
       });
       const prompt =
-        'Tôi muốn một bản tóm tắt chi tiết về tiến độ của phần viết báo cáo, bao gồm cả những thông tin về cấu trúc và nội dung của báo cáo sau (chỉ lấy nội dung tóm tắt): ';
+        'Tôi cần một bản tóm tắt chi tiết về tiến độ và nội dung của phần viết báo cáo, bao gồm các thông tin sau đây (chỉ lấy nội dung quan trọng và cần thiết, không trích dẫn toàn bộ văn bản gốc): ';
 
-      const fullPrompt = prompt + generateParagraphs([report]);
+      const fullPrompt =
+        prompt +
+        generateParagraphs([report]) +
+        'Không có liên kết đính kèm, không có tệp tin đính kèm và không có bình luận. Trả kết quả theo cách súc tích, dễ hiểu, tập trung vào các điểm quan trọng để sử dụng trong báo cáo tổng hợp hoặc kế hoạch công việc.';
 
       const result = await model.generateContent(fullPrompt);
       const content = result.response.text();
@@ -123,6 +128,7 @@ const ReportTimeline = ({ group }: { group: IGroup }) => {
         prevReports.map((r) => (r.reportId === report.reportId ? { ...report, brief: res.data } : r)),
       );
 
+      router.refresh();
       // Set brief report flag
       setBriefReport(true);
     } catch (error) {
