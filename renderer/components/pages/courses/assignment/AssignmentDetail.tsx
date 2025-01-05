@@ -421,9 +421,7 @@ export default function AssignmentDetail() {
                         variant="outline"
                         className="justify-center w-full"
                         onClick={() => {
-                          if (categorizeStatus(assignment?.submission || null) !== 'Trễ hạn') {
-                            setIsSubmit(true);
-                          }
+                          setIsSubmit(true);
                         }}
                       >
                         {categorizeStatus(assignment?.submission || null) === 'Trễ hạn' ? 'Hết hạn nộp bài' : 'Nộp bài'}
