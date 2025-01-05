@@ -118,7 +118,7 @@ const EditAssignmentHmWorkModal = ({
       content: values.content,
       dueDate: formattedDueDate,
       attachedLinks: links,
-      attachments: resAttachments,
+      attachments: [...assignment.attachments, ...resAttachments],
       scoreStructureId: scoreSelectedOption.value,
       type: assignment.type,
     };

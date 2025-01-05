@@ -1,6 +1,6 @@
 import { API_URL } from '@/constants/endpoints';
 import { IAssignment } from '@/types/assignment';
-import { ApiResponse, ISubmissionList } from '@/types';
+import { ApiResponse, IAssignmentFile, ISubmissionList } from '@/types';
 
 import configService from './configService';
 
@@ -38,6 +38,9 @@ const assignmentService = {
   },
   getAssignmentsByUser(): Promise<ApiResponse<IAssignment[]>> {
     return configService.get(`${API_URL.ASSIGNMENTS}/current-user`);
+  },
+  getAllFiles(assignmentId: string): Promise<ApiResponse<IAssignmentFile>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/${assignmentId}/downloads`);
   },
 };
 

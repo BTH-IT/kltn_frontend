@@ -120,7 +120,7 @@ const ReportAccordionItem = ({
           <div className="px-6 py-4">
             <div className="pl-6 border-l-2 border-blue-200">
               <div
-                className="mb-4 prose text-gray-700 max-w-none ql-editor"
+                className="pb-4 border-b markdown ql-editor !rounded-none"
                 dangerouslySetInnerHTML={{ __html: report.content }}
               />
               <AnnouncementAttachList links={report.attachedLinks || []} files={report.attachments || []} />

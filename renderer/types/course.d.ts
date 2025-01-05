@@ -27,6 +27,7 @@ export interface ICourse {
   setting: ISetting;
   saveAt: string | null;
   studentCount: number;
+  sourceCourseId?: string;
 }
 
 export interface ISetting {

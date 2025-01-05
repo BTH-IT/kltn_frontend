@@ -21,11 +21,9 @@ import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 const CreateSubjectModal = ({
   isOpen,
   setIsOpen,
-  setSubjectCreated,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setSubjectCreated: React.Dispatch<React.SetStateAction<ISubject | null>>;
 }) => {
   const { subjects, setSubjects } = useContext(CreateSubjectContext);
 
@@ -65,7 +63,6 @@ const CreateSubjectModal = ({
       res = await subjectService.createSubject(data);
       if (res.data) {
         setSubjects([...subjects, res.data]);
-        setSubjectCreated(res.data);
       }
       form.reset();
       setIsOpen(false);

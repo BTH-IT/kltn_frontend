@@ -101,9 +101,11 @@ export const generateParagraphs = (reports: IReport[]) => {
 
       const plainContent = content?.replace(/<\/?[^>]+(>|$)/g, ' ') || 'Không có nội dung';
 
+      console.log('plainContent', content);
+
       return `
       Báo cáo: ${title || 'Không có tiêu đề'}
-      Nội dung: ${plainContent}
+      Nội dung: ${content || 'Không có nội dung'}
       Người tạo: ${userName}
       Ngày tạo: ${formatDateTime(createdAt) || 'Không rõ'}
       ${linksInfo ? `Liên kết đính kèm: \n${linksInfo}` : 'Không có liên kết đính kèm'}

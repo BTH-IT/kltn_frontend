@@ -138,7 +138,7 @@ const EditGroupReportModal = ({
         title: values.title,
         content: values.content,
         attachedLinks: links,
-        attachments: resAttachments,
+        attachments: [...report.attachments, ...resAttachments],
       };
       const res = await reportService.updateReport(report.groupId, report.reportId, data);
       if (res.data) {

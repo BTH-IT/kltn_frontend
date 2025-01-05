@@ -1,3 +1,5 @@
+import { Attachment } from './attachment';
+
 export * from './session';
 export * from './sidebar';
 export * from './dropdown';
@@ -42,4 +44,8 @@ export interface IBaseModel {
 export interface BreadcrumbItem {
   label: string;
   href?: string;
+}
+
+export interface IAssignmentFile {
+  [key: string]: Partial<Attachment>;
 }

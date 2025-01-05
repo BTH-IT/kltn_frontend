@@ -1,10 +1,9 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 
 import { Breadcrumbs } from '@/components/common/Breadcrumbs';
 import { SubjectClient } from '@/components/tables/subject-tables/client';
-import { ISubject } from '@/types';
-import subjectService from '@/services/subjectService';
+import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -12,15 +11,7 @@ const breadcrumbItems = [
 ];
 
 export default function Page() {
-  const [subjects, setSubjects] = useState<ISubject[]>([]);
-
-  useEffect(() => {
-    const fetchSubject = async () => {
-      const response = await subjectService.getSubjects();
-      setSubjects(response.data);
-    };
-    fetchSubject();
-  }, []);
+  const { subjects } = useContext(CreateSubjectContext);
 
   return (
     <>
