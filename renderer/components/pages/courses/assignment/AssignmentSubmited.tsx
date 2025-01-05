@@ -10,6 +10,8 @@ import {
   ArrowLeftFromLine,
   AlertCircle,
 } from 'lucide-react';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -158,6 +160,55 @@ export default function AssigmentSubmited({ submissions }: { submissions: ISubmi
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-auto" align="end">
               <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    try {
+                      const assignmentId = assignment?.assignmentId || '';
+                      if (!assignmentId) {
+                        toast.error('Assignment ID không hợp lệ.');
+                        return;
+                      }
+
+                      const response = await assignmentService.getAllFiles(assignmentId);
+                      if (response?.statusCode === 200 && response?.data) {
+                        const files = response.data;
+
+                        if (Object.values(files).length === 0) {
+                          toast.error('Không tìm thấy file để tải.');
+                          return;
+                        }
+
+                        const zip = new JSZip();
+
+                        for (const fileGroup of Object.values(files)) {
+                          if (Array.isArray(fileGroup)) {
+                            for (const file of fileGroup) {
+                              const fileResponse = await fetch(file.url);
+                              const blob = await fileResponse.blob();
+                              zip.file(file.name || 'unknown', blob);
+                            }
+                          }
+                        }
+
+                        toast.info('Đang nén file, vui lòng đợi...');
+
+                        const zipBlob = await zip.generateAsync({
+                          type: 'blob',
+                        });
+                        saveAs(zipBlob, `assignment_${assignmentId}_${new Date().toISOString().split('T')[0]}.zip`);
+                        toast.success('Tải file thành công!');
+                      } else {
+                        toast.error('Không tìm thấy file để tải.');
+                      }
+                    } catch (error) {
+                      console.error('Lỗi khi tải file:', error);
+                      toast.error('Có lỗi xảy ra khi tải file.');
+                    }
+                  }}
+                >
+                  Tải tất cả các bài tập về máy
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={(e) => {
                     e.stopPropagation();

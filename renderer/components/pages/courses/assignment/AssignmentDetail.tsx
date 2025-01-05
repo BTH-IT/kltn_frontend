@@ -38,6 +38,7 @@ import { IComment, ISubmission, IUser } from '@/types';
 import { KEY_LOCALSTORAGE } from '@/utils';
 import { logError } from '@/libs/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { FileViewerModal } from '@/components/modals/FileViewerModal';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -69,6 +70,7 @@ export default function AssignmentDetail() {
   const router = useRouter();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewSubmissionModalOpen, setIsViewSubmissionModalOpen] = useState(false);
   const [isDeleteSubmissionModalOpen, setIsDeleteSubmissionModalOpen] = useState(false);
   const [isSubmissionDeletable, setIsSubmissionDeletable] = useState(false);
@@ -452,6 +454,7 @@ export default function AssignmentDetail() {
             />
           </>
         )}
+        <FileViewerModal attachments={assignment?.attachments || []} open={isModalOpen} onOpenChange={setIsModalOpen} />
         <CommonModal
           isOpen={isDeleteModalOpen}
           setIsOpen={setIsDeleteModalOpen}
