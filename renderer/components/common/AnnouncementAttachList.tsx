@@ -192,17 +192,6 @@ const AnnouncementAttachList = ({
           ))}
         </>
       )}
-      {files.length > 0 && (
-        <div className="flex items-center justify-center col-span-12">
-          <button
-            onClick={handleDownloadAllFiles}
-            className="flex items-center justify-center p-2 text-sm font-semibold text-white transition-all bg-blue-500 rounded-lg hover:bg-blue-600"
-          >
-            <Clapperboard className="w-4 h-4 mr-2" />
-            Tải xuống tất cả
-          </button>
-        </div>
-      )}
     </div>
   );
 };
