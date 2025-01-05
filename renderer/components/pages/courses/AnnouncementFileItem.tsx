@@ -15,7 +15,7 @@ const AnnouncementFileItem = ({ f }: { f: File | { url: string; name: string; ty
     const fetchFileType = async () => {
       if (f instanceof File) {
         try {
-          if (f.size < 10000000) {
+          if (f.size <= 524288000) {
             setFileType(f.type || 'unknown');
           } else {
             setFileType('large');
