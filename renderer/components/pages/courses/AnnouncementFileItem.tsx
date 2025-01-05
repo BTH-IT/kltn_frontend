@@ -11,8 +11,6 @@ const AnnouncementFileItem = ({ f }: { f: File | { url: string; name: string; ty
   const [fileType, setFileType] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log(f);
-
   useEffect(() => {
     const fetchFileType = async () => {
       if (f instanceof File) {
