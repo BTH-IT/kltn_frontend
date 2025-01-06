@@ -1,10 +1,11 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { Dispatch, SetStateAction, useCallback, useContext } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
 
 import MultiSelectPeople from '@/components/common/MultiSelectPeople';
 import { Button } from '@/components/ui/button';
@@ -18,23 +19,26 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CourseContext } from '@/contexts/CourseContext';
 import { cn } from '@/libs/utils';
 import groupService from '@/services/groupService';
 import { IGroup, IGroupMember } from '@/types';
+import assignmentService from '@/services/assignmentService';
 
 const CreateGroupMemberModal = ({
   isOpen,
   setIsOpen,
   group,
   setMembers,
+  assignmentId,
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   group: IGroup;
   setMembers: Dispatch<SetStateAction<IGroupMember[]>>;
+  assignmentId: string;
 }) => {
-  const { course } = useContext(CourseContext);
+  const [students, setStudents] = useState<any[]>([]);
+  const router = useRouter();
 
   const FormSchema = z.object({
     student: z
@@ -54,15 +58,31 @@ const CreateGroupMemberModal = ({
     },
   });
 
-  const generateOptions = useCallback(() => {
-    const data = course?.students?.map((s) => {
-      return {
-        label: `${s.fullName || s.userName}`,
-        value: s.email,
-      };
-    });
-    return data?.filter((s) => !group?.groupMembers?.find((m) => m.studentObj?.email === s.value));
-  }, [group]);
+  useEffect(() => {
+    const fetchStudents = async () => {
+      if (!assignmentId) return;
+
+      try {
+        const res = await assignmentService.getStudentsWithoutGroup(assignmentId);
+        if (res.data) {
+          setStudents(
+            res.data.map((s) => {
+              return {
+                label: `${s.fullName || s.userName}`,
+                value: s.email,
+              };
+            }),
+          );
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(error?.response?.data?.message || error.message);
+        }
+      }
+    };
+
+    fetchStudents();
+  }, [assignmentId]);
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
@@ -78,6 +98,7 @@ const CreateGroupMemberModal = ({
         toast.success('Thêm thành viên thành công');
         const sortedGroupMembers = [...res.data].sort((a) => (a.isLeader ? -1 : 1));
         setMembers(sortedGroupMembers);
+        router.refresh();
         onClose();
       } else {
         toast.error(res.message);
@@ -114,7 +135,7 @@ const CreateGroupMemberModal = ({
                       <>
                         <MultiSelectPeople
                           isDisabled={form.formState.isSubmitting}
-                          options={generateOptions()}
+                          options={students}
                           onChange={field.onChange}
                           value={field.value}
                           isSelectAll={true}
