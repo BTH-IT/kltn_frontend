@@ -14,9 +14,13 @@ export const columns: ColumnDef<IGroup>[] = createColumns([
     header: 'Tên nhóm',
   },
   {
-    accessorKey: 'numberOfMembers',
-    header: 'Tổng số thành viên tối đa',
-    sortable: true,
+    accessorKey: 'MEMBER',
+    header: 'Thành viên',
+    cell: ({ row }: any) => (
+      <div>
+        {row.original.groupMembers.length} / {row.original.numberOfMembers}
+      </div>
+    ),
   },
   {
     id: 'APPROVED',
