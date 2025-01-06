@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { use, useContext, useEffect, useState } from 'react';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +23,7 @@ import { cn } from '@/libs/utils';
 import courseService from '@/services/courseService';
 import { API_URL } from '@/constants/endpoints';
 import { CreateSubjectContext } from '@/contexts/CreateSubjectContext';
-import { ApiResponse, ISubject, IUser } from '@/types';
+import { ApiResponse, IUser } from '@/types';
 import { CoursesContext } from '@/contexts/CoursesContext';
 
 import CreateSubjectModal from './CreateSubjectModal';
@@ -34,6 +34,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setCreatedCourses, createdCourses } = useContext(CoursesContext);
+  const [isSourceCourse, setIsSourceCourse] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -53,9 +54,11 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
     name: z.string().min(1, {
       message: 'Tên lớp học là trường bắt buộc.',
     }),
-    subjectId: z.object({ label: z.string(), value: z.string() }).refine((data) => data && data.label && data.value, {
-      message: 'Mã học phần là bắt buộc',
-    }),
+    subjectId: z
+      .object({ label: z.string(), value: z.string() })
+      .refine((data) => (data && data.label && data.value) || isSourceCourse, {
+        message: 'Mã học phần là bắt buộc',
+      }),
     courseGroup: z
       .string()
       .min(1, { message: 'Nhóm môn học là trường bắt buộc.' })
@@ -88,8 +91,12 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
 
   const sourceCourseId = form.watch('sourceCourseId');
 
+  useEffect(() => {
+    setIsSourceCourse(!!sourceCourseId?.value);
+  }, [sourceCourseId]);
+
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    if (values.sourceCourseId.value !== '') {
+    if (values.sourceCourseId.value) {
       try {
         const data = {
           name: values.name,
@@ -185,7 +192,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
                             label: course.name,
                             value: course.courseId,
                           }))}
-                          className={cn(form.formState.isSubmitting && 'hidden')}
+                          isDisabled={form.formState.isSubmitting}
                           placeholder="Chọn lớp học nguồn ..."
                         />
                       </FormControl>
@@ -205,7 +212,7 @@ const CreateCourseModal = ({ children }: { children: React.ReactNode }) => {
                             <div className="w-full">
                               <Select
                                 {...field}
-                                className={cn(form.formState.isSubmitting && 'hidden')}
+                                isDisabled={form.formState.isSubmitting}
                                 options={subjects?.map((s) => {
                                   return {
                                     label: `${s.name}`,
