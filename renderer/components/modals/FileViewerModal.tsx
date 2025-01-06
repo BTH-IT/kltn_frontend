@@ -26,7 +26,6 @@ export function FileViewerModal({ attachments, open, onOpenChange }: FileViewerM
 
   React.useEffect(() => {
     setCurrentIndex(0);
-    console.log(attachments);
     setCurrentAttachment(attachments[currentIndex]);
   }, [attachments]);
 

@@ -65,7 +65,9 @@ const ScoreStructureTable: React.FC = () => {
     return <div>Đang tải bảng điểm...</div>;
   }
 
-  const leafColumns = getLeafColumns(scoreStructure);
+  const leafColumns = course.setting.hasFinalScore
+    ? getLeafColumns(scoreStructure)
+    : getLeafColumns(scoreStructure)?.filter((leaf) => leaf.columnName !== 'Cuối kì');
 
   const getStudentScores = (studentId: string) => {
     const transcript = transcripts.find((t) => t.id === studentId);
@@ -116,8 +118,8 @@ const ScoreStructureTable: React.FC = () => {
         <>
           <div className="pb-3" ref={contentRef}>
             <div className="flex items-center justify-between gap-2 mb-6">
-              <h2 className="mb-4 text-2xl font-bold">Bảng điểm</h2>
-              <div className="flex items-start gap-3">
+              <h2 className="flex-shrink-0 text-2xl font-bold">Bảng điểm</h2>
+              <div className="flex items-center gap-3">
                 <Select
                   onValueChange={(value) => setExportOption(value as 'full' | 'scoresOnly' | 'infosOnly')}
                   value={exportOption}

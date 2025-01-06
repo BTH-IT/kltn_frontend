@@ -118,6 +118,8 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
         const groupLeader = group?.groupMembers?.find((m) => m.isLeader) || null;
         const members = group?.groupMembers || [];
 
+        if (!group) continue;
+
         data.push({
           group: group!,
           submittedMember: newGroupSubmissions[0]?.user ? newGroupSubmissions[0].user : null,
@@ -251,7 +253,7 @@ export default function FinalAssigmentSubmited({ submissions }: { submissions: I
 
   const filteredGroups = groupSubmissions.filter(
     (gs) =>
-      gs.group.groupMembers?.some((m) => m.studentObj.fullName.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      gs.group?.groupMembers?.some((m) => m.studentObj.fullName.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (!selectedDate ||
         format(gs.submissionList?.submission?.createdAt ?? '', 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')),
   );

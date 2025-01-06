@@ -99,10 +99,6 @@ export const generateParagraphs = (reports: IReport[]) => {
         })
         .join('\n');
 
-      const plainContent = content?.replace(/<\/?[^>]+(>|$)/g, ' ') || 'Không có nội dung';
-
-      console.log('plainContent', content);
-
       return `
       Báo cáo: ${title || 'Không có tiêu đề'}
       Nội dung: ${content || 'Không có nội dung'}

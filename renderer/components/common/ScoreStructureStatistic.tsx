@@ -7,7 +7,7 @@ import { ITranscriptStatistic } from '@/types';
 
 export default function ScoreStructureStatistic({ data }: { data: ITranscriptStatistic[] }) {
   return (
-    <div className="p-4 space-y-6">
+    <div className="pb-6 space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
