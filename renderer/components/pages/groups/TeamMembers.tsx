@@ -167,7 +167,13 @@ const TeamMembers = ({ group }: { group: IGroup }) => {
           )}
         </CardContent>
       </Card>
-      <CreateGroupMemberModal isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} group={group} setMembers={setMembers} />
+      <CreateGroupMemberModal
+        isOpen={isDialogOpen}
+        setIsOpen={setIsDialogOpen}
+        group={group}
+        setMembers={setMembers}
+        assignmentId={group.assignmentId || ''}
+      />
     </>
   );
 };

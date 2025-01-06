@@ -1,6 +1,6 @@
 import { API_URL } from '@/constants/endpoints';
 import { IAssignment } from '@/types/assignment';
-import { ApiResponse, IAssignmentFile, ISubmissionList } from '@/types';
+import { ApiResponse, IAssignmentFile, ISubmissionList, IUser } from '@/types';
 
 import configService from './configService';
 
@@ -38,6 +38,9 @@ const assignmentService = {
   },
   getAssignmentsByUser(): Promise<ApiResponse<IAssignment[]>> {
     return configService.get(`${API_URL.ASSIGNMENTS}/current-user`);
+  },
+  getStudentsWithoutGroup(assignmentId: string): Promise<ApiResponse<IUser[]>> {
+    return configService.get(`${API_URL.ASSIGNMENTS}/${assignmentId}/studentswithoutgroup`);
   },
   getAllFiles(assignmentId: string): Promise<ApiResponse<IAssignmentFile>> {
     return configService.get(`${API_URL.ASSIGNMENTS}/${assignmentId}/downloads`);
